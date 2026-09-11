@@ -40,15 +40,12 @@ markup:
 
 params:
   env: production
-  description: 记录技术实践、工具探索与日常思考
+  description: 记录技术实践、学习过程与日常想法
   author: LittlehamsterXu
   keywords:
-    - Systems Security
-    - Compiler Security
-    - AI Compiler
-    - Reverse Engineering
-    - Pwn
-    - CTF
+    - Hugo
+    - 技术博客
+    - 编程
   math: false
   schema:
     publisherType: Person
@@ -69,40 +66,28 @@ params:
   TocOpen: false
   homeInfoParams:
     Title: 欢迎来到我的博客
-    Content: 记录技术实践、工具探索与日常思考。
+    Content: 记录技术实践、学习过程与日常想法。
   footer:
-    text: "Systems Security · Compiler Security · AI Compilers"
+    text: "Technical notes · Little Hamster"
   socialIcons:
     - name: github
       url: https://github.com/LittlehamsterXu
 
 menu:
   main:
-    - identifier: research
-      name: 研究
-      url: /research/
-      weight: 10
-    - identifier: security
-      name: 安全
-      url: /security/
-      weight: 20
-    - identifier: projects
-      name: 项目
-      url: /projects/
-      weight: 30
-    - identifier: contributions
-      name: 贡献
-      url: /contributions/
-      weight: 40
     - identifier: posts
-      name: 博客
+      name: 文章
       url: /posts/
-      weight: 50
+      weight: 10
+    - identifier: archives
+      name: 归档
+      url: /archives/
+      weight: 20
     - identifier: about
       name: 关于
       url: /about/
-      weight: 60
+      weight: 30
     - identifier: search
       name: 搜索
       url: /search/
-      weight: 70
+      weight: 40

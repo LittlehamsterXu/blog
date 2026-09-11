@@ -1,57 +1,16 @@
 hero:
-  label: "PERSONAL TECHNICAL HOMEPAGE"
-  name: "LittlehamsterXu / 小许"
-  tagline: "Systems Security · Compiler Security · AI Compilers"
+  label: "PERSONAL BLOG"
+  name: "Little Hamster"
+  tagline: "记录技术，也记录折腾。"
   intro:
-    - "我从 Reverse Engineering、Binary Exploitation / Pwn 和 CTF 出发，后来一路追到了 Systems Security 和编译器。"
-    - "目前关注 Compiler Correctness、Compiler Security、AI Compiler 与 AI Infrastructure；具体项目细节先锁在抽屉里，等可以公开时再见人。"
+    - "这里放技术文章、学习记录，以及一些还在整理中的想法。"
   links:
-    - label: "研究 Research"
-      url: "/research/"
+    - label: "文章"
+      url: "/posts/"
       primary: true
-    - label: "安全 Security"
-      url: "/security/"
-    - label: "项目 Projects"
-      url: "/projects/"
+    - label: "归档"
+      url: "/archives/"
     - label: "GitHub"
       url: "https://github.com/LittlehamsterXu"
 
-sections:
-  - id: research
-    title: "技术方向"
-    intro: "从二进制和系统安全出发，继续关注编译器正确性、安全性和 AI 编译器工程。"
-    cards:
-      - title: "Compiler Correctness & Security"
-        description: "关注编译器可靠性、代码生成、测试和安全边界等公开方向。具体项目暂不在主页展开。"
-        meta: "Public direction · Compiler"
-        url: "/research/"
-      - title: "AI Compiler Engineering"
-        description: "关注 AI 编译器和基础设施生态，持续记录可以公开的工程经验与技术观察。"
-        meta: "Public direction · AI Infra"
-        url: "/research/"
-
-  - id: projects
-    title: "公开项目"
-    intro: "可以公开的项目和安全内容会放在这里；未公开项目先保持安静，这也是一种工程纪律。"
-    cards:
-      - title: "Security / CTF Archive"
-        description: "整理 Reverse Engineering、Pwn、CTF 和系统安全相关的公开文章、实验和技术积累。"
-        meta: "Public archive · Security"
-        url: "/security/"
-      - title: "Projects in Progress"
-        description: "当前项目的设计和创新细节暂不公开；等成果具备公开条件后，再补充可复现的版本。"
-        meta: "Private until public"
-        url: "/projects/"
-
-  - id: security
-    title: "安全基础"
-    intro: "Reverse Engineering、Pwn、CTF 和系统安全没有过期，只是换成了更长的调用栈。"
-    cards:
-      - title: "Reverse Engineering / Pwn / CTF"
-        description: "保留漏洞分析、二进制程序、逆向工程和 CTF writeup 等内容，作为技术积累和问题分析方法的记录。"
-        meta: "Security Foundations / Earlier Work"
-        url: "/security/"
-      - title: "Open Source Contributions"
-        description: "整理已经公开的 Apache TVM、LLVM/MLIR、IREE、Triton 等项目问题、修复和 upstream 反馈。"
-        meta: "Issues · PRs · Upstream"
-        url: "/contributions/"
+sections: []
