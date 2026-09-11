@@ -52,6 +52,8 @@ Build output directory: public
 HUGO_VERSION: 0.166.0
 ```
 
+在 Cloudflare 项目的 `Settings > Environment variables` 中，分别为 Production 和 Preview 添加 `HUGO_VERSION=0.166.0`。这样本地、GitHub Pages 和 Cloudflare 使用同一个 Hugo 版本。
+
 推送到 `main` 后会自动构建。正式地址配置在 `hugo.yaml` 中。
 
 ## 维护
