@@ -1,5 +1,12 @@
 <meta property="og:url" content="{{ .Permalink }}">
 
+{{- $siteLocale := site.Language.Lang -}}
+{{- if ge hugo.Version "0.158.0" -}}
+  {{- $siteLocale = site.Language.Locale -}}
+{{- else -}}
+  {{- $siteLocale = site.Language.LanguageCode -}}
+{{- end -}}
+
 {{- with or site.Title site.Params.title | plainify }}
   <meta property="og:site_name" content="{{ . }}">
 {{- end }}
@@ -12,7 +19,7 @@
   <meta property="og:description" content="{{ trim . "\n\r\t " }}">
 {{- end }}
 
-{{- with or .Params.locale site.Language.Locale }}
+{{- with or .Params.locale $siteLocale }}
   <meta property="og:locale" content="{{ replace . `-` `_` }}">
 {{- end }}
 
