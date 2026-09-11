@@ -41,20 +41,20 @@ math: true
 
 站点支持代码高亮、代码复制、KaTeX 数学公式、Mermaid 图表和 Callout 提示框。
 
-## Cloudflare 部署
+## Cloudflare Workers 部署
 
-Cloudflare Pages / Workers Git 集成建议使用：
+这个仓库使用 Workers Builds 部署 Hugo 静态站点：
 
 ```text
-Production branch: main
+Root directory: /
 Build command: hugo --gc --minify
-Build output directory: public
+Deploy command: npx wrangler deploy
 HUGO_VERSION: 0.166.0
 ```
 
-在 Cloudflare 项目的 `Settings > Environment variables` 中，分别为 Production 和 Preview 添加 `HUGO_VERSION=0.166.0`。这样本地、GitHub Pages 和 Cloudflare 使用同一个 Hugo 版本。
+`wrangler.jsonc` 已将 Workers Static Assets 目录固定为 `./public/`，不需要设置 Pages 的 Output directory。在 Cloudflare 项目的 `Settings > Build` 中确认 Deploy command 为 `npx wrangler deploy`，并在 `Settings > Environment variables` 中为 Production 和 Preview 添加 `HUGO_VERSION=0.166.0`。
 
-推送到 `main` 后会自动构建。正式地址配置在 `hugo.yaml` 中。
+推送到 `main` 后会自动构建和发布。正式地址配置在 `hugo.yaml` 中。
 
 ## 维护
 
