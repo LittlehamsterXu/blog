@@ -1,0 +1,22 @@
+:root {
+    --main-width: 860px;
+    --gap: 24px;
+}
+
+.post-content {
+    font-size: 17px;
+    line-height: 1.9;
+}
+
+.post-content h2,
+.post-content h3 {
+    margin-top: 2.2em;
+}
+
+.post-entry {
+    border-radius: 12px;
+}
+
+.first-entry {
+    min-height: 240px;
+}

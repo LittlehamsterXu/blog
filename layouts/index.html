@@ -1,0 +1,60 @@
+{{- define "main" -}}
+{{- $home := hugo.Data.home -}}
+
+<section class="home-hero">
+  <p class="home-eyebrow">{{ $home.hero.label }}</p>
+  <h1>{{ $home.hero.name }}</h1>
+  <p class="home-tagline">{{ $home.hero.tagline }}</p>
+  {{- range $home.hero.intro }}
+  <p class="home-intro">{{ . }}</p>
+  {{- end }}
+  <nav class="home-actions" aria-label="Homepage links">
+    {{- range $home.hero.links }}
+    {{- $href := .url }}
+    {{- if hasPrefix .url "/" }}{{ $href = .url | relURL }}{{ end }}
+    <a class="home-action{{ if .primary }} home-action-primary{{ end }}" href="{{ $href }}"{{ if not (hasPrefix .url "/") }} target="_blank" rel="noopener"{{ end }}>{{ .label }}</a>
+    {{- end }}
+  </nav>
+</section>
+
+{{- range $home.sections }}
+<section class="home-section" id="{{ .id }}">
+  <div class="home-section-heading">
+    <h2>{{ .title }}</h2>
+    <p>{{ .intro }}</p>
+  </div>
+  <div class="home-grid">
+    {{- range .cards }}
+    {{- $href := .url }}
+    {{- if hasPrefix .url "/" }}{{ $href = .url | relURL }}{{ end }}
+    <article class="home-card">
+      <h3>{{ .title }}</h3>
+      <p>{{ .description }}</p>
+      {{- with .meta }}<p class="home-card-meta">{{ . }}</p>{{ end }}
+      {{- with .url }}<a class="home-card-link" href="{{ $href }}">查看相关内容 →</a>{{ end }}
+    </article>
+    {{- end }}
+  </div>
+</section>
+{{- end }}
+
+{{- $recent := where site.RegularPages "Section" "posts" -}}
+{{- $recent = where $recent "Draft" "ne" true -}}
+<section class="home-section home-recent" id="writing">
+  <div class="home-section-heading">
+    <h2>近期文章</h2>
+    <p>记录具体问题、实验过程、代码阅读和研究思考。</p>
+  </div>
+  <div class="home-recent-list">
+    {{- range first 3 ($recent.ByDate.Reverse) }}
+    <a class="home-recent-item" href="{{ .RelPermalink }}">
+      <span class="home-recent-title">{{ .Title }}</span>
+      <span class="home-recent-meta">{{ .Date.Format (site.Params.DateFormat | default "2006-01-02") }}</span>
+    </a>
+    {{- else }}
+    <p class="home-empty">文章正在整理中，后续会持续更新。</p>
+    {{- end }}
+  </div>
+  <a class="home-more" href="{{ "posts/" | relURL }}">查看全部文章 →</a>
+</section>
+{{- end -}}
