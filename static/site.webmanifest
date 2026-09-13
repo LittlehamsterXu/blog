@@ -1,0 +1,16 @@
+{
+  "name": "LittleHamster_Xu' Blog",
+  "short_name": "LittleHamster Xu",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f8f7f1",
+  "theme_color": "#e18568",
+  "icons": [
+    {
+      "src": "/images/avatar.png",
+      "sizes": "256x256",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

@@ -71,8 +71,25 @@ params:
     hiddenInSingle: true
   label:
     text: LittleHamster_Xu' Blog
-    icon: "https://github.com/LittlehamsterXu.png?size=80"
+    icon: "/images/avatar.png"
     iconHeight: 32
+  assets:
+    favicon: "/images/avatar.png"
+    favicon16x16: "/images/avatar.png"
+    favicon32x32: "/images/avatar.png"
+    apple_touch_icon: "/images/avatar.png"
+    theme_color: "#e18568"
+  fuseOpts:
+    isCaseSensitive: false
+    shouldSort: true
+    threshold: 0.3
+    minMatchCharLength: 1
+    keys:
+      - title
+      - permalink
+      - summary
+      - content
+      - tags
   homeInfoParams:
     Title: 欢迎来到我的博客
     Content: "## 记录技术，也记录折腾。"

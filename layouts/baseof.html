@@ -27,8 +27,9 @@
 {{- else }}
 <body id="top">
 {{- end }}
+    <a class="skip-link" href="#main-content">跳到正文</a>
     {{ partial "header.html" . -}}
-    <main class="main">
+    <main id="main-content" class="main">
         {{- block "main" . }}{{ end }}
     </main>
     {{ partial "footer.html" . -}}

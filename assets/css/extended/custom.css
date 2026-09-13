@@ -61,6 +61,23 @@ body {
     background: transparent;
 }
 
+.skip-link {
+    position: absolute;
+    top: 8px;
+    left: -9999px;
+    z-index: 10000;
+    padding: 8px 14px;
+    color: var(--theme);
+    border-radius: 999px;
+    background: var(--accent);
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.skip-link:focus {
+    left: var(--gap);
+}
+
 .nav {
     display: flex;
     flex-wrap: wrap;
@@ -436,6 +453,24 @@ body {
     border-top-right-radius: 0;
 }
 
+.post-content .code-block {
+    position: relative;
+    margin: 50px 0 30px;
+    border-radius: var(--radius);
+    background: var(--code-block-bg);
+    direction: ltr;
+}
+
+.post-content .code-block > .highlight {
+    margin: 0;
+    border-radius: 0 0 var(--radius) var(--radius);
+    background: var(--code-block-bg) !important;
+}
+
+.post-content .code-block > .highlight pre {
+    border-radius: 0 0 var(--radius) var(--radius);
+}
+
 .post-content pre {
     overflow-x: auto;
     background: var(--code-block-bg);
@@ -647,7 +682,7 @@ button:active {
     margin-bottom: 10px;
     padding-left: 10px;
     color: var(--accent);
-    font-size: 1.1em;
+    font-size: 16px;
     font-weight: 600;
     list-style: none;
 }
@@ -683,7 +718,8 @@ button:active {
     margin: 5px 20px 0;
     padding: 0;
     overflow-y: auto;
-    font-size: .95rem;
+    font-size: 14px;
+    line-height: 1.65;
 }
 
 .post-sidebar .toc li,
@@ -758,7 +794,7 @@ button:active {
 @media screen and (min-width: 1440px) {
     :root {
         --toc-width: 320px;
-        --side-module-gap: 20px;
+        --side-module-gap: 32px;
     }
 }
 

@@ -1,0 +1,38 @@
+{{- $language := lower .Type -}}
+{{- $languageNames := dict
+  "bash" "Bash"
+  "c" "C"
+  "cpp" "C++"
+  "cs" "C#"
+  "css" "CSS"
+  "go" "Go"
+  "html" "HTML"
+  "java" "Java"
+  "javascript" "JavaScript"
+  "js" "JavaScript"
+  "json" "JSON"
+  "markdown" "Markdown"
+  "md" "Markdown"
+  "powershell" "PowerShell"
+  "py" "Python"
+  "python" "Python"
+  "rust" "Rust"
+  "sh" "Shell"
+  "shell" "Shell"
+  "sql" "SQL"
+  "ts" "TypeScript"
+  "typescript" "TypeScript"
+  "yaml" "YAML"
+  "yml" "YAML"
+-}}
+{{- $languageLabel := index $languageNames $language | default ($language | title) | default "Text" -}}
+{{- $result := transform.HighlightCodeBlock . -}}
+<div class="highlight code-block">
+  <div class="mac-tool" aria-hidden="true">
+    <span class="mac bb1"></span>
+    <span class="mac bb2"></span>
+    <span class="mac bb3"></span>
+    <span class="language-type">{{ $languageLabel }}</span>
+  </div>
+  {{- $result.Wrapped -}}
+</div>
