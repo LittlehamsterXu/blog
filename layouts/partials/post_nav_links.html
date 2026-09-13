@@ -1,0 +1,12 @@
+{{- with .PrevInSection }}
+<a class="prev" href="{{ .RelPermalink }}">
+    <span class="title">« {{ i18n "prev_post" }}</span>
+    <span>{{ .Name }}</span>
+</a>
+{{- end }}
+{{- with .NextInSection }}
+<a class="next" href="{{ .RelPermalink }}">
+    <span class="title">{{ i18n "next_post" }} »</span>
+    <span>{{ .Name }}</span>
+</a>
+{{- end }}

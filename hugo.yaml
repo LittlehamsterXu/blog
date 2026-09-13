@@ -2,7 +2,7 @@ baseURL: "https://blog.little-hamster-xu.workers.dev/"
 locale: zh-cn
 timeZone: Asia/Shanghai
 defaultContentLanguage: zh
-title: Little Hamster 的博客
+title: LittleHamster Xu 的博客
 theme: [PaperMod]
 hasCJKLanguage: true
 enableRobotsTXT: true
@@ -24,24 +24,27 @@ outputs:
 markup:
   goldmark:
     extensions:
+      extras:
+        mark:
+          enable: true
       passthrough:
         enable: true
         delimiters:
           block:
-            - - '\\['
-              - '\\]'
+            - - '\['
+              - '\]'
             - - '$$'
               - '$$'
           inline:
-            - - '\\('
-              - '\\)'
+            - - '\('
+              - '\)'
   highlight:
-    noClasses: false
+    noClasses: true
 
 params:
   env: production
   description: 记录技术实践、学习过程与日常想法
-  author: LittlehamsterXu
+  author: LittleHamster Xu
   keywords:
     - Hugo
     - 技术博客
@@ -58,36 +61,42 @@ params:
   ShowReadingTime: true
   ShowWordCount: true
   ShowFullTextinRSS: true
-  ShowShareButtons: true
+  ShowShareButtons: false
   ShowPostNavLinks: true
   ShowBreadCrumbs: true
   ShowCodeCopyButtons: true
   ShowToc: true
-  TocOpen: false
+  TocOpen: true
+  cover:
+    hiddenInSingle: true
+  label:
+    text: LittleHamster_Xu' Blog
+    icon: "https://github.com/LittlehamsterXu.png?size=80"
+    iconHeight: 32
   homeInfoParams:
     Title: 欢迎来到我的博客
-    Content: 记录技术实践、学习过程与日常想法。
+    Content: "## 记录技术，也记录折腾。"
   footer:
-    text: "Technical notes · Little Hamster"
+    text: "Technical notes · LittleHamster Xu"
   socialIcons:
     - name: github
       url: https://github.com/LittlehamsterXu
 
 menu:
   main:
-    - identifier: posts
-      name: 文章
-      url: /posts/
-      weight: 10
-    - identifier: archives
-      name: 归档
-      url: /archives/
-      weight: 20
-    - identifier: about
-      name: 关于
-      url: /about/
-      weight: 30
     - identifier: search
       name: 搜索
       url: /search/
+      weight: 10
+    - identifier: posts
+      name: 文章
+      url: /posts/
+      weight: 20
+    - identifier: archives
+      name: 归档
+      url: /archives/
+      weight: 30
+    - identifier: about
+      name: 关于
+      url: /about/
       weight: 40

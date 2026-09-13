@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 675" role="img" aria-labelledby="title desc">
+  <title id="title">Hugo blog capability test</title>
+  <desc id="desc">A blue and purple abstract cover for the LittleHamster Xu blog.</desc>
+  <defs>
+    <linearGradient id="background" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#111827"/>
+      <stop offset="48%" stop-color="#312e81"/>
+      <stop offset="100%" stop-color="#0e7490"/>
+    </linearGradient>
+    <linearGradient id="orb" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#a5b4fc" stop-opacity=".9"/>
+      <stop offset="100%" stop-color="#67e8f9" stop-opacity=".18"/>
+    </linearGradient>
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M40 0H0V40" fill="none" stroke="#fff" stroke-opacity=".08"/>
+    </pattern>
+    <filter id="blur" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="34"/>
+    </filter>
+  </defs>
+  <rect width="1200" height="675" rx="36" fill="url(#background)"/>
+  <rect x="32" y="32" width="1136" height="611" rx="24" fill="url(#grid)"/>
+  <circle cx="965" cy="110" r="185" fill="#22d3ee" opacity=".24" filter="url(#blur)"/>
+  <circle cx="965" cy="110" r="120" fill="url(#orb)" opacity=".72"/>
+  <circle cx="180" cy="570" r="220" fill="#818cf8" opacity=".22" filter="url(#blur)"/>
+  <path d="M80 470C245 390 310 515 468 420S735 282 1110 370" fill="none" stroke="#c4b5fd" stroke-opacity=".55" stroke-width="3"/>
+  <path d="M80 500C245 420 310 545 468 450S735 312 1110 400" fill="none" stroke="#67e8f9" stroke-opacity=".3" stroke-width="2"/>
+  <g fill="#f8fafc" font-family="Inter, Noto Sans SC, Microsoft YaHei, sans-serif">
+    <text x="92" y="152" font-size="26" letter-spacing="6" fill="#c4b5fd">PERSONAL BLOG</text>
+    <text x="88" y="252" font-size="72" font-weight="700">Hello, World</text>
+    <text x="94" y="305" font-size="26" fill="#bae6fd">Hugo · Markdown · Reading · Ideas</text>
+  </g>
+  <g transform="translate(870 470)" fill="none" stroke="#f8fafc" stroke-width="4" opacity=".84">
+    <rect x="0" y="0" width="170" height="104" rx="14"/>
+    <path d="M25 28h120M25 52h78M25 76h50" stroke-linecap="round"/>
+  </g>
+</svg>

@@ -1,4 +1,4 @@
-# Little Hamster 的博客
+# LittleHamster Xu 的博客
 
 一个用 Hugo 和 PaperMod 搭建的小博客，记录技术实践、学习过程和日常想法。
 
@@ -7,10 +7,12 @@
 ## 本地运行
 
 ```powershell
-hugo server --buildDrafts
+hugo server --buildDrafts --baseURL http://localhost:1313/
 ```
 
 打开 <http://localhost:1313/> 预览。
+
+本地预览显式使用 `localhost` 作为 `baseURL`，这样文章封面等通过绝对地址生成的资源也会从本地加载；线上构建仍使用 `hugo.yaml` 中的正式地址。
 
 如果 Windows 下遇到缓存路径问题，可以使用项目内缓存：
 

@@ -1,0 +1,24 @@
+{{- $recent := where site.RegularPages "Type" "in" site.Params.mainSections -}}
+{{- $recent = where $recent "RelPermalink" "ne" .RelPermalink -}}
+{{- $recent = $recent.ByDate.Reverse -}}
+{{- if eq (len $recent) 0 -}}
+  {{- $recent = (where site.RegularPages "Type" "in" site.Params.mainSections).ByDate.Reverse -}}
+{{- end -}}
+<div class="toc recent-posts">
+  <details open>
+    <summary>
+      <span class="details">最新文章</span>
+    </summary>
+    <div class="inner">
+      <ul>
+        {{- range first 5 $recent }}
+        <li>
+          <a href="{{ .RelPermalink }}">{{ .Title }}</a>
+        </li>
+        {{- else }}
+        <li class="recent-empty">暂时还没有其他文章</li>
+        {{- end }}
+      </ul>
+    </div>
+  </details>
+</div>

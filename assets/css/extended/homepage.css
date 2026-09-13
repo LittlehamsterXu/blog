@@ -1,5 +1,7 @@
 .home-hero {
-    padding: 56px 0 42px;
+    max-width: 840px;
+    margin-inline: auto;
+    padding: 62px 0 46px;
     border-bottom: 1px solid var(--border);
 }
 
@@ -13,7 +15,7 @@
 
 .home-hero h1 {
     margin-bottom: 12px;
-    font-size: clamp(36px, 7vw, 58px);
+    font-size: clamp(38px, 7vw, 60px);
     letter-spacing: -.035em;
 }
 
@@ -63,6 +65,8 @@
 }
 
 .home-section {
+    max-width: 840px;
+    margin-inline: auto;
     padding: 42px 0 8px;
 }
 
@@ -132,6 +136,12 @@
     gap: 20px;
     padding: 15px 0;
     border-bottom: 1px solid var(--border);
+    transition: padding-inline .2s ease, color .2s ease;
+}
+
+.home-recent-item:hover {
+    padding-inline: 8px;
+    background: color-mix(in srgb, var(--accent) 5%, transparent);
 }
 
 .home-recent-title {
@@ -189,7 +199,12 @@
 
 @media screen and (max-width: 700px) {
     .home-hero {
-        padding-top: 32px;
+        padding-top: 36px;
+    }
+
+    .home-hero,
+    .home-section {
+        max-width: none;
     }
 
     .home-grid {
