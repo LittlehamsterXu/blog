@@ -10,8 +10,9 @@
     --main-width: 720px;
     --nav-width: 1024px;
     --toc-width: 200px;
-    --side-module-gap: 24px;
-    --side-module-top-offset: var(--gap);
+    --side-module-min-gap: 20px;
+    --side-module-gap: var(--side-module-min-gap);
+    --side-module-top-offset: calc(var(--gap) + 20px);
     --gap: 24px;
     --content-gap: 20px;
     --accent: hsl(15, 63.1%, 59.6%);
@@ -749,24 +750,24 @@ button:active {
 }
 
 @media screen and (min-width: 1440px) {
-    .post-single > .post-sidebar,
-    .post-single > .recent-container {
+    .post-single > .post-sidebar.wide,
+    .post-single > .recent-container.wide {
         position: absolute;
         top: var(--side-module-top-offset);
         width: var(--toc-width);
         height: 100%;
     }
 
-    .post-single > .post-sidebar {
+    .post-single > .post-sidebar.wide {
         left: calc(var(--gap) - var(--toc-width) - var(--side-module-gap));
     }
 
-    .post-single > .recent-container {
+    .post-single > .recent-container.wide {
         right: calc(var(--gap) - var(--toc-width) - var(--side-module-gap));
     }
 
-    .post-single > .post-sidebar .toc,
-    .post-single > .recent-container .toc {
+    .post-single > .post-sidebar.wide .toc,
+    .post-single > .recent-container.wide .toc {
         position: sticky;
         top: var(--side-module-top-offset);
         width: 100%;
@@ -778,23 +779,26 @@ button:active {
         background: transparent;
     }
 
-    .post-single > .post-sidebar .toc .inner,
-    .post-single > .recent-container .toc .inner {
+    .post-single > .post-sidebar.wide .toc .inner,
+    .post-single > .recent-container.wide .toc .inner {
         max-height: 83vh;
         margin: 0 0 0 10px;
         padding: 0;
     }
 
-    .post-single > .post-sidebar .toc summary,
-    .post-single > .recent-container .toc summary {
+    .post-single > .post-sidebar.wide .toc summary,
+    .post-single > .recent-container.wide .toc summary {
         font-weight: 400;
+    }
+
+    .post-single > .recent-container:not(.wide) {
+        display: none;
     }
 }
 
 @media screen and (min-width: 1440px) {
     :root {
         --toc-width: 320px;
-        --side-module-gap: 32px;
     }
 }
 

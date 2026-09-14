@@ -71,6 +71,51 @@
 {{- if .Params.ShowToc }}
 <script>
   document.addEventListener("DOMContentLoaded", function () {
+    const root = document.documentElement;
+    const tocContainer = document.getElementById("toc-container");
+    const recentPostsContainer = document.getElementById("recent-posts-container");
+    let resizeFrameRequested = false;
+
+    function checkTocPosition() {
+      const rootStyle = getComputedStyle(root);
+      const tocWidth = parseInt(rootStyle.getPropertyValue("--toc-width"), 10);
+      const minGap = parseInt(rootStyle.getPropertyValue("--side-module-min-gap"), 10);
+      const article = document.querySelector(".post-single");
+      const articleWidth = article
+        ? article.getBoundingClientRect().width
+        : parseInt(rootStyle.getPropertyValue("--main-width"), 10);
+      const viewportWidth = root.clientWidth;
+      const sideGap = (viewportWidth - articleWidth - tocWidth * 2) / 4;
+      const shouldWide = sideGap >= minGap;
+
+      root.style.setProperty("--side-module-gap", `${Math.max(sideGap, minGap)}px`);
+
+      if (tocContainer) {
+        tocContainer.classList.toggle("wide", shouldWide);
+      }
+      if (recentPostsContainer) {
+        recentPostsContainer.classList.toggle("wide", shouldWide);
+      }
+    }
+
+    function requestTocPositionCheck() {
+      if (resizeFrameRequested) {
+        return;
+      }
+
+      resizeFrameRequested = true;
+      window.requestAnimationFrame(function () {
+        checkTocPosition();
+        resizeFrameRequested = false;
+      });
+    }
+
+    checkTocPosition();
+    window.addEventListener("resize", requestTocPositionCheck, { passive: true });
+  });
+</script>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
     const tocLinks = Array.from(document.querySelectorAll(".post-sidebar .toc a[href^='#']"));
     const headings = tocLinks
       .map(function (link) {
