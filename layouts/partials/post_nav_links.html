@@ -1,12 +1,18 @@
-{{- with .PrevInSection }}
-<a class="prev" href="{{ .RelPermalink }}">
-    <span class="title">« {{ i18n "prev_post" }}</span>
-    <span>{{ .Name }}</span>
-</a>
-{{- end }}
-{{- with .NextInSection }}
-<a class="next" href="{{ .RelPermalink }}">
-    <span class="title">{{ i18n "next_post" }} »</span>
-    <span>{{ .Name }}</span>
-</a>
+{{- $previous := .PrevInSection -}}
+{{- $next := .NextInSection -}}
+{{- if or $previous $next }}
+<nav class="paginav post-nav-compact" aria-label="文章导航">
+    {{- with $previous }}
+    <a class="prev" href="{{ .RelPermalink }}">
+        <span class="title">← 上一篇</span>
+        <span>{{ .Title }}</span>
+    </a>
+    {{- end }}
+    {{- with $next }}
+    <a class="next" href="{{ .RelPermalink }}">
+        <span class="title">下一篇 →</span>
+        <span>{{ .Title }}</span>
+    </a>
+    {{- end }}
+</nav>
 {{- end }}
