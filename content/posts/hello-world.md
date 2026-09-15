@@ -10,7 +10,7 @@ ShowToc: true
 TocOpen: true
 math: true
 cover:
-  image: "/images/hello-world-cover.svg"
+  image: "images/hello-world-cover.svg"
   alt: "蓝紫色的 Hugo 博客能力验证封面"
   caption: "Hugo · PaperMod · LittleHamster Xu"
   hiddenInSingle: true

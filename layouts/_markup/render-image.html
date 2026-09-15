@@ -1,0 +1,13 @@
+{{- $u := urls.Parse .Destination -}}
+{{- $src := $u.String -}}
+{{- if not (findRE "^(https?:|data:|//)" $src) -}}
+  {{- $path := strings.TrimPrefix "/" $u.Path -}}
+  {{- $src = $path | relURL -}}
+  {{- with $u.RawQuery -}}
+    {{- $src = printf "%s?%s" $src . -}}
+  {{- end -}}
+  {{- with $u.Fragment -}}
+    {{- $src = printf "%s#%s" $src . -}}
+  {{- end -}}
+{{- end -}}
+<img loading="lazy" decoding="async" src="{{ $src | safeURL }}" alt="{{ .Text }}"{{ with .Title }} title="{{ . }}"{{ end }}>
