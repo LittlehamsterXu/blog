@@ -71,13 +71,13 @@ params:
     hiddenInSingle: true
   label:
     text: LittleHamster_Xu' Blog
-    icon: "images/avatar.png"
+    icon: "images/avatar-20260915.png"
     iconHeight: 32
   assets:
-    favicon: "images/avatar.png"
-    favicon16x16: "images/avatar.png"
-    favicon32x32: "images/avatar.png"
-    apple_touch_icon: "images/avatar.png"
+    favicon: "images/avatar-20260915.png"
+    favicon16x16: "images/avatar-20260915.png"
+    favicon32x32: "images/avatar-20260915.png"
+    apple_touch_icon: "images/avatar-20260915.png"
     theme_color: "#e18568"
   fuseOpts:
     isCaseSensitive: false
