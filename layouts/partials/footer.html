@@ -11,8 +11,8 @@
 
     {{- with site.Params.footer.text }}
         {{ . | markdownify }}
-        {{- print " · "}}
     {{- end }}
+    <span> · <a href="{{ "index.xml" | relURL }}" title="订阅新文章">RSS 订阅</a></span>
 
 </footer>
 {{- end }}

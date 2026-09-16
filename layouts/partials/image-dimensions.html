@@ -1,0 +1,14 @@
+{{- $size := dict -}}
+{{- with . -}}
+  {{- if eq .MediaType.SubType "svg" -}}
+    {{- with findRE `viewBox=["'][^"']+["']` .Content 1 -}}
+      {{- $values := findRE `[-+]?[0-9]*\.?[0-9]+` (index . 0) -}}
+      {{- if eq (len $values) 4 -}}
+        {{- $size = dict "width" (index $values 2) "height" (index $values 3) -}}
+      {{- end -}}
+    {{- end -}}
+  {{- else if in (slice "jpeg" "png" "webp" "gif" "tiff" "bmp") .MediaType.SubType -}}
+    {{- $size = dict "width" .Width "height" .Height -}}
+  {{- end -}}
+{{- end -}}
+{{- return $size -}}

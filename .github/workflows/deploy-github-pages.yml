@@ -1,6 +1,7 @@
 name: Deploy Hugo site to GitHub Pages
 
 on:
+  pull_request:
   push:
     branches: [main]
   workflow_dispatch:
@@ -10,11 +11,9 @@ env:
 
 permissions:
   contents: read
-  pages: write
-  id-token: write
 
 concurrency:
-  group: pages
+  group: pages-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
@@ -36,15 +35,34 @@ jobs:
           sudo install /tmp/hugo /usr/local/bin/hugo
           hugo version
 
-      - name: Build
-        run: hugo --gc --minify -b "https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/"
+      - name: Validate Cloudflare site
+        run: |
+          python3 -m unittest discover -s tests
+          bash scripts/build-cloudflare.sh "$RUNNER_TEMP/blog-cloudflare"
+
+      - name: Build and validate GitHub Pages site
+        env:
+          OWNER: ${{ github.repository_owner }}
+          REPOSITORY: ${{ github.event.repository.name }}
+        run: |
+          pages_url="https://${OWNER}.github.io/${REPOSITORY}/"
+          if [ "${REPOSITORY,,}" = "${OWNER,,}.github.io" ]; then
+            pages_url="https://${OWNER}.github.io/"
+          fi
+          hugo --gc --minify -b "$pages_url"
+          python3 scripts/check-site.py public --base-url "$pages_url"
 
       - name: Upload artifact
+        if: github.event_name != 'pull_request'
         uses: actions/upload-pages-artifact@v4
         with:
           path: ./public
 
   deploy:
+    if: github.event_name != 'pull_request'
+    permissions:
+      pages: write
+      id-token: write
     needs: build
     runs-on: ubuntu-latest
     environment:

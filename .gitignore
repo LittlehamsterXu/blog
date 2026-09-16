@@ -3,3 +3,5 @@
 /.hugo_build.lock
 /.hugo_cache/
 /.wrangler/
+/.local/
+__pycache__/

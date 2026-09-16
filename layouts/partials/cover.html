@@ -42,7 +42,7 @@
                 width="{{ $cover.Width }}" height="{{ $cover.Height }}"
                 alt="{{ $alt }}">
         {{- else }}
-            <img loading="{{ $loading }}" src="{{ $imgdl }}" alt="{{ $alt }}">
+            <img loading="{{ $loading }}" decoding="async" src="{{ $imgdl }}" alt="{{ $alt }}"{{ with partial "image-dimensions.html" $cover }} width="{{ .width }}" height="{{ .height }}"{{ end }}>
         {{- end }}
     {{- else }}
         <img loading="{{ $loading }}" src="{{ $imgdl }}" alt="{{ $alt }}">

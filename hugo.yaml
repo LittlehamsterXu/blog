@@ -8,6 +8,13 @@ hasCJKLanguage: true
 enableRobotsTXT: true
 enableEmoji: true
 
+module:
+  mounts:
+    - source: assets
+      target: assets
+    - source: static/images
+      target: assets/images
+
 pagination:
   pagerSize: 10
 
@@ -45,6 +52,8 @@ params:
   env: production
   description: 记录技术实践、学习过程与日常想法
   author: LittleHamster Xu
+  images:
+    - images/default-share.png
   keywords:
     - Hugo
     - 技术博客
@@ -70,7 +79,7 @@ params:
   cover:
     hiddenInSingle: true
   label:
-    text: LittleHamster_Xu' Blog
+    text: LittleHamster Xu
     icon: "images/avatar-20260915.png"
     iconHeight: 32
   assets:
@@ -91,13 +100,16 @@ params:
       - content
       - tags
   homeInfoParams:
-    Title: 欢迎来到我的博客
-    Content: "## 记录技术，也记录折腾。"
+    Title: LittleHamster Xu
+    Content: "记录技术，也记录折腾。"
   footer:
     text: "Technical notes · LittleHamster Xu"
   socialIcons:
     - name: github
       url: https://github.com/LittlehamsterXu
+    - name: rss
+      title: RSS 订阅
+      url: index.xml
 
 menu:
   main:

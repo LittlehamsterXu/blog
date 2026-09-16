@@ -1,5 +1,5 @@
-<link rel="preload" href="{{ "fonts/LXGWBright-Regular.486e5fd6.woff2" | relURL }}" as="font" type="font/woff2" crossorigin>
 <link rel="manifest" href="{{ "site.webmanifest" | relURL }}">
-{{- if .Param "math" }}
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.18.4/dist/katex.min.css" integrity="sha384-u1zONI5gPXUx0UKI62c75/zww972y0v2rSK5ZYlVdS6xEuWDeZWUI66v6t1gvlXJ" crossorigin="anonymous">
+{{- $content := .Content -}}
+{{- if or (.Param "math") (.Store.Get "hasMath") }}
+<link rel="stylesheet" href="{{ "vendor/katex-0.18.4/katex.min.css" | relURL }}">
 {{- end -}}

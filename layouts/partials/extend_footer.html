@@ -38,13 +38,42 @@
 
 {{- if .Store.Get "hasMermaid" }}
 <script type="module">
-  import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs";
-  const isDark = document.documentElement.dataset.theme === "dark";
-  mermaid.initialize({
-    startOnLoad: true,
-    securityLevel: "strict",
-    theme: isDark ? "dark" : "default"
-  });
+  import mermaid from {{ "vendor/mermaid-11.12.2/mermaid.esm.min.mjs" | relURL | jsonify | safeJS }};
+  const blocks = Array.from(document.querySelectorAll("pre.mermaid"));
+  const sources = blocks.map(node => node.textContent);
+  let requested = false;
+  let rendering = false;
+  async function renderDiagrams() {
+    requested = true;
+    if (rendering) return;
+    rendering = true;
+    try {
+      while (requested) {
+        requested = false;
+        const isDark = document.documentElement.dataset.theme === "dark";
+        mermaid.initialize({ startOnLoad: false, securityLevel: "strict", theme: isDark ? "dark" : "default" });
+        for (const [index, node] of blocks.entries()) {
+          node.removeAttribute("data-processed");
+          node.textContent = sources[index];
+          try {
+            await mermaid.run({ nodes: [node] });
+            node.nextElementSibling?.classList.contains("mermaid-error") && node.nextElementSibling.remove();
+          } catch (error) {
+            node.textContent = sources[index];
+            if (!node.nextElementSibling?.classList.contains("mermaid-error")) {
+              const notice = document.createElement("p");
+              notice.className = "mermaid-error";
+              notice.textContent = "图表暂时无法渲染，以上保留原始内容。";
+              node.after(notice);
+            }
+            console.error("Mermaid diagram could not be rendered", error);
+          }
+        }
+      }
+    } finally { rendering = false; }
+  }
+  new MutationObserver(renderDiagrams).observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
+  renderDiagrams();
 </script>
 {{- end -}}
 
@@ -68,7 +97,7 @@
 </script>
 {{- end -}}
 
-{{- if .Params.ShowToc }}
+{{- if (.Param "ShowToc") }}
 <script>
   document.addEventListener("DOMContentLoaded", function () {
     const root = document.documentElement;

@@ -1,13 +1,34 @@
 {{- $u := urls.Parse .Destination -}}
-{{- $src := $u.String -}}
+{{- $src := .Destination -}}
+{{- $image := false -}}
+{{- $srcset := slice -}}
+{{- $original := "" -}}
 {{- if not (findRE "^(https?:|data:|//)" $src) -}}
   {{- $path := strings.TrimPrefix "/" $u.Path -}}
+  {{- $image = or (.Page.Resources.Get $path) (resources.Get $path) -}}
   {{- $src = $path | relURL -}}
-  {{- with $u.RawQuery -}}
-    {{- $src = printf "%s?%s" $src . -}}
+  {{- with $image -}}
+    {{- $src = .RelPermalink -}}
+    {{- $original = $src -}}
+    {{- if in (slice "jpeg" "png" "webp") .MediaType.SubType -}}
+      {{- if gt .Width 720 -}}
+        {{- range slice 480 720 1080 1440 -}}
+          {{- if lt . $image.Width -}}
+            {{- $variant := $image.Resize (printf "%dx webp q82" .) -}}
+            {{- $srcset = $srcset | append (printf "%s %dw" $variant.RelPermalink .) -}}
+          {{- end -}}
+        {{- end -}}
+        {{- $srcset = $srcset | append (printf "%s %dw" $original .Width) -}}
+        {{- $src = (.Resize "720x webp q82").RelPermalink -}}
+      {{- end -}}
+    {{- end -}}
   {{- end -}}
-  {{- with $u.Fragment -}}
-    {{- $src = printf "%s#%s" $src . -}}
-  {{- end -}}
+  {{- with $u.RawQuery }}{{ $src = printf "%s?%s" $src . }}{{ end -}}
+  {{- with $u.Fragment }}{{ $src = printf "%s#%s" $src . }}{{ end -}}
 {{- end -}}
-<img loading="lazy" decoding="async" src="{{ $src | safeURL }}" alt="{{ .Text }}"{{ with .Title }} title="{{ . }}"{{ end }}>
+{{- if .Title }}<span class="article-image">{{ end -}}
+<img loading="lazy" decoding="async" src="{{ $src | safeURL }}" alt="{{ .Text }}"
+  {{- with partial "image-dimensions.html" $image }} width="{{ .width }}" height="{{ .height }}"{{ end -}}
+  {{- with $srcset }} srcset="{{ delimit . ", " | safeHTMLAttr }}" sizes="(max-width: 700px) calc(100vw - 28px), 840px" data-zoom-src="{{ $original }}"{{ end -}}
+  {{- with .Title }} title="{{ . }}"{{ end -}}>
+{{- with .Title }}<span class="image-caption">{{ . }}</span></span>{{ end -}}

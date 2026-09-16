@@ -1,0 +1,3 @@
+# Vendored upstream bundles can contain intentional trailing whitespace.
+static/vendor/mermaid-11.12.2/** -whitespace
+static/vendor/katex-0.18.4/** -whitespace

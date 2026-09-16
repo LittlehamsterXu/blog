@@ -34,6 +34,14 @@
   {{- if (.Param "ShowToc") }}
   <aside id="toc-container" class="toc-container post-sidebar wide" aria-label="文章目录">
     {{- partial "toc.html" . }}
+    <script>
+      // Set the initial mobile state before the article is painted; later user
+      // toggles remain untouched, including when the viewport is resized.
+      if (window.matchMedia("(max-width: 700px)").matches) {
+        const toc = document.querySelector("#toc-container details");
+        if (toc) toc.open = false;
+      }
+    </script>
   </aside>
   <aside id="recent-posts-container" class="recent-container wide" aria-label="最近文章">
     {{- partial "recent_posts.html" . }}
