@@ -1,3 +1,6 @@
+{{- if .HasShortcode "matrix-access" }}
+<script src="{{ "js/matrix-access.js" | relURL }}" type="module"></script>
+{{- end }}
 {{- if .IsPage }}
 <div class="progress-bar" aria-hidden="true"></div>
 <script>
@@ -36,7 +39,7 @@
 </script>
 {{- end -}}
 
-{{- if .Store.Get "hasMermaid" }}
+{{- if findRE "<pre class=\"mermaid\"" .Content }}
 <script type="module">
   import mermaid from {{ "vendor/mermaid-11.12.2/mermaid.esm.min.mjs" | relURL | jsonify | safeJS }};
   const blocks = Array.from(document.querySelectorAll("pre.mermaid"));

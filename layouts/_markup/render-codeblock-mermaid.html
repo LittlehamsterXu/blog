@@ -1,2 +1,3 @@
 <pre class="mermaid">{{ .Inner | htmlEscape | safeHTML }}</pre>
-{{- .Page.Store.Set "hasMermaid" true -}}
+{{- /* 是否注入 mermaid 脚本由 layouts/partials/extend_footer.html 用 findRE 判断，
+       这里不再需要往 .Store 里放标记（快速渲染下 .Store 的时序并不可靠）。 */ -}}

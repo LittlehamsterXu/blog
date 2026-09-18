@@ -1,0 +1,103 @@
+{{- /*
+  A、B、C 的矩阵乘法与内存访问演示。
+
+  - 三个面板里的元素值在这里服务端渲染，matrix-access.js 再从 DOM 读回去接管重绘。
+    所以 A、B 的取值只有这一个来源，不存在"模板和 JS 各写一份公式、改一边忘另一边"。
+  - 取值刻意让 C 的 16 个元素互不相同：如果 C 与 j 无关（A 每行是常数、B 每列和又相等
+    就会这样），读者就看不出 ikj 和分块在 j 方向上的连续性。
+  - id 默认是 matrix-access，文章正文用 [#matrix-access] 链接到它。
+    同一页要放第二个演示时传 id="matrix-access-2" 之类，避免 id 重复
+    （.Ordinal 统计的是页面里所有 shortcode 的位置，不能拿来当同名实例的序号）。
+  - 脚本由 layouts/partials/extend_footer.html 按 .HasShortcode 注入。
+*/ -}}
+{{- $n := 4 -}}
+{{- $t := 2 -}}
+{{- $l := 2 -}}
+{{- $cells := mul $n $n -}}
+{{- $steps := mul $cells $n -}}
+{{- $last := sub $steps 1 -}}
+{{- $tiled := eq (.Get "mode") "tiled" -}}
+{{- $id := .Get "id" | default "matrix-access" -}}
+<figure id="{{ $id }}" class="matrix-demo" data-initial-mode="{{ if $tiled }}tiled{{ else }}ijk{{ end }}" aria-label="A、B、C 矩阵乘法与内存访问演示">
+  <figcaption>{{ if $tiled }}把 {{ $n }} × {{ $n }} 矩阵分成 {{ $t }} × {{ $t }} 小块{{ else }}一次乘加，三个矩阵{{ end }}</figcaption>
+  <div class="matrix-controls" hidden>
+    <div class="matrix-modes" aria-label="选择乘法实现">
+      <button type="button" data-mode="ijk" aria-pressed="false">ijk · 按列读 B</button>
+      <button type="button" data-mode="ikj" aria-pressed="false">ikj · 按行读 B</button>
+      <button type="button" data-mode="tiled" aria-pressed="false">Tiling · {{ $t }} × {{ $t }} 分块</button>
+    </div>
+    <div class="matrix-actions">
+      <button type="button" data-play>播放</button>
+      <button type="button" data-prev>上一步</button>
+      <button type="button" data-next>下一步</button>
+      <button type="button" data-block hidden>下一组块</button>
+      <button type="button" data-reset>重置</button>
+      <label>速度 <select data-speed><option value="1000">慢</option><option value="600" selected>正常</option><option value="250">快</option></select></label>
+    </div>
+    <label class="matrix-timeline">计算进度 <input type="range" min="0" max="{{ $last }}" value="0" data-seek><output data-count>1 / {{ $steps }}</output></label>
+  </div>
+  <div class="matrix-panels">
+    {{- range $name := slice "A" "B" "C" }}
+    <section class="matrix-panel" data-matrix="{{ $name }}" aria-label="矩阵 {{ $name }}">
+      <div class="matrix-panel-title"><strong>{{ $name }}</strong><span>{{ if eq $name "C" }}结果 · 初始为 0{{ else }}输入 · {{ $n }} × {{ $n }}{{ end }}</span></div>
+      <div class="matrix-grid" aria-label="{{ $name }} 的二维元素">
+        {{- range $p := seq 0 (sub $cells 1) }}
+        {{- $value := 0 -}}
+        {{- if eq $name "A" }}{{ $value = add (add (div $p $n) (mod $p $n)) 2 }}{{ else if eq $name "B" }}{{ $value = add (mod (add (add (mul 4 (div $p $n)) (mod $p $n)) 1) 5) 1 }}{{ end -}}
+        <span data-cell="{{ $p }}" data-value="{{ $value }}">{{ $value }}</span>
+        {{- end }}
+      </div>
+      <p class="matrix-address" data-address></p>
+    </section>
+    {{- end }}
+  </div>
+  <div class="matrix-legend"><span>● 当前读取 / 写回</span><span>▧ 淡色区域：当前行列或块</span><span>内描边：sum 已算好，尚未写回 C</span><span>虚线：上一步位置</span></div>
+  <div class="matrix-calculation" aria-live="polite">
+    <p data-formula>每一步读取 A(i, k) 和 B(k, j)，累加到 C(i, j)。</p>
+  </div>
+  <div class="matrix-memory-section">
+    <p class="matrix-memory-title">线性内存 · 格内数字是元素偏移</p>
+    {{- range $name := slice "A" "B" "C" }}
+    <div class="matrix-memory-row" data-memory="{{ $name }}">
+      <strong>{{ $name }}</strong>
+      <div class="matrix-memory" aria-label="{{ $name }} 的线性内存">
+        {{- range $p := seq 0 (sub $cells 1) }}<span data-cell="{{ $p }}">{{ $p }}</span>{{- end }}
+      </div>
+      <small data-jump></small>
+    </div>
+    {{- end }}
+  </div>
+  <section class="matrix-cache" aria-label="教学缓存模型">
+    <div class="cache-heading"><strong>Cache · 当前驻留的数据块</strong>
+      <label>容量 <select data-capacity aria-label="缓存容量"><option value="4">4 块</option><option value="6" selected>6 块</option><option value="8">8 块</option><option value="12">12 块</option></select></label>
+    </div>
+    <p class="cache-caption">每块装 {{ $l }} 个相邻 float · 左侧最久未用 → 右侧最近使用 · * 表示已修改</p>
+    <div class="cache-slots" data-cache-slots></div>
+    <p class="cache-count" data-cache-count></p>
+    <details>
+      <summary>本步发生了什么？</summary>
+      <p data-explanation></p>
+      <p data-tile></p>
+      <p data-register></p>
+      <ol class="cache-events" data-cache-events></ol>
+    </details>
+    <details>
+      <summary>比较三种方法跑完 {{ $steps }} 步的缓存访问</summary>
+      <div class="cache-table-wrap">
+      <table>
+        <thead><tr><th>方法</th><th>访问</th><th>命中</th><th>未命中</th></tr></thead>
+        <tbody>{{ range slice "ijk" "ikj" "tiled" }}<tr data-compare="{{ . }}"><th>{{ . }}</th><td data-total></td><td data-hits></td><td data-misses></td></tr>{{ end }}</tbody>
+      </table>
+      </div>
+      <p>同样做 {{ $steps }} 次乘加，访问次数并不相同：ijk 和 ikj 都是 144 次，分块版是 160 次——差别在顺序，不在数量。未命中次数才是结果差别所在，比较时先看它，不能只看命中率。</p>
+    </details>
+    <details>
+      <summary>模型做了哪些简化？</summary>
+      <p>A、B、C 共用一个初始为空的全相联缓存，每块只有 2 个 float。容量满时淘汰最久未使用的块（LRU），写未命中也载入块；C 的读改写合并计一次访问，脏块淘汰会提示写回。计数不包含初始化、预取和写回流量。</p>
+      <p>这是为了看清分块复用而缩小的教学模型。真实 CPU 的 cache line 通常更大，还受多级缓存、组相联、预取、寄存器分配和编译器优化影响。这些数字不能换算成实测耗时。</p>
+      <p>范围也有限：{{ $n }} × {{ $n }} 的玩具总共只有 24 个缓存块，容量调到 12 时大部分已经装得下，那时 ijk 的未命中（45 次）反而略少于 ikj（48 次），容量 8 时两者持平（各 48 次）。未命中数的排名只在容量紧张时才稳定，别把它当成普遍结论。</p>
+    </details>
+  </section>
+  <p class="matrix-note">内存条的底部色线标记当前仍在 cache 中的元素。三个矩阵使用独立连续缓冲区，偏移 × sizeof(float) 即各自的字节偏移。动画手动开始，离开屏幕会暂停。</p>
+  <noscript>ijk 固定 C 的一个位置，沿 A 的行与 B 的列累加；ikj 固定 A 的一个元素，顺着 B、C 的行访问；分块版本围绕三个 {{ $t }} × {{ $t }} 小块重复计算。</noscript>
+</figure>
