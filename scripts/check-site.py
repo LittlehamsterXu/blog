@@ -9,16 +9,25 @@ from urllib.parse import unquote, urljoin, urlsplit
 import xml.etree.ElementTree as ET
 
 
+# 交互组件必须在同一页面上带出自己的脚本。
+# 只检查“引用的文件在不在”发现不了这类问题：图还在、引用却整个丢了不算断链。
+FEATURE_ASSETS = {
+    'matrix-demo': ('js/matrix-access.js',),
+}
+
+
 class Document(HTMLParser):
     def __init__(self, text):
         super().__init__(convert_charrefs=True)
-        self.refs, self.ids, self.remote_code = [], set(), []
+        self.refs, self.ids, self.remote_code, self.classes = [], set(), [], set()
         self.feed(text)
 
     def handle_starttag(self, tag, attrs):
         a = dict(attrs)
         if a.get('id'):
             self.ids.add(a['id'])
+        if a.get('class'):
+            self.classes.update(a['class'].split())
         for key in ('href', 'src', 'data-zoom-src', 'poster'):
             if a.get(key):
                 self.refs.append(a[key])
@@ -73,13 +82,22 @@ def main():
         for ref in page.remote_code:
             if urlsplit(ref).netloc != origin.netloc:
                 errors.append(f'{rel}: externally hosted script/style: {ref}')
+        referenced = {unquote(urlsplit(ref).path) for ref in page.refs}
+        for marker, assets in FEATURE_ASSETS.items():
+            if marker not in page.classes:
+                continue
+            for asset in assets:
+                if not any(path.endswith('/' + asset) for path in referenced):
+                    errors.append(f'{rel}: .{marker} is present but never loads {asset}')
 
     for file in root.rglob('*.css'):
         rel = file.relative_to(root).as_posix()
         for ref in re.findall(r'url\(\s*[\'"]?([^\)\'"\s]+)', file.read_text()):
             check(ref, urljoin(base, rel), rel)
 
-    for file in root.rglob('*.mjs'):
+    # .js 也要查：入口模块可能就叫 .js，而它 import 的 .mjs 才是真正需要存在的东西。
+    modules = sorted(set(root.rglob('*.mjs')) | set(root.rglob('*.js')))
+    for file in modules:
         rel = file.relative_to(root).as_posix()
         for ref in re.findall(r'(?:from\s*|import\s*\(\s*|import\s*)[\'"](\.{1,2}/[^\'"]+)[\'"]', file.read_text()):
             check(ref, urljoin(base, rel), rel)
@@ -105,7 +123,7 @@ def main():
         print(message, file=sys.stderr)
     if errors:
         return 1
-    print(f'OK: {len(pages)} HTML pages, local links/assets, CSS fonts, JS imports, RSS and sitemap ({base})')
+    print(f'OK: {len(pages)} HTML pages, local links/assets, CSS fonts, JS imports, feature assets, RSS and sitemap ({base})')
     return 0
 
 
