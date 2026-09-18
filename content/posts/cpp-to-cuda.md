@@ -1,200 +1,420 @@
 ---
-title: "从 C++ 走到 CUDA"
+title: "CUDA 前记：C++ 基础回顾"
 date: 2026-09-18T09:00:00+08:00
 draft: false
 tags: ["C++", "CUDA", "AI Infra", "性能优化"]
 categories: ["学习笔记"]
-description: "用一个小型矩阵库，把 C++ 的数据表示、所有权、工程组织和性能优化串成一条通往 CUDA 的学习路径。"
-summary: "为了学 CUDA，我没有先背 API，而是先用 mini-tensor 重新理解 C++：数据怎样落在内存里，代码怎样变成可执行文件，以及性能为什么常常取决于访问顺序。"
+description: "从 mini-tensor 出发，复习 C++ 的内存与资源管理，再用矩阵乘法试试循环交换、分块和简单调参。"
+summary: "准备学 CUDA，先写了个小矩阵库。顺着几十行乘法代码，把引用、内存布局、资源管理和缓存又看了一遍，也遇到了一个有意思的结果：分块之后，程序几乎没变快。"
 cover:
   image: "images/cpp-to-cuda-cover.png"
-  alt: "矩阵网格沿着缓存分块路径通往 GPU 芯片的技术插图"
-  caption: "从数据表示、生命周期到性能，一条通往 CUDA 的学习路径"
-  hiddenInSingle: true
+  alt: "矩阵网格经过缓存分块，通往 GPU 芯片"
+  caption: "先从 CPU 上的一小块矩阵写起。"
+  hiddenInSingle: false
 ShowToc: true
 TocOpen: true
 ---
 
-为了学 CUDA，我没有从 API 清单开始，而是先把一个小型矩阵库重新读了一遍。这个项目叫 `mini-tensor`：保存矩阵、执行矩阵乘法、比较循环顺序，再用基准测试验证猜想。
+最近在补 AI Infra，接下来想继续学 CUDA、算子优化和 AI 编译器。之前写过一些 C++，也看过 TVM、LLVM 的代码，这次准备自己动手时，还是想把内存和资源管理再过一遍。
 
-它把几件容易分开学习的事串了起来：C++ 的对象和所有权、内存中的 shape 与 stride、头文件和链接、CPU 缓存，以及最后通往 CUDA 的线程模型。
+于是有了这个小练习：写一个自己的 Matrix，实现 CPU 矩阵乘法，再试着让它跑快一点。项目叫 `mini-tensor`，在 WSL 环境中编写和运行，本文的代码示例也以这份项目为基础。目录很简单：
 
-## 先说结论
+~~~text
+mini-tensor/
+├── include/          # Matrix 和乘法函数的声明
+├── src/              # 对应的实现
+├── main.cpp          # 生成数据、检查结果、测量耗时
+└── CMakeLists.txt
+~~~
 
-- **数据结构先于优化。** 如果不知道一个元素的地址怎样算出来，后面的 cache、shared memory 都只是名词。
-- **所有权要明确。** `std::vector`、RAII 和智能指针让资源在异常和早退时仍然可靠。
-- **性能取决于访问路径。** 同一组乘加，`ijk` 和 `ikj` 的速度可以明显不同，因为它们触碰缓存的方式不同。
-- **优化必须用数据收尾。** 分块循环并不保证更快；分块大小、编译选项和机器缓存一起决定结果。
+实际上，最让我在意的是一个实验结果：交换循环顺序后，耗时降了一截；继续做分块，却几乎没再快多少。要解释这件事，得先从矩阵在内存里的样子说起。
 
-## 1. 从一个元素开始：shape、stride 和地址
+## 一、矩阵与内存
 
-矩阵通常用两个数字描述形状：行数 `M` 和列数 `N`。但程序真正需要的是地址。对连续的 row-major 矩阵，元素 `(i, j)` 的位置可以写成：
+纸上的矩阵有行有列。在这个项目里，它用一个 `std::vector<float>` 保存，一行接着一行排下去，这叫按行存储，也就是 row-major。
 
-```text
-offset = i * row_stride + j
-```
+比如一个 2 行 3 列的矩阵：
 
-`mini-tensor` 把这些信息集中放在一个对象中：
+~~~text
+矩阵里的位置                 内存中的顺序
+┌───┬───┬───┐
+│ 1 │ 2 │ 3 │               [ 1 ][ 2 ][ 3 ][ 4 ][ 5 ][ 6 ]
+├───┼───┼───┤                 0    1    2    3    4    5
+│ 4 │ 5 │ 6 │                          数组下标
+└───┴───┴───┘
+~~~
 
-```cpp
+Matrix 的成员很少。下面摘出了和存储有关的部分：
+
+~~~cpp
 class Matrix {
 public:
-    Matrix(std::size_t rows, std::size_t cols);
-    float& operator()(std::size_t i, std::size_t j);
-    const float& operator()(std::size_t i, std::size_t j) const;
+    Matrix(int rows, int cols);
+    float& operator()(int i, int j);
+    const float& operator()(int i, int j) const;
+
 private:
-    std::size_t rows_, cols_, row_stride_;
+    int rows_;
+    int cols_;
+    int row_stride_;
     std::vector<float> data_;
 };
-```
 
-访问运算符只做一件事：把二维坐标翻译成一维偏移。
+Matrix::Matrix(int rows, int cols)
+    : rows_(rows), cols_(cols),
+      row_stride_(cols), data_(rows * cols) {}
+~~~
 
-```cpp
-float& Matrix::operator()(std::size_t i, std::size_t j) {
+这里的 data_(rows * cols) 会创建相应数量的 float 元素，并把它们初始化为 0。后面做乘法累加时，正好用得上。
+
+访问 A(i, j) 时，先跨过 i 行，再往右走 j 个元素：
+
+~~~cpp
+float& Matrix::operator()(int i, int j) {
     return data_[i * row_stride_ + j];
 }
-```
+~~~
 
-当前实现是连续存储，所以 `row_stride_ == cols_`。把 stride 单独保留下来，是为了给后续的 padding、切片和 view 留出接口。
+前面矩阵中的 5 位于 (1, 1)，数组下标就是 1 × 3 + 1 = 4。这里所有下标都从 0 开始。
 
-```mermaid
+行数和列数合起来是 **shape**。沿某个维度走一步，在存储中跨过多少个元素，则是这个维度的 **stride**。普通连续矩阵的 shape 为 [M, N]，stride 为 [N, 1]。
+
+如果每行末尾留出一些空位，列数和行跨度就会不同：
+
+~~~text
+shape = [2, 3]，stride = [5, 1]
+
+[ 1 ][ 2 ][ 3 ][ 空 ][ 空 ]
+[ 4 ][ 5 ][ 6 ][ 空 ][ 空 ]
+
+第二行从偏移 5 开始，元素 5 的偏移为 1 × 5 + 1 = 6。
+~~~
+
+这是用来说明 stride 的例子。当前项目的 row_stride_ 始终等于列数，还不支持这样的 padding；要支持它，分配空间和构造逻辑也得一起改。
+
+调用 data_.data()，可以拿到底层缓冲区的指针。通过它访问第 5 个元素时，ptr[4] 等价于 *(ptr + 4)。
+
+指针加法按元素大小移动。假设一个 float 占 4 字节，ptr + 1 就向后移动 4 字节。CUDA kernel 里常见的 data[index]，同样需要这一步地址计算。
+
+不过，拿到指针并不意味着接管了内存。缓冲区仍然由 vector 管理；vector 销毁，或者扩容导致重新分配后，原来的指针就不能继续使用了。
+
+## 二、资源管理
+
+矩阵乘法的接口是这样的：
+
+~~~cpp
+Matrix matmul_ijk(const Matrix& A, const Matrix& B);
+~~~
+
+A 和 B 通过引用传入，不需要为了调用函数复制两份矩阵；const 限制了函数通过这些引用修改输入。结果以一个新的 Matrix 返回。
+
+这里有个容易混在一起的细节：const 说明访问权限，引用本身也不会延长任意对象的寿命。谁负责释放数据，仍然要看持有它的对象。在这个项目里，负责管理缓冲区的是 Matrix 内部的 vector。
+
+局部 Matrix 对象离开作用域时，它的 vector 成员会析构，底层缓冲区随之释放。提前 return，或者异常导致栈展开，也会触发已经构造完成的局部对象的析构。
+
+这就是 RAII 在这里的作用。把资源交给对象管理后，申请和释放就能跟着对象的生命周期走。
+
+如果直接使用 new，就得自己处理这些事情。遗漏释放会泄漏，释放后继续访问会用到已经失效的地址。多个指针指向同一个对象时，把其中一个设成 nullptr，也不会更新其他指针。
+
+以后封装别的资源时，还会用到智能指针。独占管理一个动态对象，可以使用 std::unique_ptr：
+
+~~~cpp
+auto p = std::make_unique<int>(10);
+int* borrowed = p.get();
+auto q = std::move(p);
+~~~
+
+这段代码里，对象仍然待在原来的地址。移动后由 q 管理，p 变为空；borrowed 依然只是借用地址，不能负责释放对象。
+
+| 操作 | 含义 | 后续由谁管理 |
+| --- | --- | --- |
+| p.get() | 取出指针供临时访问 | p |
+| auto q = std::move(p) | 将 unique_ptr 的所有权交给 q | q |
+| p.release() | 放弃管理，返回原指针 | 调用者需要接手 |
+
+release() 很容易被误读成“释放内存”。它只会让 unique_ptr 放手，所指对象还活着；如果没有后续的管理和释放，就会泄漏。
+
+确实需要多个对象共享生命周期时，可以考虑 std::shared_ptr。最后一个拥有者释放所有权时，所管理对象才会销毁。循环持有 shared_ptr 会让计数降不下来，需要用 weak_ptr 等方式打断。
+
+如果一个 Buffer 用裸指针保存自己申请的内存，默认拷贝只会复制地址。两份 Buffer 都在析构时释放它，就会发生 double free。这样的类需要明确处理析构、拷贝构造、拷贝赋值、移动构造和移动赋值，也就是 Rule of Five 涉及的五个操作。
+
+当前的 Matrix 简单一些。vector 已经实现了自己的拷贝和移动，Matrix 可以依赖默认行为，这通常称为 Rule of Zero。
+
+复制 Matrix 会复制元素，得到独立的数据；移动时可以转移缓冲区。不过，移动后的对象仍需谨慎使用：这个类的行列数是普通整数，默认移动不会把它们清零，不能看到行列数还在，就继续按原坐标访问已经移出的数据。
+
+## 三、编译与运行
+
+把类拆到头文件和源文件之后，编译过程也值得顺着看一次。
+
+头文件让调用者看见声明，例如 `Matrix(int rows, int cols);`；源文件提供对应的实现。传统 `#include` 会在预处理阶段引入头文件内容，各个源文件随后分别编译，最后由链接器把需要的实现接起来。
+
+~~~mermaid
 flowchart LR
-    A[shape: M × N] --> B[坐标: i, j]
-    B --> C[offset = i × stride + j]
-    C --> D[连续内存中的 float]
-    D --> E[CPU cache / GPU memory]
-```
+    A["main.cpp + 头文件"] --> D["main.o"]
+    B["matrix.cpp + 头文件"] --> E["matrix.o"]
+    C["matmul.cpp + 头文件"] --> F["matmul.o"]
+    D --> G["链接"]
+    E --> G
+    F --> G
+    G --> H["app"]
+~~~
 
-shape、stride 和 contiguous 不是抽象标签，而是数据布局的说明书。
+所以遇到“找不到头文件”，先查搜索路径；遇到 undefined reference，则要看看实现有没有参与编译、库有没有链接，以及声明和定义的签名是否一致。
 
-## 2. C++ 里最容易被低估的三件事
+CMake 负责描述这些关系。这个项目里，Matrix 和乘法函数组成 matrix 库，app 再链接它：
 
-### 引用、指针和 `const`
-
-引用适合表达“这里一定有一个对象”，指针适合表达“这里可能没有对象，或者我需要做地址运算”。`const` 则是在接口上说明谁可以修改数据。
-
-```cpp
-float sum_row(const Matrix& x, std::size_t row);
-void fill_row(Matrix& x, std::size_t row, float value);
-```
-
-读接口拿 `const&`，避免拷贝并禁止修改；写接口拿 `&`，把修改权限写在函数签名里。
-
-### 生命周期和 RAII
-
-`Matrix` 把内存交给 `std::vector<float>` 管理。构造时分配，析构时释放；中途抛异常或提前返回，也不需要手写清理代码。这就是 RAII：资源的生命周期绑定到对象生命周期。
-
-需要独占动态资源时，优先使用 `std::unique_ptr`；确实存在共享所有权时再考虑 `std::shared_ptr`。智能指针解决的是所有权，不能替代对数据布局和并发访问的理解。
-
-## 3. 从源码到可执行文件
-
-一个 `.cpp` 文件会经过预处理、编译、汇编和链接：
-
-```mermaid
-flowchart LR
-    A[.cpp + .h] --> B[预处理] --> C[编译] --> D[生成 .o] --> E[链接] --> F[可执行文件]
-```
-
-`mini-tensor` 用 CMake 把库和可执行文件分开组织：
-
-```cmake
+~~~cmake
 add_library(matrix src/matrix.cpp src/matmul.cpp)
+target_include_directories(matrix PUBLIC include)
+
 add_executable(app main.cpp)
 target_link_libraries(app PRIVATE matrix)
-```
+~~~
 
-{{< collapse summary="如何运行这个小实验" >}}
+这里的 PUBLIC 让使用 matrix 的目标也能获得头文件搜索路径，所以 main.cpp 能找到相应的声明。
 
-```bash
+{{< collapse summary="完整的 CMake 配置与运行命令" >}}
+
+~~~cmake
+cmake_minimum_required(VERSION 3.16)
+project(mini_tensor LANGUAGES CXX)
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+add_library(matrix src/matrix.cpp src/matmul.cpp)
+target_include_directories(matrix PUBLIC include)
+add_executable(app main.cpp)
+target_link_libraries(app PRIVATE matrix)
+~~~
+
+~~~bash
 cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
 cmake --build build -j
 ./build/app
-```
+~~~
+
+这里显式选择 Release，方便后续在固定构建配置下比较性能。
 
 {{< /collapse >}}
 
-## 4. 同一个矩阵乘法，为什么顺序会影响速度
+## 四、矩阵乘法
 
-矩阵乘法的数学定义没有变化：
+A 的大小是 M×K，B 的大小是 K×N，结果 C 就是 M×N。每个结果元素来自 A 的一行与 B 的一列：
 
-\[
-C_{ij}=\sum_k A_{ik}B_{kj}
-\]
+~~~text
+C(i, j) = Σ A(i, k) × B(k, j)    （k 从 0 到 K−1）
+~~~
 
-最直观的 `ijk` 写法是：
+### 调整循环顺序
 
-```cpp
-for (std::size_t i = 0; i < M; ++i)
-    for (std::size_t j = 0; j < N; ++j)
-        for (std::size_t k = 0; k < K; ++k)
-            C(i, j) += A(i, k) * B(k, j);
-```
+最开始按公式写，外层选 i 和 j，内层沿着 k 累加。这就是项目里的 ijk 版本：
 
-交换成 `ikj` 后，`A(i, k)` 被取出一次，随后连续更新 `C` 的一整行：
+~~~cpp
+for (int i = 0; i < M; ++i) {
+    for (int j = 0; j < N; ++j) {
+        float sum = 0.0f;
+        for (int k = 0; k < K; ++k) {
+            sum += A(i, k) * B(k, j);
+        }
+        C(i, j) = sum;
+    }
+}
+~~~
 
-```cpp
-for (std::size_t i = 0; i < M; ++i)
-    for (std::size_t k = 0; k < K; ++k)
-        for (std::size_t j = 0; j < N; ++j)
-            C(i, j) += A(i, k) * B(k, j);
-```
+随着 k 增加，A 沿一行连续读取，B 却沿着一列向下走。按行存储的 B，每次跳到下一行都要跨过 N 个元素。如果 N=1024、每个 float 占 4 字节，两次访问就隔了 4096 字节。
 
-CPU 会把附近的一段数据搬进 cache；访问连续时，这次搬运更容易被复用。
+交换内层循环的顺序，变成 ikj：
 
-```mermaid
-flowchart TB
-    A[矩阵乘法] --> B[循环顺序] --> C[内存访问方向] --> D[cache 命中率] --> E[运行时间]
-```
+~~~cpp
+// C 在构造时已经初始化为 0。
+for (int i = 0; i < M; ++i) {
+    for (int k = 0; k < K; ++k) {
+        const float a = A(i, k);
+        for (int j = 0; j < N; ++j) {
+            C(i, j) += a * B(k, j);
+        }
+    }
+}
+~~~
 
-{{< flow-strip label="从数据布局走到性能结果" items="shape / stride|循环顺序|缓存访问|基准测试|结论" >}}
+现在每次固定一个 A 元素，沿着 j 连续读 B 的一行、更新 C 的一行。下面把 A、B、C 及其线性内存放在一起：实色格是当前读取或写回的位置，淡色区域是当前使用的行、列或小块。可以播放，也可以拖动进度条逐步查看。
 
-## 5. 分块优化：想法正确，结果仍然要测
+先看 ijk：B 的内存偏移从 0 跳到 4、8、12，C 等一轮累加完成才写回。再切到 ikj：A 暂时停在同一个位置，B 和 C 沿着相邻元素前进。
 
-分块（tiling）把大矩阵切成小块，让一组数据尽量停留在更快的缓存中：
+下方还放了一个缩小的 cache 模型。每次访问都会标出命中或未命中；装满后，最久没用的块会被替换。可以调整容量，再展开完整计算的对比表，看访问顺序怎样改变载入次数。
 
-```cpp
-for (std::size_t ii = 0; ii < M; ii += tile)
-    for (std::size_t kk = 0; kk < K; kk += tile)
-        for (std::size_t jj = 0; jj < N; jj += tile)
-            for (std::size_t i = ii; i < std::min(ii + tile, M); ++i)
-                for (std::size_t k = kk; k < std::min(kk + tile, K); ++k)
-                    for (std::size_t j = jj; j < std::min(jj + tile, N); ++j)
-                        C(i, j) += A(i, k) * B(k, j);
-```
+{{< matrix-access >}}
 
-一次 Release 构建的结果如下，数值用于观察趋势，不代表所有机器的绝对性能：
+CPU 通常以 cache line 为单位搬运数据。例如一条 64 字节的 cache line，可以容纳 16 个 4 字节 float。连续访问时，刚搬进来的邻近元素更容易接着用上。
 
-| N | ijk | ikj | tile=32 | tile=128 | tile=256 |
-|---:|---:|---:|---:|---:|---:|
-| 512 | 327.5 ms | 277.2 ms | 287.9 ms | 278.2 ms | 277.5 ms |
-| 1024 | 2701.6 ms | 2222.8 ms | 2267.8 ms | 2210.6 ms | 2208.8 ms |
+原实验里，N=512 时，ijk 约用了 327 ms，ikj 约用了 277 ms，耗时减少约 15%。数学上的乘加数量相同，访问顺序却让结果有了可见的差别。
 
-最有价值的结论不是“tile=256 永远最好”，而是：
+这两份实现都让每个输出元素按 k 递增累加。更一般的重排、向量化或编译选项仍可能影响浮点舍入，所以比较实现时需要保留误差检查。
 
-1. 只调整循环顺序，就可能获得明显收益。
-2. 分块有额外边界和循环开销，小矩阵上未必占优。
-3. tile 大小和缓存层级相关，应该通过基准测试选择，而不是凭经验写死。
+### 分块计算
 
-## 6. 这和 CUDA 有什么关系
+但是要是矩阵过大，cache 难以容纳呢？所以接下来试了 tiling，也叫 blocking。一次围绕小块计算，希望一组数据留在缓存期间能多用几次。
 
-CUDA 会把同一个问题换一种方式表达：CPU 上关心循环顺序和 cache，GPU 上还要关心线程、block、grid、global memory 和 shared memory。
+对于同一块输出 C，要沿 K 方向取出 A、B 的对应块相乘，再把各组结果累加起来。下面采用源码里的 ii → kk → jj 顺序，外层固定 A 的一个块，依次配合不同的 B 块更新 C：
 
-```mermaid
+~~~mermaid
 flowchart LR
-    A[CPU: 循环嵌套] --> B[GPU: 线程映射] --> C[global memory] --> D[shared memory 分块] --> E[coalesced access] --> F[更高吞吐]
-```
+    A["A 的块：行 i，列 k"] --> X["块内乘加"]
+    B["B 的块：行 k，列 j"] --> X
+    X --> C["累加到 C 的块：行 i，列 j"]
+    C --> K["换下一段 k，继续累加"]
+~~~
 
-{{< flow-strip label="从 CPU 代码走向 CUDA kernel" items="CPU Matrix|Host / Device|cudaMemcpy|CUDA Kernel|Thread / Block / Grid|Shared Memory" >}}
+外层的 ii、kk、jj 决定块的位置，块内继续使用 ikj。边缘可能剩下不足一整块的元素，所以结束位置取块边界和矩阵边界中的较小值。
 
-学习 CUDA 前，先能回答这些问题：一个 tensor 的数据在哪里？二维坐标怎样映射到线性地址？谁拥有这段内存？一次访存会不会被相邻线程共同利用？优化后如何证明结果仍然正确？
+在[上面的演示](#matrix-access)中切到“Tiling”，再点“下一组块”，就能看到三个淡色块怎样移动。第一组计算后，C 左上角只有部分结果；走到 kk=2 时，还会回到它并继续累加。每个 2×2 块包含 4 个元素，在按行存储的内存中表现为两段长度为 2 的连续区域，中间还隔着同一行的其他元素。
 
-## 最后：给下一步留一条清晰的路
+分块希望让这些小区域在缓存中多用几次：同一 A 元素服务多列，同一 B 元素服务多行。能否更快还取决于缓存容量、块大小和循环开销；这个动画展示的是复用方式，实际效果仍然看后面的实验数据。
 
-这个小项目目前只做了连续 row-major 矩阵和 CPU 乘法。下一步可以沿着三条线继续：
+在默认的 6 块教学缓存里，完整计算的未命中次数分别是 ijk 的 88 次、ikj 的 48 次、分块的 44 次。切换容量后这些数字也会变：容量 8 时 ijk 和 ikj 持平（各 48 次），容量 12 时 ijk 反而略少（45 次对 48 次）。这个 4 × 4 的玩具总共只有 24 个缓存块，容量一大就基本装得下，未命中数的排名只在容量紧张时才稳定。它们来自下方模型的模拟，与后面 WSL 实验中的耗时是两组不同的数据。
 
-1. **正确性：** 加入边界、随机输入和更严格的误差检查。
-2. **性能：** 记录不同编译器、线程数和 tile 大小的基准结果，区分冷启动与稳态。
-3. **CUDA：** 先把 `Matrix::data()` 拷贝到 device，再实现一个最小 kernel，最后比较 global memory 与 shared memory 的差别。
+{{< collapse summary="展开看分块循环" >}}
 
-我想把这次学习记成一句话：**先把数据和生命周期讲清楚，再谈并行和加速。** CUDA 的线程模型很重要，但真正决定你能不能写出可靠 kernel 的，往往是此前对内存、布局和性能证据的理解。
+~~~cpp
+// tile_size 必须大于 0，C 已初始化为 0。
+for (int ii = 0; ii < M; ii += tile_size) {
+    for (int kk = 0; kk < K; kk += tile_size) {
+        for (int jj = 0; jj < N; jj += tile_size) {
+            const int i_end = std::min(ii + tile_size, M);
+            const int k_end = std::min(kk + tile_size, K);
+            const int j_end = std::min(jj + tile_size, N);
+
+            for (int i = ii; i < i_end; ++i) {
+                for (int k = kk; k < k_end; ++k) {
+                    const float a = A(i, k);
+                    for (int j = jj; j < j_end; ++j) {
+                        C(i, j) += a * B(k, j);
+                    }
+                }
+            }
+        }
+    }
+}
+~~~
+
+{{< /collapse >}}
+
+到底切多大合适？先选几个候选值：8、16、32、64、128、256。每个都跑一遍，记录耗时，再找出其中最快的。
+
+这已经是一个简单的参数搜索了。搜索空间只有一个 tile_size，还远没有复杂调度系统里的循环变换和多层分块，但“生成候选、运行、测量、选择”的过程很好理解。
+
+### 实验结果
+
+这组实验在 **WSL** 中运行。N 表示方阵边长，耗时单位为 ms。当前代码每个候选测量 10 次，排序后取下标为 5 的结果，也就是中间两个值中较大的一个；计时包含结果矩阵的创建、初始化和销毁。
+
+| N | ijk | ikj | tile=8 | tile=16 | tile=32 | tile=64 | tile=128 | tile=256 |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| 512 | 327.497 | 277.175 | 297.759 | 285.383 | 287.853 | 279.457 | 278.226 | 277.522 |
+| 1024 | 2701.60 | 2222.83 | 2354.53 | 2281.35 | 2267.77 | 2233.19 | 2210.62 | 2208.76 |
+
+原本期待分块能再快一些，实际看下来，N=512 时 tile=256 还稍慢于 ikj；N=1024 时则只少了约 0.6% 的耗时。这个差距需要结合多次测量的波动看，暂时很难说有稳定收益。
+
+ikj 已经让 B 和 C 连续访问，而分块又增加了外层循环和边界处理。tile 太小时，内层也被切成许多短循环。这些都可能影响表现。
+
+不过，仅凭耗时表，还判断不了是哪一项占了主要影响。特别是 Matrix 的访问运算符放在单独的源文件里，它有没有被内联、内层有没有向量化，还要结合编译选项和编译器报告确认，这部分放在最后的补充笔记里。
+
+## 五、接着写 CUDA
+
+继续优化 CPU 乘法，还会碰到不同层次的缓存分块、数据 packing、寄存器分块和 SIMD。数据从主存经过各级缓存进入寄存器，每一层的容量和访问成本都有区别。
+
+越往计算单元靠近，可用空间通常越小，访问也越快。分块想做的事情，就是在这些容量限制下多复用数据。当前这份实现只试了一层简单分块，后面还有不少可做的实验。
+
+不过，这次先在这里停一下。接下来想写一个最简单的 CUDA 矩阵乘法：申请 device 内存，把输入传过去，每个线程计算 C 的一个元素，最后取回结果和 CPU 版本比较。
+
+等这一版跑通，再试 shared memory 分块。到那时，stride 还要用来算地址，资源管理要覆盖 device 内存，计时也得考虑 GPU 的异步执行。前面复习过的内容，很快又能接着用上。
+
+这个小项目暂时就记到这里。代码还很朴素，不过从一个矩阵怎么存，到几层循环怎么跑，已经有了可以继续动手的起点。下一篇再来看看 GPU 上会有什么不同。
+
+## 补充笔记
+
+这几处容易混淆的小细节放在最后，需要时再展开看。
+
+{{< collapse summary="顺便记一下：数组传进函数后，长度去哪了？" >}}
+
+~~~cpp
+int a[10];
+int* p = a;
+~~~
+
+a 是包含 10 个元素的数组，p 只保存地址。sizeof(a) 得到整个数组的大小，sizeof(p) 得到指针本身的大小。
+
+在许多表达式里，数组会转换成指向首元素的指针。函数参数里的 int a[] 也会被调整为 int* a，所以进入函数后，无法用 sizeof(a) 算出原数组的长度。
+
+这就是底层接口经常同时接收指针和长度的原因：
+
+~~~cpp
+void process(const float* data, std::size_t size);
+~~~
+
+C++20 的 std::span 可以把地址和长度一起传递，同时保持非拥有的语义。这个项目使用 C++17，暂时没有用到它。
+
+{{< /collapse >}}
+
+{{< collapse summary="std::move 本身做了什么？" >}}
+
+std::move 将表达式转换为可参与移动操作的形式，后续是否转移资源取决于具体类型的构造或赋值操作。对一个普通裸指针调用它，不会自动建立资源管理关系。
+
+返回局部 Matrix 时，直接写 return C; 即可。编译器可以做返回值优化；不能消除这次传递时，也可以使用移动构造。这里通常不必再手动包一层 std::move。
+
+{{< /collapse >}}
+
+{{< collapse summary="顺便记一下：分块为什么没有变快？" >}}
+
+前面那张表里，分块几乎没有收益，原因不在分块，而在编译器。`Matrix::operator()` 定义在 `src/matrix.cpp` 里，和 `matmul.cpp` 是两个独立的编译单元。项目没有开链接时优化（LTO），编译器看不到它的定义，也就没法内联。数一下最终可执行文件里还剩多少条对它的调用：
+
+~~~bash
+objdump -d --demangle build/app | grep -c 'call.*Matrix::operator()'
+~~~
+
+结果是 12 条。内层的每一次 `A(i, k)`、`B(k, j)` 都是真的函数调用。
+
+不过，调用未必是全部原因。分块和循环交换针对的是数据来不及搬进来，只有在内存成为瓶颈时才有意义。换一个装得下的矩阵，看每次乘加的耗时有没有变：
+
+| 每次乘加的耗时 | N=256（768 KB） | N=1024（12 MB） |
+| --- | ---: | ---: |
+| ijk | 2.40 ns | 2.51 ns |
+| ikj | 2.25 ns | 2.26 ns |
+| tile=256 | 2.09 ns | 2.07 ns |
+
+两组数字几乎重合。边长翻了四倍，也已经超出缓存，每次运算的成本却没有变，说明时间不是花在等内存上，而是花在执行那一串调用上。内存还有余量，访问顺序也就改不出差别。
+
+内联带走的还不只是调用。为了看清各占多少，我另外写了一个可以指定 N 和重复次数的小程序，只保留 `-O3`，再对比两种编译方式。把三段代码合成一个编译单元，相当于让编译器看到 `operator()` 的全部内容。
+
+打开 `-fopt-info-vec-optimized` 会发现，分开编译时它一个循环都没有向量化；合成之后，三个内层循环都被向量化了。函数体不可见时，编译器判断不了别名，也没法把加载打包成 SIMD 指令，只能一个元素一个元素地算。
+
+| 配置（N=1024，ikj） | 每次乘加 | 耗时 |
+| --- | ---: | ---: |
+| 分开编译 | 2.262 ns | 2429 ms |
+| 内联、禁用向量化 | 0.252 ns | 271 ms |
+| 内联并向量化 | 0.064 ns | 69 ms |
+
+内联大约占 9 倍，向量化再占 4 倍，而 4 和 16 字节向量能装的 float 个数一致。
+
+这样一来，前面那个结论就要改了。它说明的不是分块没用，而是这次实验量到的主要是函数调用。修掉之后，ikj 从 2429 ms 降到 69 ms，分块也从一条平线变成 237 到 95 ms 的梯度。
+
+顺带做了个对照：只加 `-O3 -march=native` 而不开 LTO，ijk 和 ikj 分别是 2678.16 ms 和 2431.85 ms，和原来接近，所以变化来自内联，而不是指令集。至于内联之后 ijk 反而更慢，那是行距的问题，见下一条。
+
+{{< /collapse >}}
+
+{{< collapse summary="顺便记一下：行距正好是 4096 字节会怎样？" >}}
+
+内联之后，ijk 并没有变快，反而从 2695 ms 涨到了 4058 ms。原因在行距。
+
+N=1024、每个 float 占 4 字节，一行正好 4096 字节，是个整幂。同一列上相邻两个元素都相隔 4096 字节，而地址里用来选 cache 组的那几位，在加 4096 时不会改变，于是一整列的元素都落在同一个组里。内联之前，调用把访存串行化了，一次只有一个在飞，这个问题显不出来；内联之后，编译器把 k 循环展开、同时发出几个加载，它们就开始互相抢位置。
+
+改法正好是第一节里那个 stride 和列数不相等的 padding：
+
+| ijk，N=1024 | 行距 | 耗时 |
+| --- | ---: | ---: |
+| 原样 | 1024（4096 字节） | 3767 ms |
+| 加 1 列 | 1025（4100 字节） | 956 ms |
+| 加 4 列 | 1028（4112 字节） | 671 ms |
+
+ikj 基本不受影响（70.8 → 70.1 ms），它沿着一行连续读 B，内层不会跨过 4096 字节；分块也变化不大，因为分块本来就限住了工作集。不过 padding 只能缓解：ijk 从 3767 ms 降到 671 ms，仍然比 ikj 慢不少，按列跳着读这件事本身还是亏的。
+
+{{< /collapse >}}
