@@ -1,0 +1,5 @@
+<div class="flow-strip" role="img" aria-label="{{ .Get "label" | default "技术流程" }}">
+  {{ range split (.Get "items") "|" }}
+    <span class="flow-step">{{ . }}</span>
+  {{ end }}
+</div>
