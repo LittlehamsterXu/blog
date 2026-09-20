@@ -1,0 +1,17 @@
+{{ $kind := .Get "kind" }}
+<figure class="gemm-demo" data-gemm="{{ $kind }}">
+  <figcaption>{{ if eq $kind "dot" }}先算一格：A 的一行 × B 的一列{{ else if eq $kind "tile" }}K 分块向前走，C 留在原地{{ else if eq $kind "shared" }}相同的四次乘加，两种取料路线{{ else if eq $kind "register" }}改变一个线程的承包面积{{ else }}两块小输出，还是一块宽输出？{{ end }}</figcaption>
+  <p class="gemm-intro">{{ if eq $kind "dot" }}选择一个 C 元素，看 k 怎样移动，乘积怎样加进同一个结果。{{ else if eq $kind "tile" }}A、B 都是 4×4，输出只观察左上角 2×2，BK=2。看两轮部分和怎样相加。{{ else if eq $kind "shared" }}左侧直接读 Global；右侧先放进 Shared。追踪箭头起点与读取计数。{{ else if eq $kind "register" }}三种模式计算相同的 2×4 输出。虚线框是线程分工，数字是实际累加结果。{{ else }}固定 BK=16。橙色是同一份 A；蓝色的 B 左半、右半是不同数据。{{ end }}</p>
+  <div class="gemm-controls" hidden>
+    {{ if eq $kind "register" }}<div class="gemm-modes" role="group" aria-label="每个线程的输出范围"><button type="button" data-mode="1x1" aria-pressed="false">1×1 · 一线程一格</button><button type="button" data-mode="1x4" aria-pressed="false">1×4 · 一线程一行</button><button type="button" data-mode="2x4" aria-pressed="true">2×4 · 一线程整块</button></div>{{ end }}
+    {{ if eq $kind "dot" }}<label>观察输出 <select data-target aria-label="观察哪个输出"><option value="0">C00</option><option value="1">C01</option><option value="2">C10</option><option value="3">C11</option></select></label>{{ end }}
+    <div class="gemm-actions"><button type="button" data-play>播放</button><button type="button" data-prev>上一步</button><button type="button" data-next>下一步</button><button type="button" data-reset>重置</button><label>速度 <select data-speed aria-label="动画播放速度"><option value="2400">慢</option><option value="1600" selected>正常</option><option value="900">快</option></select></label></div>
+    <label class="gemm-timeline">进度 <input data-seek type="range" min="0" max="1" value="0" aria-label="动画进度"><output data-progress></output></label>
+  </div>
+  {{ if or (eq $kind "dot") (eq $kind "register") (eq $kind "tile") }}<p class="gemm-scroll-hint">窄屏可在图内左右滑动，查看完整矩阵。</p>{{ end }}
+  <div class="gemm-stage" data-stage></div>
+  <div class="gemm-stats" data-stats></div>
+  <p class="gemm-explain" data-explain aria-live="polite">{{ if eq $kind "dot" }}C00 = 2×1 + 1×2 = 4。固定输出位置，沿 k 累加，算完后再写回。{{ else if eq $kind "tile" }}第一轮使用 k=0,1，第二轮使用 k=2,3。A 窗口右移，B 窗口下移，C 位置固定并保留累加结果。{{ else if eq $kind "shared" }}固定 k：Naive 四个线程逻辑读取 8 个输入值；Shared 先从 Global 搬 4 个值，再由四个线程读取复用。{{ else if eq $kind "register" }}固定 k、相同八个输出：1×1 分工读取 16 个输入值，1×4 读取 10 个，2×4 读取 6 个。三者都做 8 次 FMA。{{ else }}两个 32×32 block 共加载 2048 floats；一个 32×64 block 加载 1536 floats，省下一份 512 floats 的 A。{{ end }}</p>
+  <div class="gemm-legend"><span><i class="gemm-key-a"></i>A 输入</span><span><i class="gemm-key-b"></i>B 输入</span><span><i class="gemm-key-c"></i>C 部分和</span><span>→ 箭头表示数据用途或搬运方向</span></div>
+  <small>教学模型，不模拟 warp 并行调度、缓存或内存事务；步骤和动画时长不能换算成真实耗时。手动播放，离屏暂停。</small>
+</figure>

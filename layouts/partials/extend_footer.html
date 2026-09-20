@@ -1,3 +1,9 @@
+{{- if findRE `class="article-table"` .Content }}
+<script src="{{ "js/responsive-tables.js" | relURL }}" type="module"></script>
+{{- end }}
+{{- if .HasShortcode "gemm-demo" }}
+<script src="{{ "js/gemm-demo.js" | relURL }}" type="module"></script>
+{{- end }}
 {{- if .HasShortcode "matrix-access" }}
 <script src="{{ "js/matrix-access.js" | relURL }}" type="module"></script>
 {{- end }}
