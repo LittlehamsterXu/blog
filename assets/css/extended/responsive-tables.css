@@ -1,0 +1,97 @@
+/* Keep native column sizing; the wrapper, rather than the table, scrolls. */
+.post-content .article-table {
+    min-width: 0;
+    max-width: 100%;
+    margin: 1.5em 0;
+}
+
+.post-content .table-scroll {
+    max-width: 100%;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    scrollbar-width: thin;
+    scrollbar-color: var(--secondary) var(--code-bg);
+}
+
+.post-content .table-scroll:focus-visible {
+    outline: 2px solid var(--secondary);
+    outline-offset: 3px;
+}
+
+.post-content .article-table table {
+    display: table;
+    width: 100%;
+    max-width: none;
+    margin: 0;
+    table-layout: auto;
+    border-collapse: separate;
+    border-spacing: 0;
+    font-size: .9em;
+    line-height: 1.6;
+}
+
+.post-content .article-table table tr {
+    border: 0;
+}
+
+.post-content .article-table table :is(th, td) {
+    min-width: 4em;
+    padding: 10px 14px;
+    border: 0;
+    border-inline-end: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+    word-break: normal;
+    overflow-wrap: anywhere;
+}
+
+.post-content .article-table table th {
+    font-size: inherit;
+    font-weight: 600;
+    text-wrap: balance;
+}
+
+.post-content .article-table table .table-numeric {
+    white-space: nowrap;
+    font-variant-numeric: tabular-nums;
+}
+
+.post-content .article-table tr > :last-child {
+    border-inline-end: 0;
+}
+
+.post-content .article-table tbody tr:last-child > td {
+    border-bottom: 0;
+}
+
+.post-content .article-table td code {
+    white-space: normal;
+    overflow-wrap: anywhere;
+}
+
+.post-content .table-scroll-hint {
+    margin: 0 0 6px;
+    color: var(--secondary);
+    font-size: 12px;
+}
+
+.post-content .table-scroll-hint[hidden] {
+    display: none;
+}
+
+@media (max-width: 600px) {
+    .post-content .article-table table {
+        font-size: 14px;
+    }
+
+    .post-content .article-table table :is(th, td) {
+        padding: 8px 10px;
+    }
+}
+
+@media print {
+    .post-content .table-scroll { overflow: visible; }
+    .post-content .table-scroll-hint { display: none; }
+}
