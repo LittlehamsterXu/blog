@@ -38,6 +38,8 @@ jobs:
       - name: Validate Cloudflare site
         run: |
           python3 -m unittest discover -s tests
+          node tests/test_gemm_animation.cjs
+          node tests/test_pipeline_model.cjs
           bash scripts/build-cloudflare.sh "$RUNNER_TEMP/blog-cloudflare"
 
       - name: Build and validate GitHub Pages site
