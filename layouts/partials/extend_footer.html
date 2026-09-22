@@ -7,6 +7,9 @@
 {{- if .HasShortcode "matrix-access" }}
 <script src="{{ "js/matrix-access.js" | relURL }}" type="module"></script>
 {{- end }}
+{{- if .HasShortcode "pipeline-demo" }}
+<script src="{{ "js/pipeline-demo.js" | relURL }}" type="module"></script>
+{{- end }}
 {{- if .IsPage }}
 <div class="progress-bar" aria-hidden="true"></div>
 <script>

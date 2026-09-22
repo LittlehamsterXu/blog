@@ -13,6 +13,8 @@ import xml.etree.ElementTree as ET
 # 只检查“引用的文件在不在”发现不了这类问题：图还在、引用却整个丢了不算断链。
 FEATURE_ASSETS = {
     'matrix-demo': ('js/matrix-access.js',),
+    # pipeline-demo.js 再 import js/pipeline-model.mjs，那一层由下面的模块 import 检查覆盖。
+    'pipeline-demo': ('js/pipeline-demo.js',),
 }
 
 

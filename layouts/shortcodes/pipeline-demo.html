@@ -1,0 +1,46 @@
+{{- /*
+  双缓冲 / 软件流水的时间线演示。
+
+  - 只画调度结构：把「搬一个 K 分块」和「算一个 K 分块」各看成整数个时间片。
+    Load 与 Compute 的相对长度可以切换，用来解释为什么理想加速比取决于两者的比例。
+  - 模型的每一步都和文章里那版 kernel 对齐：异步拷贝用 __pipeline_memcpy_async 发起，
+    迭代末尾 __pipeline_wait_prior(0) 等掉全部未完成的拷贝，所以同时只有一批拷贝在飞，
+    tile k 的 Compute 只能和 tile k+1 的 Load 重叠。
+  - ping-pong 只开两块 buffer：读 k % 2、写 (k + 1) % 2。两块是否够用由
+    tests/test_pipeline_model.cjs 里的不变式守住，不靠肉眼确认。
+  - 脚本由 layouts/partials/extend_footer.html 按 .HasShortcode 注入。
+*/ -}}
+{{- $mode := .Get "mode" | default "pipeline" -}}
+<figure class="pipeline-demo" data-initial-mode="{{ if eq $mode "serial" }}serial{{ else }}pipeline{{ end }}" aria-label="双缓冲与软件流水的时间线演示">
+  <figcaption>同一段时间里，谁在搬、谁在算</figcaption>
+  <p class="pipeline-intro">把「搬一个 K 分块」和「算一个 K 分块」各自看成一个整数时间片，切换两种调度，看 Load 和 Compute 是排队还是重叠。时间片是教学刻度，不代表真实耗时比例。</p>
+  <div class="pipeline-controls" hidden>
+    <div class="pipeline-modes" role="group" aria-label="选择调度方式">
+      <button type="button" data-mode="serial" aria-pressed="false">串行：搬完再算</button>
+      <button type="button" data-mode="pipeline" aria-pressed="true">流水：边搬边算</button>
+    </div>
+    <label>K 分块数 <select data-tiles aria-label="K 分块数量"><option value="4">4</option><option value="6" selected>6</option><option value="8">8</option></select></label>
+    <label>Load : Compute <select data-ratio aria-label="拷贝与计算的时长比"><option value="1:1">1 : 1</option><option value="1:2" selected>1 : 2</option><option value="2:1">2 : 1</option></select></label>
+    <div class="pipeline-actions">
+      <button type="button" data-play>播放</button>
+      <button type="button" data-prev>上一步</button>
+      <button type="button" data-next>下一步</button>
+      <button type="button" data-reset>重置</button>
+      <label>速度 <select data-speed aria-label="播放速度"><option value="1100">慢</option><option value="700" selected>正常</option><option value="380">快</option></select></label>
+    </div>
+    <label class="pipeline-timeline">时间片 <input data-seek type="range" min="0" max="1" value="0" aria-label="时间片进度"><output data-progress></output></label>
+  </div>
+  <div class="pipeline-scroll">
+    <div class="pipeline-chart" data-chart></div>
+  </div>
+  <div class="pipeline-buffers" data-buffers></div>
+  <p class="pipeline-readout" data-readout aria-live="polite"></p>
+  <div class="pipeline-legend">
+    <span><i class="pipeline-key-load"></i>L：Global → Shared 拷贝</span>
+    <span><i class="pipeline-key-compute"></i>C：FMA 计算</span>
+    <span>左边色条 = 正在被读的 buffer</span>
+    <span>右边色条 = 正在被写的 buffer</span>
+  </div>
+  <small>教学模型：Load 和 Compute 被量化成整数时间片，并且一次只等一批拷贝（对应代码里的 <code>__pipeline_wait_prior(0)</code>）。它不模拟 cp.async 的完成抖动、bank conflict 和真实占用率，所以这里的倍数只用来理解调度结构；文章里的加速比来自实测。</small>
+  <noscript>串行调度里，每个 tile 的 Load 和 Compute 首尾相接；双缓冲把两轮 K 分块的 Load 与 Compute 排到同一段时间上，两块 buffer 交替承担「正在算」和「正在收」的角色。</noscript>
+</figure>

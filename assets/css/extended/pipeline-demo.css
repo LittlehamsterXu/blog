@@ -1,0 +1,38 @@
+/* 双缓冲时间线演示。配色沿用 matrix-demo 的蓝（搬运）/ 橙（计算）分工。 */
+.pipeline-demo { --p-load: #315d84; --p-compute: #965024; --p-focus: #d58150; margin: 1.8rem 0; padding: clamp(12px, 3vw, 24px); border: 1px solid var(--border); border-radius: 16px; background: var(--entry); }
+.pipeline-demo figcaption { font-weight: 650; color: var(--primary); font-size: 1.1em; }
+.pipeline-demo .pipeline-intro { font-size: .84em; color: var(--secondary); margin: 8px 0 14px; }
+.pipeline-modes, .pipeline-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 7px; margin: 10px 0; }
+.pipeline-controls { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 16px; margin-bottom: 14px; }
+.pipeline-controls [hidden], .pipeline-controls[hidden] { display: none; }
+.pipeline-controls button, .pipeline-controls select { padding: 6px 9px; border: 1px solid var(--secondary); border-radius: 7px; color: var(--primary); background: var(--theme); font: inherit; font-size: .8em; cursor: pointer; }
+.pipeline-controls button[aria-pressed="true"] { background: #315a65; color: #fff; }
+.pipeline-controls button:disabled { opacity: .4; cursor: default; }
+.pipeline-controls :focus-visible { outline: 3px solid var(--p-focus); outline-offset: 3px; }
+.pipeline-controls label { font-size: .8em; color: var(--secondary); }
+.pipeline-timeline { display: flex; align-items: center; gap: 10px; flex: 1; min-width: 190px; font-size: .8em; }
+.pipeline-timeline input { flex: 1; min-width: 60px; accent-color: #315a65; }
+.pipeline-timeline output { min-width: 54px; text-align: right; font-variant-numeric: tabular-nums; }
+.pipeline-scroll { overflow-x: auto; padding-bottom: 4px; }
+.pipeline-chart { display: grid; grid-template-columns: repeat(var(--slots, 6), minmax(0, 1fr)); grid-auto-rows: 28px; gap: 3px; min-width: calc(var(--slots, 6) * 34px); }
+.pipeline-block { display: grid; place-items: center; border: 1px solid var(--border); border-radius: 5px; font-size: .68em; font-variant-numeric: tabular-nums; background: var(--theme); color: var(--primary); overflow: hidden; }
+.pipeline-block.is-load { border-color: var(--p-load); color: var(--p-load); background: color-mix(in srgb, var(--p-load) 12%, var(--theme)); }
+.pipeline-block.is-compute { border-color: var(--p-compute); color: var(--p-compute); background: color-mix(in srgb, var(--p-compute) 12%, var(--theme)); }
+.pipeline-block.is-active { color: #fff; font-weight: 700; }
+.pipeline-block.is-load.is-active { background: var(--p-load); }
+.pipeline-block.is-compute.is-active { background: var(--p-compute); }
+.pipeline-cursor { justify-self: start; width: 2px; margin-left: -2px; background: var(--primary); opacity: .45; pointer-events: none; }
+.pipeline-buffers { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin: 14px 0 0; }
+.pipeline-buffer { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 4px 10px; padding: 8px 10px; border: 1px solid var(--border); border-radius: 8px; background: var(--theme); font-size: .74em; }
+.pipeline-buffer strong { font-variant-numeric: tabular-nums; color: var(--primary); }
+.pipeline-buffer span { color: var(--secondary); }
+.pipeline-buffer.is-computing { border-left: 3px solid var(--p-compute); }
+.pipeline-buffer.is-loading { border-right: 3px solid var(--p-load); }
+.pipeline-buffer.is-computing strong { color: var(--p-compute); }
+.pipeline-buffer.is-loading span { color: var(--p-load); }
+.pipeline-readout { margin: 14px 0 0; padding: 10px 14px; border-left: 3px solid var(--p-compute); border-radius: 4px; background: var(--theme); font-size: .8em; font-variant-numeric: tabular-nums; }
+.pipeline-legend { display: flex; flex-wrap: wrap; gap: 6px 14px; font-size: .7em; color: var(--secondary); margin: 12px 0 0; }
+.pipeline-legend i { display: inline-block; width: 11px; height: 11px; margin-right: 5px; border-radius: 3px; vertical-align: -1px; }
+.pipeline-legend .pipeline-key-load { background: color-mix(in srgb, var(--p-load) 30%, var(--theme)); border: 1px solid var(--p-load); }
+.pipeline-legend .pipeline-key-compute { background: color-mix(in srgb, var(--p-compute) 30%, var(--theme)); border: 1px solid var(--p-compute); }
+.pipeline-demo small { display: block; margin-top: 12px; font-size: .72em; color: var(--secondary); line-height: 1.5; }
