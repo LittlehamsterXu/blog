@@ -1,12 +1,12 @@
 ---
 
-title: "从 Roofline 到 Tensor Core：我终于开始看懂 GPU 为什么快了"
+title: "看懂 GPU GEMM"
 date: 2026-09-22
 draft: false
 tags: [CUDA, GPU, GEMM, Tensor Core, AI Infra]
 categories: [AI Infra]
-description: "从 Roofline 和 Arithmetic Intensity 出发，把 tiling、Occupancy、软件流水与 WMMA 连成一张 GPU 性能图，再用一版教学 GEMM 看见 Tensor Core 指令。"
-summary: "从前两篇 CUDA GEMM 的手写优化继续往下：先用 Roofline 判断瓶颈，再理解数据复用、延迟隐藏与 Tensor Core 的 warp 级矩阵计算。"
+description: "用 Roofline、数据复用、软件流水和 WMMA 串起 GPU GEMM 的性能逻辑。"
+summary: "从数据复用、延迟隐藏到 Tensor Core，复盘一版教学 WMMA GEMM。"
 math: true
 ShowToc: true
 TocOpen: true
@@ -42,7 +42,9 @@ TocOpen: true
 
 ---
 
-## 先问一句：程序到底在等什么
+## 1. 性能模型
+
+### 先找瓶颈
 
 GPU 性能优化最容易犯的错误，是看到代码之后立刻开始想：
 
@@ -124,14 +126,12 @@ $$
 
 ---
 
-## GEMM 为什么那么特别
+### GEMM 的复用空间
 
 矩阵乘法：
 
 $$
-C_{M\times N}
-=
-A_{M\times K}B_{K\times N}
+C_{M\times N}=A_{M\times K}B_{K\times N}
 $$
 
 计算量大约是：
@@ -196,7 +196,7 @@ $$
 
 ---
 
-## Tiling 不是魔法
+### Tiling 提高复用
 
 后来写 shared-memory tiled GEMM：
 
@@ -246,11 +246,7 @@ $$
 于是：
 
 $$
-AI
-=
-\frac{2T^3}{8T^2}
-=
-\frac{T}{4}
+AI = \frac{2T^3}{8T^2} = \frac{T}{4}
 $$
 
 这个估算只计 A、B tile 的输入流量，并假设 tile 完整、能按预期复用；C 的写回、边界补零和缓存命中都先略过。它描述的是 tiling 带来的复用趋势，不是每个实际 kernel 的精确 DRAM Arithmetic Intensity。
@@ -286,7 +282,7 @@ $$
 
 ---
 
-## 但 Tile 不能无限变大
+### Tile 的资源代价
 
 看到：
 
@@ -355,7 +351,7 @@ T = 64 → 4096 threads
 
 ---
 
-## Occupancy 并不是越高越好
+### Occupancy 是手段
 
 以前很容易把 Occupancy 理解成：
 
@@ -420,7 +416,7 @@ Occupancy 只是隐藏 latency 的一个手段。
 
 ---
 
-## Register Blocking 的代价
+### Register Blocking 的代价
 
 这也解释了之前一个让我很困惑的问题。
 
@@ -502,7 +498,9 @@ device memory
 
 ---
 
-## 从“少搬”走到“早点搬”
+## 2. 数据搬运
+
+### 从减少流量到隐藏等待
 
 前面的优化都在围绕一个问题：
 
@@ -558,7 +556,7 @@ $$
 
 ---
 
-## `cp.async` 到底在解决什么
+### `cp.async`：异步搬运
 
 普通数据搬运逻辑大致是：
 
@@ -604,7 +602,7 @@ Shared Memory
 
 ---
 
-## Double Buffer 和 Multi-stage
+### 双缓冲与多级 Pipeline
 
 刚开始觉得这两个好像是一个东西。
 
@@ -678,7 +676,7 @@ prefetch k+3
 
 ---
 
-## Latency 和 Bandwidth
+### Latency 与 Bandwidth
 
 这里也是今天很重要的一个分界。
 
@@ -734,7 +732,9 @@ $$
 
 ---
 
-## Tensor Core 出场
+## 3. Tensor Core
+
+### Tensor Core 的运算单元
 
 到这里才进入 Tensor Core。
 
@@ -772,7 +772,7 @@ matrix tile
 
 ---
 
-## 从 Thread 到 Warp
+### 从 Thread 到 Warp
 
 普通 CUDA 世界：
 
@@ -809,7 +809,7 @@ $$
 
 ---
 
-## Fragment
+### Fragment 的分布
 
 然后遇到了 WMMA 的核心抽象：
 
@@ -850,20 +850,14 @@ lane 31 → 一部分元素
 所以：
 
 $$
-\boxed{
-Fragment
-=
-logical matrix tile
-+
-distributed registers
-}
+\boxed{\text{Fragment} = \text{logical matrix tile} + \text{distributed registers}}
 $$
 
 CUDA 文档把 `fragment` 定义为分布在 warp 各线程中的矩阵片段，同时明确说元素在各 lane 内的具体映射没有被 WMMA API 固定下来。因此，把它想成“全 warp 合起来的一块逻辑 tile”很有用；把它当成布局确定的 `float[16][16]` 则不行。详见 [CUDA Programming Guide 的 WMMA 说明](https://docs.nvidia.com/cuda/cuda-programming-guide/05-appendices/cpp-language-extensions.html)。
 
 ---
 
-## WMMA 其实并没有想象中神秘
+### WMMA 接口
 
 最小 WMMA 大概只有：
 
@@ -937,7 +931,7 @@ mma_sync(c_frag, a_frag, b_frag, c_frag);
 
 ---
 
-## 三层 Tile
+### CTA、Warp、MMA 三层 Tile
 
 今天最后终于把现代 GEMM 最重要的三层结构串了起来：
 
@@ -955,7 +949,7 @@ $$
 
 它们分别回答三个问题。
 
-### CTA
+#### CTA
 
 一个 block 负责多大的输出：
 
@@ -965,7 +959,7 @@ Entire GEMM
 CTA Tile
 ```
 
-### Warp
+#### Warp
 
 CTA 内部，一个 warp 负责哪个区域：
 
@@ -975,7 +969,7 @@ CTA Tile
 Warp Tile
 ```
 
-### MMA
+#### MMA
 
 一个 warp 的 output 再拆成若干 Tensor Core 能吃下的最小 tile：
 
@@ -1013,7 +1007,9 @@ GemmShape<16, 8, 16>
 
 ---
 
-## 第一次真的跑起来
+## 4. 性能实测
+
+### 第一次跑通
 
 最后写了一个教学版 WMMA GEMM：
 
@@ -1077,7 +1073,7 @@ Max abs error = 0
 
 ---
 
-## ptxas 也开始能看懂了
+### 资源用量
 
 普通 tiled kernel：
 
@@ -1100,9 +1096,7 @@ Used 56 registers
 普通 tiled：
 
 $$
-16\times16\times2B\times2
-=
-1024B
+16\times16\times2B\times2=1024B
 $$
 
 WMMA：
@@ -1124,9 +1118,7 @@ FP16 每元素 2B：
 $$
 64\times16\times2
 +
-16\times64\times2
-=
-4096B
+16\times64\times2=4096B
 $$
 
 正好对应：
@@ -1163,7 +1155,7 @@ register pressure 自然更高。
 
 ---
 
-## SASS 给出的最后证据
+### HMMA 指令
 
 最后：
 
@@ -1220,7 +1212,7 @@ Tensor Core
 
 ---
 
-## 为什么还只有 6 TFLOPS
+### 为什么只有 6 TFLOPS
 
 当然，6 TFLOPS 离这块 GPU 的 Tensor Core 峰值还差得很远。这个教学样例没有做 profiler 分析，所以我不能仅凭这份代码断言唯一瓶颈；但从执行顺序可以直接看见，它还没有把搬运和计算流水化：
 
@@ -1304,7 +1296,7 @@ TVM / MetaSchedule
 
 ---
 
-## 源码与复现
+## 5. 源码与复现
 
 这次的教学实现放在 [wmma-gemm.cu](../../downloads/wmma-gemm.cu)。它包含两个 kernel：一个使用 CUDA Core 做 FP16 输入、FP32 累加的 tiled GEMM；另一个用 WMMA 把 A/B tile 装入 warp fragment，再调用 `mma_sync`。
 
@@ -1328,7 +1320,7 @@ Occupancy、寄存器和资源限制可继续看 [CUDA C++ Best Practices Guide]
 
 ---
 
-## 回头看
+## 6. 回看
 
 今天最有价值的可能不是学会了 Tensor Core。
 
