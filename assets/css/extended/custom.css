@@ -17,6 +17,7 @@
     --border: hsl(50, 20.7%, 88.6%);
     --code-bg: hsl(53, 28.6%, 94.5%);
     --code-block-bg: rgb(28, 29, 33);
+    --code-font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
 }
 
 :root[data-theme="dark"] {
@@ -329,6 +330,16 @@ body {
 }
 
 /* Article typography. */
+:not(pre) > code {
+    font-family: var(--code-font-family);
+    letter-spacing: normal;
+}
+
+.post-content :not(pre) > code {
+    font-size: .9em;
+    line-height: inherit;
+}
+
 .post-single {
     position: relative;
     width: 100%;
@@ -512,7 +523,7 @@ body {
     background: var(--code-block-bg) !important;
     border-radius: var(--radius);
     overflow-x: auto;
-    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    font-family: var(--code-font-family);
     font-size: .86em;
     line-height: 1.6;
     tab-size: 4;
