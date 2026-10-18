@@ -1,0 +1,89 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="680" height="1080" viewBox="0 0 680 1080" role="img" aria-labelledby="title desc">
+<title id="title">128 个位置，几条线程？</title>
+<desc id="desc">reduce128 的输入始终是 x[0] 到 x[127]。一个 warp 用 32 个线程，每个 lane 持有连续四个值，i=4*lane+slot。四个 warp 用 128 个线程，每个线程持有一个值，i=32*warp+lane。tl.arange 的 128 是逻辑位置的数量，不是线程数量。</desc>
+<defs><marker id="arrow" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L8,4 L0,8 Z" fill="#706760"/></marker></defs>
+<style>text{font-family:'Noto Sans SC','Microsoft YaHei','PingFang SC',sans-serif;font-weight:400} .mono{font-family:Consolas,'DejaVu Sans Mono',monospace} .bold{font-weight:650}</style>
+<rect width="680" height="1080" rx="16" fill="#fbf7f0"/>
+<text x="36" y="48" font-size="29" fill="#302c2a" text-anchor="start" class="bold">128 个位置，几条线程？</text>
+<text x="36" y="82" font-size="22" fill="#706760" text-anchor="start" class="">同一个 reduce128，只改 num_warps</text>
+<rect x="36" y="110" width="608" height="65" rx="9" fill="#fae4da" stroke="#e18568" stroke-width="1.5"/>
+<text x="340" y="151" font-size="25" fill="#302c2a" text-anchor="middle" class="bold">逻辑 tile：x[0] … x[127]</text>
+<line x1="340" y1="185" x2="340" y2="218" stroke="#706760" stroke-width="2" marker-end="url(#arrow)"/>
+<rect x="36" y="238" width="608" height="342" rx="9" fill="white" stroke="#d9cec3" stroke-width="1.5"/>
+<text x="58" y="275" font-size="25" fill="#427e9a" text-anchor="start" class="bold">1 warp = 32 threads</text>
+<text x="58" y="308" font-size="22" fill="#302c2a" text-anchor="start" class="">每个 lane 拿连续 4 个值</text>
+<text x="58" y="347" font-size="20" fill="#706760" text-anchor="start" class="">Lane</text>
+<text x="395" y="347" font-size="20" fill="#706760" text-anchor="middle" class="">持有的元素下标 i</text>
+<text x="58" y="386" font-size="22" fill="#302c2a" text-anchor="start" class="">0</text>
+<rect x="171" y="359" width="102" height="36" rx="6" fill="#e3f0f4" stroke="#d9cec3" stroke-width="1.5"/>
+<text x="222.0" y="384.7" font-size="22" fill="#302c2a" text-anchor="middle" class="">0</text>
+<rect x="281" y="359" width="102" height="36" rx="6" fill="#e3f0f4" stroke="#d9cec3" stroke-width="1.5"/>
+<text x="332.0" y="384.7" font-size="22" fill="#302c2a" text-anchor="middle" class="">1</text>
+<rect x="391" y="359" width="102" height="36" rx="6" fill="#e3f0f4" stroke="#d9cec3" stroke-width="1.5"/>
+<text x="442.0" y="384.7" font-size="22" fill="#302c2a" text-anchor="middle" class="">2</text>
+<rect x="501" y="359" width="102" height="36" rx="6" fill="#e3f0f4" stroke="#d9cec3" stroke-width="1.5"/>
+<text x="552.0" y="384.7" font-size="22" fill="#302c2a" text-anchor="middle" class="">3</text>
+<text x="58" y="428" font-size="22" fill="#302c2a" text-anchor="start" class="">1</text>
+<rect x="171" y="401" width="102" height="36" rx="6" fill="#e3f0f4" stroke="#d9cec3" stroke-width="1.5"/>
+<text x="222.0" y="426.7" font-size="22" fill="#302c2a" text-anchor="middle" class="">4</text>
+<rect x="281" y="401" width="102" height="36" rx="6" fill="#e3f0f4" stroke="#d9cec3" stroke-width="1.5"/>
+<text x="332.0" y="426.7" font-size="22" fill="#302c2a" text-anchor="middle" class="">5</text>
+<rect x="391" y="401" width="102" height="36" rx="6" fill="#e3f0f4" stroke="#d9cec3" stroke-width="1.5"/>
+<text x="442.0" y="426.7" font-size="22" fill="#302c2a" text-anchor="middle" class="">6</text>
+<rect x="501" y="401" width="102" height="36" rx="6" fill="#e3f0f4" stroke="#d9cec3" stroke-width="1.5"/>
+<text x="552.0" y="426.7" font-size="22" fill="#302c2a" text-anchor="middle" class="">7</text>
+<text x="58" y="470" font-size="22" fill="#302c2a" text-anchor="start" class="">…</text>
+<rect x="171" y="443" width="102" height="36" rx="6" fill="#e3f0f4" stroke="#d9cec3" stroke-width="1.5"/>
+<text x="222.0" y="468.7" font-size="22" fill="#302c2a" text-anchor="middle" class="">…</text>
+<rect x="281" y="443" width="102" height="36" rx="6" fill="#e3f0f4" stroke="#d9cec3" stroke-width="1.5"/>
+<text x="332.0" y="468.7" font-size="22" fill="#302c2a" text-anchor="middle" class="">…</text>
+<rect x="391" y="443" width="102" height="36" rx="6" fill="#e3f0f4" stroke="#d9cec3" stroke-width="1.5"/>
+<text x="442.0" y="468.7" font-size="22" fill="#302c2a" text-anchor="middle" class="">…</text>
+<rect x="501" y="443" width="102" height="36" rx="6" fill="#e3f0f4" stroke="#d9cec3" stroke-width="1.5"/>
+<text x="552.0" y="468.7" font-size="22" fill="#302c2a" text-anchor="middle" class="">…</text>
+<text x="58" y="512" font-size="22" fill="#302c2a" text-anchor="start" class="">31</text>
+<rect x="171" y="485" width="102" height="36" rx="6" fill="#e3f0f4" stroke="#d9cec3" stroke-width="1.5"/>
+<text x="222.0" y="510.7" font-size="22" fill="#302c2a" text-anchor="middle" class="">124</text>
+<rect x="281" y="485" width="102" height="36" rx="6" fill="#e3f0f4" stroke="#d9cec3" stroke-width="1.5"/>
+<text x="332.0" y="510.7" font-size="22" fill="#302c2a" text-anchor="middle" class="">125</text>
+<rect x="391" y="485" width="102" height="36" rx="6" fill="#e3f0f4" stroke="#d9cec3" stroke-width="1.5"/>
+<text x="442.0" y="510.7" font-size="22" fill="#302c2a" text-anchor="middle" class="">126</text>
+<rect x="501" y="485" width="102" height="36" rx="6" fill="#e3f0f4" stroke="#d9cec3" stroke-width="1.5"/>
+<text x="552.0" y="510.7" font-size="22" fill="#302c2a" text-anchor="middle" class="">127</text>
+<text x="58" y="554" font-size="22" fill="#427e9a" text-anchor="start" class="">i = 4 × lane + slot   ·   slot = 0…3</text>
+<rect x="36" y="608" width="608" height="350" rx="9" fill="white" stroke="#d9cec3" stroke-width="1.5"/>
+<text x="58" y="645" font-size="25" fill="#4c8164" text-anchor="start" class="bold">4 warps = 128 threads</text>
+<text x="58" y="678" font-size="22" fill="#302c2a" text-anchor="start" class="">每个 lane 拿 1 个值</text>
+<text x="58" y="717" font-size="20" fill="#706760" text-anchor="start" class="">Warp</text>
+<text x="258" y="717" font-size="20" fill="#706760" text-anchor="middle" class="">lane 0</text>
+<text x="418" y="717" font-size="20" fill="#706760" text-anchor="middle" class="">…</text>
+<text x="560" y="717" font-size="20" fill="#706760" text-anchor="middle" class="">lane 31</text>
+<text x="58" y="757" font-size="22" fill="#302c2a" text-anchor="start" class="">0</text>
+<rect x="201" y="731" width="114" height="35" rx="6" fill="#e6efe5" stroke="#d9cec3" stroke-width="1.5"/>
+<text x="258.0" y="756.2" font-size="22" fill="#302c2a" text-anchor="middle" class="">0</text>
+<text x="418" y="757" font-size="22" fill="#706760" text-anchor="middle" class="">…</text>
+<rect x="503" y="731" width="114" height="35" rx="6" fill="#e6efe5" stroke="#d9cec3" stroke-width="1.5"/>
+<text x="560.0" y="756.2" font-size="22" fill="#302c2a" text-anchor="middle" class="">31</text>
+<text x="58" y="798" font-size="22" fill="#302c2a" text-anchor="start" class="">1</text>
+<rect x="201" y="772" width="114" height="35" rx="6" fill="#e6efe5" stroke="#d9cec3" stroke-width="1.5"/>
+<text x="258.0" y="797.2" font-size="22" fill="#302c2a" text-anchor="middle" class="">32</text>
+<text x="418" y="798" font-size="22" fill="#706760" text-anchor="middle" class="">…</text>
+<rect x="503" y="772" width="114" height="35" rx="6" fill="#e6efe5" stroke="#d9cec3" stroke-width="1.5"/>
+<text x="560.0" y="797.2" font-size="22" fill="#302c2a" text-anchor="middle" class="">63</text>
+<text x="58" y="839" font-size="22" fill="#302c2a" text-anchor="start" class="">2</text>
+<rect x="201" y="813" width="114" height="35" rx="6" fill="#e6efe5" stroke="#d9cec3" stroke-width="1.5"/>
+<text x="258.0" y="838.2" font-size="22" fill="#302c2a" text-anchor="middle" class="">64</text>
+<text x="418" y="839" font-size="22" fill="#706760" text-anchor="middle" class="">…</text>
+<rect x="503" y="813" width="114" height="35" rx="6" fill="#e6efe5" stroke="#d9cec3" stroke-width="1.5"/>
+<text x="560.0" y="838.2" font-size="22" fill="#302c2a" text-anchor="middle" class="">95</text>
+<text x="58" y="880" font-size="22" fill="#302c2a" text-anchor="start" class="">3</text>
+<rect x="201" y="854" width="114" height="35" rx="6" fill="#e6efe5" stroke="#d9cec3" stroke-width="1.5"/>
+<text x="258.0" y="879.2" font-size="22" fill="#302c2a" text-anchor="middle" class="">96</text>
+<text x="418" y="880" font-size="22" fill="#706760" text-anchor="middle" class="">…</text>
+<rect x="503" y="854" width="114" height="35" rx="6" fill="#e6efe5" stroke="#d9cec3" stroke-width="1.5"/>
+<text x="560.0" y="879.2" font-size="22" fill="#302c2a" text-anchor="middle" class="">127</text>
+<text x="58" y="933" font-size="22" fill="#4c8164" text-anchor="start" class="">i = 32 × warp + lane</text>
+<line x1="36" y1="991" x2="644" y2="991" stroke="#d9cec3" stroke-width="1.5"/>
+<text x="36" y="1026" font-size="23" fill="#302c2a" text-anchor="start" class="bold">128 个逻辑位置 ≠ 必须启动 128 个线程</text>
+<text x="36" y="1056" font-size="20" fill="#706760" text-anchor="start" class="">两种分工都覆盖同一批输入，归约的通信随之改变。</text>
+</svg>

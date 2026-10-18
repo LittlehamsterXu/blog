@@ -1,0 +1,55 @@
+{
+  "environment": {
+    "python": "3.12.15",
+    "torch": "2.14.1+cu130",
+    "triton": "3.8.0",
+    "cuda": "13.0",
+    "gpu": "NVIDIA GeForce RTX 4070 Laptop GPU",
+    "compute_capability": [
+      8,
+      9
+    ],
+    "target": "GPUTarget(backend='cuda', arch=89, warp_size=32)"
+  },
+  "cases": {
+    "add": {
+      "N": 1003,
+      "BLOCK_SIZE": 128,
+      "grid": [
+        8
+      ],
+      "num_warps": 4,
+      "correct": true
+    },
+    "reduce128_w1": {
+      "num_warps": 1,
+      "result": 8128.0,
+      "correct": true,
+      "shared_bytes": 0,
+      "blocked_layouts": [
+        "#blocked = #ttg.blocked<{sizePerThread = [4], threadsPerWarp = [32], warpsPerCTA = [1], order = [0]}>"
+      ],
+      "static_instructions": {
+        "shfl.sync": 5,
+        "st.shared": 0,
+        "ld.shared": 0,
+        "bar.sync": 0
+      }
+    },
+    "reduce128_w4": {
+      "num_warps": 4,
+      "result": 8128.0,
+      "correct": true,
+      "shared_bytes": 16,
+      "blocked_layouts": [
+        "#blocked = #ttg.blocked<{sizePerThread = [1], threadsPerWarp = [32], warpsPerCTA = [4], order = [0]}>"
+      ],
+      "static_instructions": {
+        "shfl.sync": 7,
+        "st.shared": 1,
+        "ld.shared": 1,
+        "bar.sync": 1
+      }
+    }
+  }
+}

@@ -1,0 +1,62 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="680" height="1320" viewBox="0 0 680 1320" role="img" aria-labelledby="title desc">
+<title id="title">两对值，怎样交给 tid 16</title>
+<desc id="desc">四个 warp、512 个 FP32 元素的布局转换，静态推导自实际 PTX。tid 32 即 warp 1 lane 0，从 X+256 字节加载 x[64]、x[65]，写到 shared_base+128 字节。tid 33 即 warp 1 lane 1，从 X+264 字节加载 x[66]、x[67]，写到 shared_base+1216 字节。所有参与线程经过 bar.sync 0 后，tid 16 即 warp 0 lane 16 用两条向量化 shared load 读回两对值。最后以一条 v4 store 把 x[64] 到 x[67] 写到 Y+256 字节，其中 x[66] 位于 Y+264 字节。所有 shared 地址都是相对基址的字节偏移，图中两地址之间距离不按比例绘制。</desc>
+<defs><marker id="arrow" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L8,4 L0,8 Z" fill="#706760"/></marker></defs>
+<style>text{font-family:'Noto Sans SC','Microsoft YaHei','PingFang SC',sans-serif;font-weight:400} .mono{font-family:Consolas,'DejaVu Sans Mono',monospace} .bold{font-weight:650}</style>
+<rect width="680" height="1320" rx="16" fill="#fbf7f0"/>
+<text x="36" y="48" font-size="29" fill="#302c2a" text-anchor="start" class="bold">两对值，交给同一个线程</text>
+<text x="36" y="82" font-size="22" fill="#706760" text-anchor="start" class="">4 warps · N = 512 · FP32，每个元素 4 B</text>
+<rect x="36" y="112" width="290" height="180" rx="9" fill="#e3f0f4" stroke="#427e9a" stroke-width="1.5"/>
+<text x="54" y="150" font-size="24" fill="#427e9a" text-anchor="start" class="bold">源 tid 32</text>
+<text x="54" y="182" font-size="22" fill="#302c2a" text-anchor="start" class="">warp 1 / lane 0</text>
+<text x="54" y="224" font-size="24" fill="#302c2a" text-anchor="start" class="bold">x[64], x[65]</text>
+<text x="54" y="267" font-size="21" fill="#302c2a" text-anchor="start" class="">global：X + 256 B</text>
+<line x1="181" y1="305" x2="181" y2="356" stroke="#706760" stroke-width="2" marker-end="url(#arrow)"/>
+<text x="181" y="389" font-size="20" fill="#706760" text-anchor="middle" class="mono">st.shared.v2.b32</text>
+<rect x="354" y="112" width="290" height="180" rx="9" fill="#eee7f4" stroke="#8668a5" stroke-width="1.5"/>
+<text x="372" y="150" font-size="24" fill="#8668a5" text-anchor="start" class="bold">源 tid 33</text>
+<text x="372" y="182" font-size="22" fill="#302c2a" text-anchor="start" class="">warp 1 / lane 1</text>
+<text x="372" y="224" font-size="24" fill="#302c2a" text-anchor="start" class="bold">x[66], x[67]</text>
+<text x="372" y="267" font-size="21" fill="#302c2a" text-anchor="start" class="">global：X + 264 B</text>
+<line x1="499" y1="305" x2="499" y2="356" stroke="#706760" stroke-width="2" marker-end="url(#arrow)"/>
+<text x="499" y="389" font-size="20" fill="#706760" text-anchor="middle" class="mono">st.shared.v2.b32</text>
+<rect x="36" y="418" width="608" height="238" rx="9" fill="#f2eee7" stroke="#d9cec3" stroke-width="1.5"/>
+<text x="58" y="456" font-size="24" fill="#302c2a" text-anchor="start" class="bold">Shared Memory：临时排列</text>
+<text x="58" y="488" font-size="20" fill="#706760" text-anchor="start" class="">下列数字都是 shared_base 后的字节偏移</text>
+<rect x="58" y="511" width="257" height="92" rx="9" fill="#e3f0f4" stroke="#427e9a" stroke-width="1.5"/>
+<text x="186.5" y="548" font-size="25" fill="#427e9a" text-anchor="middle" class="bold">+ 128 B</text>
+<text x="186.5" y="582" font-size="23" fill="#302c2a" text-anchor="middle" class="">x[64], x[65]</text>
+<rect x="365" y="511" width="257" height="92" rx="9" fill="#eee7f4" stroke="#8668a5" stroke-width="1.5"/>
+<text x="493.5" y="548" font-size="25" fill="#8668a5" text-anchor="middle" class="bold">+ 1216 B</text>
+<text x="493.5" y="582" font-size="23" fill="#302c2a" text-anchor="middle" class="">x[66], x[67]</text>
+<text x="58" y="636" font-size="20" fill="#706760" text-anchor="start" class="">两段相距 1088 B；示意位置不按地址比例。</text>
+<line x1="36" y1="705" x2="644" y2="705" stroke="#706760" stroke-width="2" stroke-dasharray="7 6"/>
+<rect x="213" y="677" width="254" height="56" rx="9" fill="#fbf7f0" stroke="#fbf7f0" stroke-width="1.5"/>
+<text x="340" y="713" font-size="25" fill="#302c2a" text-anchor="middle" class="bold mono">bar.sync 0</text>
+<text x="340" y="758" font-size="22" fill="#706760" text-anchor="middle" class="">先让整个 CTA 完成写入，再继续读</text>
+<line x1="181" y1="779" x2="181" y2="830" stroke="#706760" stroke-width="2" marker-end="url(#arrow)"/>
+<text x="181" y="860" font-size="22" fill="#706760" text-anchor="middle" class="">读 +128 B</text>
+<line x1="499" y1="779" x2="499" y2="830" stroke="#706760" stroke-width="2" marker-end="url(#arrow)"/>
+<text x="499" y="860" font-size="22" fill="#706760" text-anchor="middle" class="">读 +1216 B</text>
+<rect x="36" y="890" width="608" height="196" rx="9" fill="#e6efe5" stroke="#4c8164" stroke-width="1.5"/>
+<text x="58" y="928" font-size="24" fill="#4c8164" text-anchor="start" class="bold">目标 tid 16 · warp 0 / lane 16</text>
+<text x="58" y="965" font-size="21" fill="#302c2a" text-anchor="start" class="">两条 ld.shared.v2.b32，读回两对值</text>
+<text x="116" y="1002" font-size="19" fill="#706760" text-anchor="middle" class="">slot 0</text>
+<rect x="58" y="1014" width="126" height="46" rx="6" fill="#e3f0f4" stroke="#427e9a" stroke-width="1.5"/>
+<text x="121.0" y="1045.05" font-size="23" fill="#302c2a" text-anchor="middle" class="">x[64]</text>
+<text x="264" y="1002" font-size="19" fill="#706760" text-anchor="middle" class="">slot 1</text>
+<rect x="206" y="1014" width="126" height="46" rx="6" fill="#e3f0f4" stroke="#427e9a" stroke-width="1.5"/>
+<text x="269.0" y="1045.05" font-size="23" fill="#302c2a" text-anchor="middle" class="">x[65]</text>
+<text x="412" y="1002" font-size="19" fill="#706760" text-anchor="middle" class="">slot 2</text>
+<rect x="354" y="1014" width="126" height="46" rx="6" fill="#eee7f4" stroke="#8668a5" stroke-width="1.5"/>
+<text x="417.0" y="1045.05" font-size="23" fill="#302c2a" text-anchor="middle" class="">x[66]</text>
+<text x="560" y="1002" font-size="19" fill="#706760" text-anchor="middle" class="">slot 3</text>
+<rect x="502" y="1014" width="126" height="46" rx="6" fill="#eee7f4" stroke="#8668a5" stroke-width="1.5"/>
+<text x="565.0" y="1045.05" font-size="23" fill="#302c2a" text-anchor="middle" class="">x[67]</text>
+<line x1="340" y1="1098" x2="340" y2="1145" stroke="#706760" stroke-width="2" marker-end="url(#arrow)"/>
+<text x="340" y="1181" font-size="22" fill="#302c2a" text-anchor="middle" class="">st.global.v4.b32：一起写回 Y + 256 B</text>
+<rect x="36" y="1205" width="608" height="77" rx="9" fill="white" stroke="#d9cec3" stroke-width="1.5"/>
+<text x="58" y="1237" font-size="21" fill="#302c2a" text-anchor="start" class="bold">Y+256 B → x[64]；Y+264 B → x[66]</text>
+<text x="58" y="1266" font-size="20" fill="#706760" text-anchor="start" class="">逻辑顺序没变；shared 中间地址由编译器安排。</text>
+<text x="36" y="1306" font-size="18" fill="#706760" text-anchor="start" class="">Triton 3.8.0 / sm_89 · 来自 PTX 静态地址推导</text>
+</svg>

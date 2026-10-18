@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="680" height="850" viewBox="0 0 680 850" role="img" aria-labelledby="title desc">
+<title id="title">广播与 Bank Conflict</title>
+<desc id="desc">独立的简化示意：同一warp中的两个lane执行32-bit标量shared读取，假定shared起点落在bank 0，32个bank，每个word为4字节。bank=(byte_addr整除4)模32。第一种情况，lane 0和lane 1都读取字节偏移0，即同一个word，可以广播给两个lane。第二种情况，lane 0读取字节偏移0，lane 1读取字节偏移128，两者是不同word，却同属bank 0，需要分批服务。这不是对本文布局转换中向量化访存的冲突测量。</desc>
+<defs><marker id="arrow" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L8,4 L0,8 Z" fill="#706760"/></marker></defs>
+<style>text{font-family:'Noto Sans SC','Microsoft YaHei','PingFang SC',sans-serif;font-weight:400} .mono{font-family:Consolas,'DejaVu Sans Mono',monospace} .bold{font-weight:650}</style>
+<rect width="680" height="850" rx="16" fill="#fbf7f0"/>
+<text x="36" y="48" font-size="29" fill="#302c2a" text-anchor="start" class="bold">广播与 Bank Conflict</text>
+<text x="36" y="86" font-size="23" fill="#706760" text-anchor="start" class="">同一 warp · 两个 lane · 32-bit 标量读取</text>
+<text x="36" y="123" font-size="23" fill="#302c2a" text-anchor="start" class="mono">bank = (byte_addr // 4) % 32</text>
+<rect x="36" y="150" width="608" height="269" rx="9" fill="white" stroke="#d9cec3" stroke-width="1.5"/>
+<text x="58" y="187" font-size="25" fill="#4c8164" text-anchor="start" class="bold">同一个 word：广播</text>
+<rect x="58" y="215" width="138" height="48" rx="6" fill="#e6efe5" stroke="#4c8164" stroke-width="1.5"/>
+<text x="127.0" y="247.4" font-size="24" fill="#302c2a" text-anchor="middle" class="">lane 0</text>
+<rect x="58" y="302" width="138" height="48" rx="6" fill="#e6efe5" stroke="#4c8164" stroke-width="1.5"/>
+<text x="127.0" y="334.4" font-size="24" fill="#302c2a" text-anchor="middle" class="">lane 1</text>
+<text x="267" y="230" font-size="23" fill="#706760" text-anchor="middle" class="">+0 B</text>
+<text x="267" y="339" font-size="23" fill="#706760" text-anchor="middle" class="">+0 B</text>
+<line x1="206" y1="244" x2="420" y2="277" stroke="#706760" stroke-width="2" marker-end="url(#arrow)"/>
+<line x1="206" y1="321" x2="420" y2="289" stroke="#706760" stroke-width="2" marker-end="url(#arrow)"/>
+<text x="524" y="238" font-size="24" fill="#4c8164" text-anchor="middle" class="bold">bank 0</text>
+<rect x="434" y="253" width="180" height="65" rx="6" fill="#e6efe5" stroke="#4c8164" stroke-width="1.5"/>
+<text x="524.0" y="293.9" font-size="24" fill="#302c2a" text-anchor="middle" class="">word 0</text>
+<text x="58" y="390" font-size="23" fill="#302c2a" text-anchor="start" class="">读出同一份值，分发给两个 lane。</text>
+<rect x="36" y="446" width="608" height="291" rx="9" fill="white" stroke="#d9cec3" stroke-width="1.5"/>
+<text x="58" y="483" font-size="25" fill="#e18568" text-anchor="start" class="bold">不同 word，同一 bank：冲突</text>
+<rect x="58" y="514" width="138" height="48" rx="6" fill="#fae4da" stroke="#e18568" stroke-width="1.5"/>
+<text x="127.0" y="546.4" font-size="24" fill="#302c2a" text-anchor="middle" class="">lane 0</text>
+<rect x="58" y="600" width="138" height="48" rx="6" fill="#fae4da" stroke="#e18568" stroke-width="1.5"/>
+<text x="127.0" y="632.4" font-size="24" fill="#302c2a" text-anchor="middle" class="">lane 1</text>
+<text x="293" y="525" font-size="23" fill="#706760" text-anchor="middle" class="">+0 B</text>
+<text x="293" y="612" font-size="23" fill="#706760" text-anchor="middle" class="">+128 B</text>
+<line x1="206" y1="546" x2="420" y2="546" stroke="#706760" stroke-width="2" marker-end="url(#arrow)"/>
+<line x1="206" y1="633" x2="420" y2="633" stroke="#706760" stroke-width="2" marker-end="url(#arrow)"/>
+<text x="524" y="519" font-size="24" fill="#e18568" text-anchor="middle" class="bold">bank 0</text>
+<rect x="434" y="531" width="180" height="47" rx="6" fill="#fae4da" stroke="#e18568" stroke-width="1.5"/>
+<text x="524.0" y="562.9" font-size="24" fill="#302c2a" text-anchor="middle" class="">word 0</text>
+<rect x="434" y="610" width="180" height="47" rx="6" fill="#fae4da" stroke="#e18568" stroke-width="1.5"/>
+<text x="524.0" y="641.9" font-size="24" fill="#302c2a" text-anchor="middle" class="">word 32</text>
+<line x1="524" y1="585" x2="524" y2="602" stroke="#d9cec3" stroke-width="2" stroke-dasharray="3 3"/>
+<text x="58" y="701" font-size="23" fill="#302c2a" text-anchor="start" class="">两个不同的 word，要分批服务。</text>
+<text x="36" y="779" font-size="22" fill="#706760" text-anchor="start" class="">示意假定 shared 起点落在 bank 0。</text>
+<text x="36" y="812" font-size="21" fill="#706760" text-anchor="start" class="">32 个 bank，每个 word 4 B；不是本次 v2 访问分析。</text>
+</svg>

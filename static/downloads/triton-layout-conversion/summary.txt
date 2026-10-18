@@ -1,0 +1,13 @@
+Environment: {"python": "3.12.15", "torch": "2.14.1+cu130", "triton": "3.8.0", "cuda": "13.0", "gpu": "NVIDIA GeForce RTX 4070 Laptop GPU", "compute_capability": [8, 9], "target": "GPUTarget(backend='cuda', arch=89, warp_size=32)"}
+
+convert_w1_n128: {"N": 128, "num_warps": 1, "correct": true, "shared_bytes": 0, "static_instructions": {"shfl.sync": 4, "st.shared": 0, "ld.shared": 0, "bar.sync": 0}}
+#blocked = #ttg.blocked<{sizePerThread = [2], threadsPerWarp = [32], warpsPerCTA = [1], order = [0]}>
+#blocked1 = #ttg.blocked<{sizePerThread = [4], threadsPerWarp = [32], warpsPerCTA = [1], order = [0]}>
+
+convert_w4_n512: {"N": 512, "num_warps": 4, "correct": true, "shared_bytes": 2048, "static_instructions": {"shfl.sync": 0, "st.shared": 2, "ld.shared": 2, "bar.sync": 1}}
+#blocked = #ttg.blocked<{sizePerThread = [2], threadsPerWarp = [32], warpsPerCTA = [4], order = [0]}>
+#blocked1 = #ttg.blocked<{sizePerThread = [4], threadsPerWarp = [32], warpsPerCTA = [4], order = [0]}>
+
+convert_w1_n512: {"N": 512, "num_warps": 1, "correct": true, "shared_bytes": 0, "static_instructions": {"shfl.sync": 16, "st.shared": 0, "ld.shared": 0, "bar.sync": 0}}
+#blocked = #ttg.blocked<{sizePerThread = [2], threadsPerWarp = [32], warpsPerCTA = [1], order = [0]}>
+#blocked1 = #ttg.blocked<{sizePerThread = [4], threadsPerWarp = [32], warpsPerCTA = [1], order = [0]}>

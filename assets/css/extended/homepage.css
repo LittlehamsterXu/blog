@@ -42,7 +42,7 @@
 
 
 .article-image { display: block; }
-.post-content .article-image img { margin-bottom: 8px; }
+.post-content .article-image img { margin-bottom: 8px; height: auto; }
 .image-caption { display: block; color: var(--secondary); text-align: center; font-size: 14px; line-height: 1.6; }
 .post-content pre.mermaid { background: var(--entry); color: var(--content); }
 .mermaid-error { color: var(--secondary); font-size: 14px; }
