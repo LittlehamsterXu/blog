@@ -114,7 +114,6 @@
   document.addEventListener("DOMContentLoaded", function () {
     const root = document.documentElement;
     const tocContainer = document.getElementById("toc-container");
-    const recentPostsContainer = document.getElementById("recent-posts-container");
     let resizeFrameRequested = false;
 
     function checkTocPosition() {
@@ -122,20 +121,13 @@
       const tocWidth = parseInt(rootStyle.getPropertyValue("--toc-width"), 10);
       const minGap = parseInt(rootStyle.getPropertyValue("--side-module-min-gap"), 10);
       const article = document.querySelector(".post-single");
-      const articleWidth = article
-        ? article.getBoundingClientRect().width
-        : parseInt(rootStyle.getPropertyValue("--main-width"), 10);
+      const articleWidth = article ? article.getBoundingClientRect().width : 760;
       const viewportWidth = root.clientWidth;
-      const sideGap = (viewportWidth - articleWidth - tocWidth * 2) / 4;
-      const shouldWide = sideGap >= minGap;
-
-      root.style.setProperty("--side-module-gap", `${Math.max(sideGap, minGap)}px`);
+      const sideSpace = (viewportWidth - articleWidth) / 2;
+      const shouldWide = viewportWidth >= 1280 && sideSpace >= tocWidth + minGap + 16;
 
       if (tocContainer) {
         tocContainer.classList.toggle("wide", shouldWide);
-      }
-      if (recentPostsContainer) {
-        recentPostsContainer.classList.toggle("wide", shouldWide);
       }
     }
 
@@ -193,6 +185,9 @@
 
     updateActiveHeading();
     window.addEventListener("scroll", updateActiveHeading, { passive: true });
+    window.addEventListener("resize", updateActiveHeading, { passive: true });
+    document.addEventListener("load", updateActiveHeading, true);
+    document.fonts?.ready.then(updateActiveHeading);
   });
 </script>
 {{- end -}}

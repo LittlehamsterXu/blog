@@ -50,6 +50,13 @@
 {{- partial "home_info.html" . }}
 {{- end }}
 
+{{- if and .IsHome (eq $paginator.PageNumber 1) }}
+<div class="post-list-heading">
+  <h2>最近更新</h2>
+  <a href="{{ "archives/" | relURL }}">全部归档 <span aria-hidden="true">→</span></a>
+</div>
+{{- end }}
+
 {{- $term := .Data.Term }}
 {{- range $index, $page := $paginator.Pages }}
 
@@ -67,6 +74,16 @@
 <article class="{{ $class }}">
   {{- partial "cover.html" (dict "cxt" . "IsSingle" false "isHidden" $isHidden) }}
   <div class="post-info">
+    {{- if not (.Param "hideMeta") }}
+    <div class="entry-meta">
+      {{- if not .Date.IsZero }}
+      <time datetime="{{ .Date.Format "2006-01-02" }}">{{ .Date.Format "2006.01.02" }}</time>
+      {{- end }}
+      {{- with .Params.categories }}
+      <span class="entry-category">{{ index . 0 }}</span>
+      {{- end }}
+    </div>
+    {{- end }}
     <header class="entry-header">
       <h2 class="entry-hint-parent">
         {{- .Title }}
@@ -85,12 +102,14 @@
     </div>
     {{- end }}
     {{- if not (.Param "hideMeta") }}
+    {{- with (partial "list_post_meta.html" .) }}
     <footer class="entry-footer">
-      {{- partial "post_meta.html" . -}}
+      {{- . -}}
     </footer>
     {{- end }}
+    {{- end }}
   </div>
-  <a class="entry-link" aria-label="post link to {{ .Title | plainify }}" href="{{ .RelPermalink }}"></a>
+  <a class="entry-link" aria-label="{{ .Title | plainify }}" href="{{ .RelPermalink }}"></a>
 </article>
 {{- end }}
 

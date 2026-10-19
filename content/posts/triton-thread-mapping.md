@@ -1,7 +1,7 @@
 ---
 title: "看懂 Triton：当线程映射交给编译器"
 date: 2026-10-18
-draft: true
+draft: false
 tags: [CUDA, GPU, Triton, GPU Compiler, AI Infra]
 categories: [AI Infra]
 description: "从向量加法到 128 个数的求和，改一改 num_warps，再沿着 TTGIR 和 PTX 看看，那些没写出来的线程究竟去了哪里。"

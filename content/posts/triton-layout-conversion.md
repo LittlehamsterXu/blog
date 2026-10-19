@@ -1,7 +1,7 @@
 ---
 title: "Triton Layout：一次转换，到底搬了什么"
 date: 2026-10-18
-draft: true
+draft: false
 tags: [Triton, Gluon, GPU, CUDA, AI Infra]
 categories: [AI Infra]
 description: "固定两端的 Blocked Layout，跟着一个元素从 lane 走到 warp，再沿着 PTX 里的地址，看一次 Layout Conversion 怎样借助 Shuffle 或 Shared Memory 完成。"

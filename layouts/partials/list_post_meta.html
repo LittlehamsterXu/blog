@@ -1,0 +1,10 @@
+{{- $meta := slice -}}
+{{- if (.Param "ShowReadingTime") -}}
+  {{- $meta = $meta | append (printf "<span>%s</span>" (i18n "read_time" .ReadingTime | default (printf "%d min" .ReadingTime))) -}}
+{{- end -}}
+{{- if (.Param "ShowWordCount") -}}
+  {{- $meta = $meta | append (printf "<span>%s</span>" (i18n "words" .WordCount | default (printf "%d words" .WordCount))) -}}
+{{- end -}}
+{{- with $meta -}}
+  {{- delimit . "&nbsp;·&nbsp;" | safeHTML -}}
+{{- end -}}

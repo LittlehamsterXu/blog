@@ -35,16 +35,21 @@
   <aside id="toc-container" class="toc-container post-sidebar wide" aria-label="文章目录">
     {{- partial "toc.html" . }}
     <script>
-      // Set the initial mobile state before the article is painted; later user
+      // Set the initial compact state before the article is painted; later user
       // toggles remain untouched, including when the viewport is resized.
-      if (window.matchMedia("(max-width: 700px)").matches) {
-        const toc = document.querySelector("#toc-container details");
-        if (toc) toc.open = false;
+      {
+        const sidebar = document.getElementById("toc-container");
+        const styles = getComputedStyle(document.documentElement);
+        const width = document.querySelector(".post-single").getBoundingClientRect().width;
+        const available = (document.documentElement.clientWidth - width) / 2;
+        const required = parseFloat(styles.getPropertyValue("--toc-width"))
+          + parseFloat(styles.getPropertyValue("--side-module-min-gap")) + 16;
+        const wide = document.documentElement.clientWidth >= 1280 && available >= required;
+        sidebar.classList.toggle("wide", wide);
+        const toc = sidebar.querySelector("details");
+        if (toc && !wide) toc.open = false;
       }
     </script>
-  </aside>
-  <aside id="recent-posts-container" class="recent-container wide" aria-label="最近文章">
-    {{- partial "recent_posts.html" . }}
   </aside>
   {{- end }}
 
@@ -74,6 +79,11 @@
     {{- end }}
     {{- if (and site.Params.ShowShareButtons (ne .Params.disableShare true)) }}
     {{- partial "share_icons.html" . -}}
+    {{- end }}
+    {{- if (.Param "ShowToc") }}
+    <aside id="recent-posts-container" class="recent-container" aria-label="最近文章">
+      {{- partial "recent_posts.html" . }}
+    </aside>
     {{- end }}
   </footer>
 
