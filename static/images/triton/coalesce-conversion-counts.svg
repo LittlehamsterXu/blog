@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="420" viewBox="0 0 1000 420" role="img" aria-labelledby="title desc">
+<title id="title">转换为什么先变多</title>
+<desc id="desc">同一份32乘32转置的TTGIR转换静态计数：进入Coalesce前有6个ttg.convert_layout，取自Before Coalesce快照；Coalesce执行后有10个，取自紧随其后的Before F32DotTC快照。首个RemoveLayoutConversions开始前仍有10个，执行后剩1个，取自紧随其后的Before OptimizeThreadLocality快照。Coalesce为load和store分别选定布局，临时增加index、地址、values周围的布局转换。清理时通过布局传播和重建index与地址消去部分转换，保留连接两端的values转换。最后该转换经shared写入、CTA barrier与shared读出完成。计数描述本次编译，不表示底层只执行一条搬运指令，也不声称布局全局最优。</desc>
+<style>text{font-family:"Noto Sans SC","Microsoft YaHei","PingFang SC",sans-serif;font-weight:400}.bold{font-weight:650}.mono{font-family:Consolas,"DejaVu Sans Mono",monospace}</style>
+<defs><marker id="arrow" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L8,4 L0,8 Z" fill="#706760"/></marker></defs>
+<rect width="1000" height="420" rx="16" fill="#fbf7f0"/>
+<text x="30" y="43" font-size="29" fill="#302c2a" text-anchor="start" class="bold">转换为什么先变多</text>
+<text x="30" y="79" font-size="22" fill="#706760" text-anchor="start" class="">32×32 转置 · ttg.convert_layout 静态条数</text>
+<text x="150" y="119" font-size="24" fill="#302c2a" text-anchor="middle" class="bold">进入 Coalesce 前</text>
+<circle cx="150" cy="177" r="43" fill="#fae4da" stroke="#e18568" stroke-width="2"/>
+<text x="150" y="193" font-size="47" fill="#e18568" text-anchor="middle" class="bold">6</text>
+<text x="150" y="261" font-size="23" fill="#302c2a" text-anchor="middle" class="">原有的布局转换</text>
+<text x="500" y="119" font-size="24" fill="#302c2a" text-anchor="middle" class="bold">Coalesce 之后</text>
+<circle cx="500" cy="177" r="43" fill="#e3f0f4" stroke="#427e9a" stroke-width="2"/>
+<text x="500" y="193" font-size="47" fill="#427e9a" text-anchor="middle" class="bold">10</text>
+<text x="500" y="261" font-size="23" fill="#302c2a" text-anchor="middle" class="">临时转换增加</text>
+<text x="850" y="119" font-size="24" fill="#302c2a" text-anchor="middle" class="bold">首次清理之后</text>
+<circle cx="850" cy="177" r="43" fill="#e6efe5" stroke="#4c8164" stroke-width="2"/>
+<text x="850" y="193" font-size="47" fill="#4c8164" text-anchor="middle" class="bold">1</text>
+<text x="850" y="261" font-size="23" fill="#302c2a" text-anchor="middle" class="">values 转换留存</text>
+<line x1="215" y1="177" x2="426" y2="177" stroke="#706760" stroke-width="2" marker-end="url(#arrow)"/>
+<line x1="565" y1="177" x2="776" y2="177" stroke="#706760" stroke-width="2" marker-end="url(#arrow)"/>
+<text x="325" y="157" font-size="22" fill="#427e9a" text-anchor="middle" class="">分别适配访存</text>
+<text x="675" y="157" font-size="22" fill="#8668a5" text-anchor="middle" class="">传播与重建</text>
+<line x1="24" y1="287" x2="976" y2="287" stroke="#706760" stroke-width="2"/>
+<text x="500" y="328" font-size="24" fill="#302c2a" text-anchor="middle" class="bold">Load 布局 → shared 写 → CTA barrier → shared 读 → Store 布局</text>
+<text x="500" y="386" font-size="22" fill="#706760" text-anchor="middle" class="">“之后”取下一份 Before 快照；1 次 IR 转换会展开成多条指令。</text>
+</svg>

@@ -1,0 +1,107 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="480" viewBox="0 0 1000 480" role="img" aria-labelledby="title desc">
+<title id="title">连续的方向变了</title>
+<desc id="desc">32乘32转置的两张局部网格都按values的逻辑坐标row、col排列，格内数字是指针相对基址的元素偏移。Load访问X加32乘row加col，沿col连续。Store访问Y加32乘col加row，沿values的row连续，对应Y的列方向。逻辑坐标(1,2)的同一个value来自输入X[1,2]，写到输出Y[2,1]，元素偏移分别为34和65。布局转换改变线程持有的元素，转置后的存储位置由输出地址公式给出。</desc>
+<style>text{font-family:"Noto Sans SC","Microsoft YaHei","PingFang SC",sans-serif;font-weight:400}.bold{font-weight:650}.mono{font-family:Consolas,"DejaVu Sans Mono",monospace}</style>
+<defs><marker id="arrow" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L8,4 L0,8 Z" fill="#706760"/></marker></defs>
+<rect width="1000" height="480" rx="16" fill="#fbf7f0"/>
+<text x="30" y="43" font-size="29" fill="#302c2a" text-anchor="start" class="bold">连续的方向变了</text>
+<text x="30" y="79" font-size="22" fill="#706760" text-anchor="start" class="">两张网格均按 values 的 (row, col) 排列；格内为元素偏移。</text>
+<rect x="24" y="103" width="464" height="303" rx="8" fill="white" stroke="#d9cec3" stroke-width="1.5"/>
+<text x="44" y="139" font-size="25" fill="#427e9a" text-anchor="start" class="bold">Load：沿 col 连续</text>
+<text x="44" y="176" font-size="24" fill="#302c2a" text-anchor="start" class="mono">X + 32*row + col</text>
+<text x="95.5" y="204" font-size="22" fill="#706760" text-anchor="middle" class="">0</text>
+<text x="138.5" y="204" font-size="22" fill="#706760" text-anchor="middle" class="">1</text>
+<text x="181.5" y="204" font-size="22" fill="#706760" text-anchor="middle" class="">2</text>
+<text x="224.5" y="204" font-size="22" fill="#706760" text-anchor="middle" class="">3</text>
+<text x="33" y="204" font-size="22" fill="#706760" text-anchor="start" class="">row</text>
+<text x="51" y="238" font-size="22" fill="#706760" text-anchor="middle" class="">0</text>
+<rect x="74" y="216" width="41" height="41" rx="5" fill="white" stroke="#d9cec3" stroke-width="1.2"/>
+<text x="94.5" y="244" font-size="23" fill="#302c2a" text-anchor="middle" class="">0</text>
+<rect x="117" y="216" width="41" height="41" rx="5" fill="white" stroke="#d9cec3" stroke-width="1.2"/>
+<text x="137.5" y="244" font-size="23" fill="#302c2a" text-anchor="middle" class="">1</text>
+<rect x="160" y="216" width="41" height="41" rx="5" fill="white" stroke="#d9cec3" stroke-width="1.2"/>
+<text x="180.5" y="244" font-size="23" fill="#302c2a" text-anchor="middle" class="">2</text>
+<rect x="203" y="216" width="41" height="41" rx="5" fill="white" stroke="#d9cec3" stroke-width="1.2"/>
+<text x="223.5" y="244" font-size="23" fill="#302c2a" text-anchor="middle" class="">3</text>
+<text x="51" y="281" font-size="22" fill="#706760" text-anchor="middle" class="">1</text>
+<rect x="74" y="259" width="41" height="41" rx="5" fill="#e3f0f4" stroke="#427e9a" stroke-width="1.2"/>
+<text x="94.5" y="287" font-size="23" fill="#302c2a" text-anchor="middle" class="">32</text>
+<rect x="117" y="259" width="41" height="41" rx="5" fill="#e3f0f4" stroke="#427e9a" stroke-width="1.2"/>
+<text x="137.5" y="287" font-size="23" fill="#302c2a" text-anchor="middle" class="">33</text>
+<rect x="160" y="259" width="41" height="41" rx="5" fill="#fae4da" stroke="#e18568" stroke-width="2"/>
+<text x="180.5" y="287" font-size="23" fill="#e18568" text-anchor="middle" class="bold">34</text>
+<rect x="203" y="259" width="41" height="41" rx="5" fill="#e3f0f4" stroke="#427e9a" stroke-width="1.2"/>
+<text x="223.5" y="287" font-size="23" fill="#302c2a" text-anchor="middle" class="">35</text>
+<text x="51" y="324" font-size="22" fill="#706760" text-anchor="middle" class="">2</text>
+<rect x="74" y="302" width="41" height="41" rx="5" fill="white" stroke="#d9cec3" stroke-width="1.2"/>
+<text x="94.5" y="330" font-size="23" fill="#302c2a" text-anchor="middle" class="">64</text>
+<rect x="117" y="302" width="41" height="41" rx="5" fill="white" stroke="#d9cec3" stroke-width="1.2"/>
+<text x="137.5" y="330" font-size="23" fill="#302c2a" text-anchor="middle" class="">65</text>
+<rect x="160" y="302" width="41" height="41" rx="5" fill="white" stroke="#d9cec3" stroke-width="1.2"/>
+<text x="180.5" y="330" font-size="23" fill="#302c2a" text-anchor="middle" class="">66</text>
+<rect x="203" y="302" width="41" height="41" rx="5" fill="white" stroke="#d9cec3" stroke-width="1.2"/>
+<text x="223.5" y="330" font-size="23" fill="#302c2a" text-anchor="middle" class="">67</text>
+<text x="51" y="367" font-size="22" fill="#706760" text-anchor="middle" class="">3</text>
+<rect x="74" y="345" width="41" height="41" rx="5" fill="white" stroke="#d9cec3" stroke-width="1.2"/>
+<text x="94.5" y="373" font-size="23" fill="#302c2a" text-anchor="middle" class="">96</text>
+<rect x="117" y="345" width="41" height="41" rx="5" fill="white" stroke="#d9cec3" stroke-width="1.2"/>
+<text x="137.5" y="373" font-size="23" fill="#302c2a" text-anchor="middle" class="">97</text>
+<rect x="160" y="345" width="41" height="41" rx="5" fill="white" stroke="#d9cec3" stroke-width="1.2"/>
+<text x="180.5" y="373" font-size="23" fill="#302c2a" text-anchor="middle" class="">98</text>
+<rect x="203" y="345" width="41" height="41" rx="5" fill="white" stroke="#d9cec3" stroke-width="1.2"/>
+<text x="223.5" y="373" font-size="23" fill="#302c2a" text-anchor="middle" class="">99</text>
+<text x="274" y="252" font-size="25" fill="#427e9a" text-anchor="start" class="bold">col + 1</text>
+<text x="274" y="287" font-size="25" fill="#427e9a" text-anchor="start" class="bold">地址 + 1</text>
+<text x="274" y="337" font-size="22" fill="#706760" text-anchor="start" class="">固定 row = 1</text>
+<rect x="512" y="103" width="464" height="303" rx="8" fill="white" stroke="#d9cec3" stroke-width="1.5"/>
+<text x="532" y="139" font-size="25" fill="#4c8164" text-anchor="start" class="bold">Store：沿 row 连续</text>
+<text x="532" y="176" font-size="24" fill="#302c2a" text-anchor="start" class="mono">Y + 32*col + row</text>
+<text x="583.5" y="204" font-size="22" fill="#706760" text-anchor="middle" class="">0</text>
+<text x="626.5" y="204" font-size="22" fill="#706760" text-anchor="middle" class="">1</text>
+<text x="669.5" y="204" font-size="22" fill="#706760" text-anchor="middle" class="">2</text>
+<text x="712.5" y="204" font-size="22" fill="#706760" text-anchor="middle" class="">3</text>
+<text x="521" y="204" font-size="22" fill="#706760" text-anchor="start" class="">row</text>
+<text x="539" y="238" font-size="22" fill="#706760" text-anchor="middle" class="">0</text>
+<rect x="562" y="216" width="41" height="41" rx="5" fill="white" stroke="#d9cec3" stroke-width="1.2"/>
+<text x="582.5" y="244" font-size="23" fill="#302c2a" text-anchor="middle" class="">0</text>
+<rect x="605" y="216" width="41" height="41" rx="5" fill="white" stroke="#d9cec3" stroke-width="1.2"/>
+<text x="625.5" y="244" font-size="23" fill="#302c2a" text-anchor="middle" class="">32</text>
+<rect x="648" y="216" width="41" height="41" rx="5" fill="#e6efe5" stroke="#4c8164" stroke-width="1.2"/>
+<text x="668.5" y="244" font-size="23" fill="#302c2a" text-anchor="middle" class="">64</text>
+<rect x="691" y="216" width="41" height="41" rx="5" fill="white" stroke="#d9cec3" stroke-width="1.2"/>
+<text x="711.5" y="244" font-size="23" fill="#302c2a" text-anchor="middle" class="">96</text>
+<text x="539" y="281" font-size="22" fill="#706760" text-anchor="middle" class="">1</text>
+<rect x="562" y="259" width="41" height="41" rx="5" fill="white" stroke="#d9cec3" stroke-width="1.2"/>
+<text x="582.5" y="287" font-size="23" fill="#302c2a" text-anchor="middle" class="">1</text>
+<rect x="605" y="259" width="41" height="41" rx="5" fill="white" stroke="#d9cec3" stroke-width="1.2"/>
+<text x="625.5" y="287" font-size="23" fill="#302c2a" text-anchor="middle" class="">33</text>
+<rect x="648" y="259" width="41" height="41" rx="5" fill="#fae4da" stroke="#e18568" stroke-width="2"/>
+<text x="668.5" y="287" font-size="23" fill="#e18568" text-anchor="middle" class="bold">65</text>
+<rect x="691" y="259" width="41" height="41" rx="5" fill="white" stroke="#d9cec3" stroke-width="1.2"/>
+<text x="711.5" y="287" font-size="23" fill="#302c2a" text-anchor="middle" class="">97</text>
+<text x="539" y="324" font-size="22" fill="#706760" text-anchor="middle" class="">2</text>
+<rect x="562" y="302" width="41" height="41" rx="5" fill="white" stroke="#d9cec3" stroke-width="1.2"/>
+<text x="582.5" y="330" font-size="23" fill="#302c2a" text-anchor="middle" class="">2</text>
+<rect x="605" y="302" width="41" height="41" rx="5" fill="white" stroke="#d9cec3" stroke-width="1.2"/>
+<text x="625.5" y="330" font-size="23" fill="#302c2a" text-anchor="middle" class="">34</text>
+<rect x="648" y="302" width="41" height="41" rx="5" fill="#e6efe5" stroke="#4c8164" stroke-width="1.2"/>
+<text x="668.5" y="330" font-size="23" fill="#302c2a" text-anchor="middle" class="">66</text>
+<rect x="691" y="302" width="41" height="41" rx="5" fill="white" stroke="#d9cec3" stroke-width="1.2"/>
+<text x="711.5" y="330" font-size="23" fill="#302c2a" text-anchor="middle" class="">98</text>
+<text x="539" y="367" font-size="22" fill="#706760" text-anchor="middle" class="">3</text>
+<rect x="562" y="345" width="41" height="41" rx="5" fill="white" stroke="#d9cec3" stroke-width="1.2"/>
+<text x="582.5" y="373" font-size="23" fill="#302c2a" text-anchor="middle" class="">3</text>
+<rect x="605" y="345" width="41" height="41" rx="5" fill="white" stroke="#d9cec3" stroke-width="1.2"/>
+<text x="625.5" y="373" font-size="23" fill="#302c2a" text-anchor="middle" class="">35</text>
+<rect x="648" y="345" width="41" height="41" rx="5" fill="#e6efe5" stroke="#4c8164" stroke-width="1.2"/>
+<text x="668.5" y="373" font-size="23" fill="#302c2a" text-anchor="middle" class="">67</text>
+<rect x="691" y="345" width="41" height="41" rx="5" fill="white" stroke="#d9cec3" stroke-width="1.2"/>
+<text x="711.5" y="373" font-size="23" fill="#302c2a" text-anchor="middle" class="">99</text>
+<text x="762" y="252" font-size="25" fill="#4c8164" text-anchor="start" class="bold">row + 1</text>
+<text x="762" y="287" font-size="25" fill="#4c8164" text-anchor="start" class="bold">地址 + 1</text>
+<text x="762" y="337" font-size="22" fill="#706760" text-anchor="start" class="">固定 col = 2</text>
+<rect x="24" y="424" width="952" height="42" rx="8" fill="#fae4da" stroke="#e18568" stroke-width="1.5"/>
+<text x="500" y="453" font-size="24" fill="#302c2a" text-anchor="middle" class="bold">同一个 value (1,2)：X[1,2] → Y[2,1]，元素偏移 34 → 65</text>
+<text x="274" y="377" font-size="22" fill="#706760">横 col / 纵 row</text>
+<text x="762" y="377" font-size="22" fill="#706760">横 col / 纵 row</text>
+</svg>
