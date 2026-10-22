@@ -1,0 +1,17 @@
+{
+  "python": "3.12.15",
+  "torch": "2.14.1+cu130",
+  "device": "cuda",
+  "cuda_build": "13.0",
+  "gpu": "NVIDIA GeForce RTX 4070 Laptop GPU",
+  "seed": 42,
+  "epochs": 301,
+  "updates": 301,
+  "cpu_threads": 1,
+  "execution": "eager",
+  "model": "Linear(2,8) -> Tanh -> Linear(8,2)",
+  "parameter_count": 42,
+  "loss": "CrossEntropyLoss",
+  "optimizer": "Adam",
+  "lr": 0.05
+}

@@ -1,0 +1,68 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="420" viewBox="0 0 1000 420" role="img" aria-labelledby="title desc">
+<title id="title">这次训练的 XOR 网络</title>
+<desc id="desc">真实的XOR MLP结构：四个样本一起组成shape为[4,2]的输入，经过Linear(2,8)与Tanh得到[4,8]隐藏特征，再经过Linear(8,2)得到shape为[4,2]的logits。长度为4的整数类别标签target与logits一起输入交叉熵，得到标量loss。网络共有42个参数：第一层2乘8加8，共24个；第二层8乘2加2，共18个。图中的每个节点代表一个特征，未把batch中的四个样本分开画。</desc>
+<style>text{font-family:"Noto Sans SC","Microsoft YaHei","PingFang SC",sans-serif;font-weight:400}.bold{font-weight:650}.mono{font-family:Consolas,"DejaVu Sans Mono",monospace}</style>
+<defs><marker id="arrow" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L8,4 L0,8 Z" fill="#706760"/></marker></defs>
+<rect width="1000" height="420" rx="16" fill="#fbf7f0"/>
+<text x="30" y="44" font-size="29" fill="#302c2a" text-anchor="start" class="bold">这次训练的 XOR 网络</text>
+<text x="30" y="81" font-size="23" fill="#706760" text-anchor="start" class="">4 个样本 · 2 → 8 → 2 · 42 个可训练参数</text>
+<text x="105" y="125" font-size="25" fill="#427e9a" text-anchor="middle" class="bold">输入</text>
+<text x="430" y="125" font-size="25" fill="#e18568" text-anchor="middle" class="bold">Linear(2,8) + Tanh</text>
+<text x="735" y="125" font-size="25" fill="#4c8164" text-anchor="middle" class="bold">Linear(8,2)</text>
+<line x1="117" y1="205" x2="420" y2="159" stroke="#d9cec3" stroke-width="1.5"/>
+<line x1="117" y1="205" x2="420" y2="181" stroke="#d9cec3" stroke-width="1.5"/>
+<line x1="117" y1="205" x2="420" y2="203" stroke="#d9cec3" stroke-width="1.5"/>
+<line x1="117" y1="205" x2="420" y2="225" stroke="#d9cec3" stroke-width="1.5"/>
+<line x1="117" y1="205" x2="420" y2="247" stroke="#d9cec3" stroke-width="1.5"/>
+<line x1="117" y1="205" x2="420" y2="269" stroke="#d9cec3" stroke-width="1.5"/>
+<line x1="117" y1="205" x2="420" y2="291" stroke="#d9cec3" stroke-width="1.5"/>
+<line x1="117" y1="205" x2="420" y2="313" stroke="#d9cec3" stroke-width="1.5"/>
+<line x1="117" y1="267" x2="420" y2="159" stroke="#d9cec3" stroke-width="1.5"/>
+<line x1="117" y1="267" x2="420" y2="181" stroke="#d9cec3" stroke-width="1.5"/>
+<line x1="117" y1="267" x2="420" y2="203" stroke="#d9cec3" stroke-width="1.5"/>
+<line x1="117" y1="267" x2="420" y2="225" stroke="#d9cec3" stroke-width="1.5"/>
+<line x1="117" y1="267" x2="420" y2="247" stroke="#d9cec3" stroke-width="1.5"/>
+<line x1="117" y1="267" x2="420" y2="269" stroke="#d9cec3" stroke-width="1.5"/>
+<line x1="117" y1="267" x2="420" y2="291" stroke="#d9cec3" stroke-width="1.5"/>
+<line x1="117" y1="267" x2="420" y2="313" stroke="#d9cec3" stroke-width="1.5"/>
+<line x1="440" y1="159" x2="723" y2="205" stroke="#d9cec3" stroke-width="1.5"/>
+<line x1="440" y1="159" x2="723" y2="267" stroke="#d9cec3" stroke-width="1.5"/>
+<line x1="440" y1="181" x2="723" y2="205" stroke="#d9cec3" stroke-width="1.5"/>
+<line x1="440" y1="181" x2="723" y2="267" stroke="#d9cec3" stroke-width="1.5"/>
+<line x1="440" y1="203" x2="723" y2="205" stroke="#d9cec3" stroke-width="1.5"/>
+<line x1="440" y1="203" x2="723" y2="267" stroke="#d9cec3" stroke-width="1.5"/>
+<line x1="440" y1="225" x2="723" y2="205" stroke="#d9cec3" stroke-width="1.5"/>
+<line x1="440" y1="225" x2="723" y2="267" stroke="#d9cec3" stroke-width="1.5"/>
+<line x1="440" y1="247" x2="723" y2="205" stroke="#d9cec3" stroke-width="1.5"/>
+<line x1="440" y1="247" x2="723" y2="267" stroke="#d9cec3" stroke-width="1.5"/>
+<line x1="440" y1="269" x2="723" y2="205" stroke="#d9cec3" stroke-width="1.5"/>
+<line x1="440" y1="269" x2="723" y2="267" stroke="#d9cec3" stroke-width="1.5"/>
+<line x1="440" y1="291" x2="723" y2="205" stroke="#d9cec3" stroke-width="1.5"/>
+<line x1="440" y1="291" x2="723" y2="267" stroke="#d9cec3" stroke-width="1.5"/>
+<line x1="440" y1="313" x2="723" y2="205" stroke="#d9cec3" stroke-width="1.5"/>
+<line x1="440" y1="313" x2="723" y2="267" stroke="#d9cec3" stroke-width="1.5"/>
+<circle cx="105" cy="205" r="12" fill="#e3f0f4" stroke="#427e9a" stroke-width="2"/>
+<circle cx="105" cy="267" r="12" fill="#e3f0f4" stroke="#427e9a" stroke-width="2"/>
+<circle cx="430" cy="159" r="9" fill="#fae4da" stroke="#e18568" stroke-width="2"/>
+<circle cx="430" cy="181" r="9" fill="#fae4da" stroke="#e18568" stroke-width="2"/>
+<circle cx="430" cy="203" r="9" fill="#fae4da" stroke="#e18568" stroke-width="2"/>
+<circle cx="430" cy="225" r="9" fill="#fae4da" stroke="#e18568" stroke-width="2"/>
+<circle cx="430" cy="247" r="9" fill="#fae4da" stroke="#e18568" stroke-width="2"/>
+<circle cx="430" cy="269" r="9" fill="#fae4da" stroke="#e18568" stroke-width="2"/>
+<circle cx="430" cy="291" r="9" fill="#fae4da" stroke="#e18568" stroke-width="2"/>
+<circle cx="430" cy="313" r="9" fill="#fae4da" stroke="#e18568" stroke-width="2"/>
+<circle cx="735" cy="205" r="12" fill="#e6efe5" stroke="#4c8164" stroke-width="2"/>
+<circle cx="735" cy="267" r="12" fill="#e6efe5" stroke="#4c8164" stroke-width="2"/>
+<line x1="748" y1="205" x2="840" y2="235" stroke="#4c8164" stroke-width="2"/>
+<line x1="748" y1="267" x2="840" y2="242" stroke="#4c8164" stroke-width="2"/>
+<rect x="850" y="212" width="120" height="58" rx="8" fill="#eee7f4" stroke="#8668a5" stroke-width="1.5"/>
+<text x="910" y="249" font-size="24" fill="#8668a5" text-anchor="middle" class="bold">CE loss</text>
+<text x="910" y="152" font-size="23" fill="#8668a5" text-anchor="middle" class="">target [4]</text>
+<line x1="910" y1="166" x2="910" y2="200" stroke="#706760" stroke-width="2" marker-end="url(#arrow)"/>
+<text x="910" y="311" font-size="23" fill="#8668a5" text-anchor="middle" class="">标量 loss</text>
+<text x="105" y="363" font-size="23" fill="#427e9a" text-anchor="middle" class="bold">batch [4,2]</text>
+<text x="430" y="363" font-size="23" fill="#e18568" text-anchor="middle" class="bold">[4,8]</text>
+<text x="735" y="363" font-size="23" fill="#4c8164" text-anchor="middle" class="bold">logits [4,2]</text>
+<line x1="30" y1="383" x2="970" y2="383" stroke="#d9cec3" stroke-width="1.5"/>
+<text x="500" y="410" font-size="23" fill="#302c2a" text-anchor="middle" class="">参数：(2×8 + 8) + (8×2 + 2) = 42</text>
+</svg>

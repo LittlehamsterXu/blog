@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="480" viewBox="0 0 1000 480" role="img" aria-labelledby="title desc">
+<title id="title">一轮训练怎样走完</title>
+<desc id="desc">上层是训练中的数据、梯度与参数依赖关系，不按真实时间排布。每轮先zero_grad清除上一轮梯度，保留模型权重。输入x经过model得到logits，结合标签y计算loss，backward通过Autograd写入参数的.grad，optimizer.step使用梯度更新模型权重，更新后的参数用于下一轮。下层单独表示需要在GPU执行的计算的调用与提交层次：Python与PyTorch API调用ATen，再进入CUDA实现或cuBLAS等库，将工作提交到Stream，最终由GPU执行。该层次覆盖前向、反向和更新阶段，不表示每个ATen操作都会提交CUDA kernel。</desc>
+<style>text{font-family:"Noto Sans SC","Microsoft YaHei","PingFang SC",sans-serif;font-weight:400}.bold{font-weight:650}.mono{font-family:Consolas,"DejaVu Sans Mono",monospace}</style>
+<defs><marker id="arrow" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L8,4 L0,8 Z" fill="#706760"/></marker></defs>
+<rect width="1000" height="480" rx="16" fill="#fbf7f0"/>
+<text x="30" y="44" font-size="29" fill="#302c2a" text-anchor="start" class="bold">一轮训练怎样走完</text>
+<text x="30" y="80" font-size="23" fill="#706760" text-anchor="start" class="">上层画训练依赖；下层画需要 GPU 计算时的调用路径。</text>
+<text x="30" y="123" font-size="22" fill="#8668a5" text-anchor="start" class="">每轮先 zero_grad()：清梯度，保留权重</text>
+<text x="472" y="121" font-size="22" fill="#8668a5" text-anchor="middle" class="">标签 y</text>
+<line x1="472" y1="129" x2="472" y2="142" stroke="#706760" stroke-width="2" marker-end="url(#arrow)"/>
+<rect x="30" y="153" width="150" height="70" rx="8" fill="#e3f0f4" stroke="#427e9a" stroke-width="1.5"/>
+<text x="105.0" y="195" font-size="23" fill="#427e9a" text-anchor="middle" class="bold">model(x)</text>
+<rect x="346" y="153" width="180" height="70" rx="8" fill="#fae4da" stroke="#e18568" stroke-width="1.5"/>
+<text x="436.0" y="195" font-size="23" fill="#e18568" text-anchor="middle" class="bold">loss(logits,y)</text>
+<text x="263" y="195" font-size="24" fill="#427e9a" text-anchor="middle" class="bold">logits</text>
+<rect x="574" y="153" width="160" height="70" rx="8" fill="#eee7f4" stroke="#8668a5" stroke-width="1.5"/>
+<text x="654" y="182" font-size="23" fill="#8668a5" text-anchor="middle" class="bold">backward()</text>
+<text x="654" y="211" font-size="22" fill="#302c2a" text-anchor="middle" class="">写参数 .grad</text>
+<rect x="780" y="153" width="190" height="70" rx="8" fill="#e6efe5" stroke="#4c8164" stroke-width="1.5"/>
+<text x="875" y="182" font-size="23" fill="#4c8164" text-anchor="middle" class="bold">optimizer.step()</text>
+<text x="875" y="211" font-size="22" fill="#302c2a" text-anchor="middle" class="">更新权重</text>
+<line x1="180" y1="188" x2="220" y2="188" stroke="#706760" stroke-width="2" marker-end="url(#arrow)"/>
+<line x1="309" y1="188" x2="336" y2="188" stroke="#706760" stroke-width="2" marker-end="url(#arrow)"/>
+<line x1="526" y1="188" x2="564" y2="188" stroke="#706760" stroke-width="2" marker-end="url(#arrow)"/>
+<line x1="734" y1="188" x2="770" y2="188" stroke="#706760" stroke-width="2" marker-end="url(#arrow)"/>
+<path d="M 875 223 V 273 H 105 V 233" fill="none" stroke="#706760" stroke-width="2" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<rect x="335" y="251" width="410" height="38" rx="4" fill="#fbf7f0" stroke="#fbf7f0" stroke-width="0"/>
+<text x="540" y="276" font-size="23" fill="#4c8164" text-anchor="middle" class="bold">下一轮用更新后的参数</text>
+<line x1="30" y1="308" x2="970" y2="308" stroke="#d9cec3" stroke-width="1.5"/>
+<text x="30" y="346" font-size="24" fill="#302c2a" text-anchor="start" class="bold">需要在 GPU 执行的计算，走下面的提交路径</text>
+<rect x="30" y="369" width="180" height="66" rx="8" fill="#e3f0f4" stroke="#427e9a" stroke-width="1.5"/>
+<text x="120.0" y="396" font-size="23" fill="#427e9a" text-anchor="middle" class="bold">Python /</text>
+<text x="120.0" y="424" font-size="23" fill="#427e9a" text-anchor="middle" class="">PyTorch API</text>
+<rect x="256" y="369" width="125" height="66" rx="8" fill="#e3f0f4" stroke="#427e9a" stroke-width="1.5"/>
+<text x="318.5" y="412" font-size="25" fill="#427e9a" text-anchor="middle" class="bold">ATen</text>
+<rect x="427" y="369" width="220" height="66" rx="8" fill="#eee7f4" stroke="#8668a5" stroke-width="1.5"/>
+<text x="537.0" y="396" font-size="23" fill="#8668a5" text-anchor="middle" class="bold">CUDA 实现 /</text>
+<text x="537.0" y="424" font-size="23" fill="#8668a5" text-anchor="middle" class="">cuBLAS 等</text>
+<rect x="693" y="369" width="130" height="66" rx="8" fill="#e6efe5" stroke="#4c8164" stroke-width="1.5"/>
+<text x="758.0" y="396" font-size="23" fill="#4c8164" text-anchor="middle" class="bold">Stream</text>
+<text x="758.0" y="424" font-size="23" fill="#4c8164" text-anchor="middle" class="">提交</text>
+<rect x="869" y="369" width="101" height="66" rx="8" fill="#fae4da" stroke="#e18568" stroke-width="1.5"/>
+<text x="919.5" y="412" font-size="25" fill="#e18568" text-anchor="middle" class="bold">GPU</text>
+<line x1="218" y1="402" x2="246" y2="402" stroke="#706760" stroke-width="2" marker-end="url(#arrow)"/>
+<line x1="389" y1="402" x2="417" y2="402" stroke="#706760" stroke-width="2" marker-end="url(#arrow)"/>
+<line x1="655" y1="402" x2="683" y2="402" stroke="#706760" stroke-width="2" marker-end="url(#arrow)"/>
+<line x1="831" y1="402" x2="859" y2="402" stroke="#706760" stroke-width="2" marker-end="url(#arrow)"/>
+<text x="500" y="469" font-size="22" fill="#706760" text-anchor="middle" class="">前向、反向、参数更新，都可能沿这条路径发出 GPU 工作。</text>
+</svg>

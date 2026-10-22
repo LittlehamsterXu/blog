@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="420" viewBox="0 0 1000 420" role="img" aria-labelledby="title desc">
+<title id="title">新图会重建，旧梯度不会自动清掉</title>
+<desc id="desc">同一个w等于2的叶子张量，x始终为3，不调用optimizer.step，因此w不变。三次forward分别创建三份新计算图，每次的loss等于(w乘x)的平方，每次backward贡献的w梯度均为36。第一次，w.grad从None变为36。第二次不清梯度，w.grad从36累积到72。第三次计算前执行w.grad等于None，第三次backward后重新为36。三个小图表示不同forward新建的计算图，不表示重复反向同一份已经释放的图。</desc>
+<style>text{font-family:"Noto Sans SC","Microsoft YaHei","PingFang SC",sans-serif;font-weight:400}.bold{font-weight:650}.mono{font-family:Consolas,"DejaVu Sans Mono",monospace}</style>
+<defs><marker id="arrow" markerWidth="7" markerHeight="7" refX="5.5" refY="3.5" orient="auto" markerUnits="strokeWidth"><path d="M0 0 7 3.5 0 7Z" fill="#706760"/></marker></defs>
+<rect width="1000" height="420" rx="16" fill="#fbf7f0"/>
+<text x="30" y="44" font-size="29" fill="#302c2a" class="bold">新图会重建，旧梯度不会自动清掉</text>
+<text x="30" y="81" font-size="23" fill="#706760">同一个 w = 2，x = 3；本例没有 optimizer.step()。</text>
+
+<rect x="30" y="108" width="290" height="211" rx="10" fill="#fae4da" stroke="#e18568" stroke-width="1.5"/>
+<text x="175" y="144" text-anchor="middle" font-size="25" fill="#302c2a" class="bold">① 第一次计算</text>
+<text x="175" y="177" text-anchor="middle" font-size="22" fill="#bf633f">forward → 新图 1</text>
+<text x="75" y="216" text-anchor="middle" font-size="23" fill="#302c2a" class="mono">w</text>
+<path d="M96 208 H148" stroke="#706760" stroke-width="2" marker-end="url(#arrow)"/>
+<text x="175" y="216" text-anchor="middle" font-size="23" fill="#302c2a" class="mono">v</text>
+<path d="M196 208 H238" stroke="#706760" stroke-width="2" marker-end="url(#arrow)"/>
+<text x="277" y="216" text-anchor="middle" font-size="23" fill="#302c2a" class="mono">loss</text>
+<text x="175" y="254" text-anchor="middle" font-size="23" fill="#bf633f">本次 backward：+36</text>
+<rect x="45" y="268" width="260" height="38" rx="6" fill="#fffaf6"/>
+<text x="175" y="295" text-anchor="middle" font-size="23" fill="#302c2a" class="mono">.grad: None → 36</text>
+
+<rect x="355" y="108" width="290" height="211" rx="10" fill="#e3f0f4" stroke="#427e9a" stroke-width="1.5"/>
+<text x="500" y="144" text-anchor="middle" font-size="25" fill="#302c2a" class="bold">② 不清，继续算</text>
+<text x="500" y="177" text-anchor="middle" font-size="22" fill="#427e9a">forward → 新图 2</text>
+<text x="400" y="216" text-anchor="middle" font-size="23" fill="#302c2a" class="mono">w</text>
+<path d="M421 208 H473" stroke="#706760" stroke-width="2" marker-end="url(#arrow)"/>
+<text x="500" y="216" text-anchor="middle" font-size="23" fill="#302c2a" class="mono">v</text>
+<path d="M521 208 H563" stroke="#706760" stroke-width="2" marker-end="url(#arrow)"/>
+<text x="602" y="216" text-anchor="middle" font-size="23" fill="#302c2a" class="mono">loss</text>
+<text x="500" y="254" text-anchor="middle" font-size="23" fill="#427e9a">本次 backward：+36</text>
+<rect x="370" y="268" width="260" height="38" rx="6" fill="#f7fbfc"/>
+<text x="500" y="295" text-anchor="middle" font-size="23" fill="#302c2a" class="mono">.grad: 36 → 72</text>
+
+<rect x="680" y="108" width="290" height="211" rx="10" fill="#e6efe5" stroke="#4c8164" stroke-width="1.5"/>
+<text x="825" y="144" text-anchor="middle" font-size="25" fill="#302c2a" class="bold">③ 清掉，再算</text>
+<text x="825" y="177" text-anchor="middle" font-size="22" fill="#4c8164">forward → 新图 3</text>
+<text x="725" y="216" text-anchor="middle" font-size="23" fill="#302c2a" class="mono">w</text>
+<path d="M746 208 H798" stroke="#706760" stroke-width="2" marker-end="url(#arrow)"/>
+<text x="825" y="216" text-anchor="middle" font-size="23" fill="#302c2a" class="mono">v</text>
+<path d="M846 208 H888" stroke="#706760" stroke-width="2" marker-end="url(#arrow)"/>
+<text x="927" y="216" text-anchor="middle" font-size="23" fill="#302c2a" class="mono">loss</text>
+<text x="825" y="254" text-anchor="middle" font-size="23" fill="#4c8164">本次 backward：+36</text>
+<rect x="695" y="268" width="260" height="38" rx="6" fill="#f8fbf6"/>
+<text x="825" y="295" text-anchor="middle" font-size="23" fill="#302c2a" class="mono">.grad: None → 36</text>
+
+<text x="500" y="359" text-anchor="middle" font-size="23" fill="#302c2a">第三次计算前：w.grad = None；w 的数值仍然是 2。</text>
+<line x1="30" y1="378" x2="970" y2="378" stroke="#d9cec3" stroke-width="1.5"/>
+<text x="500" y="407" text-anchor="middle" font-size="23" fill="#706760">每次都是新计算图；w.grad 在同一个 w 上累积。</text>
+</svg>

@@ -1,0 +1,275 @@
+{
+  "kernel_events": 24,
+  "stage_counts": {
+    "FORWARD": 5,
+    "BACKWARD": 12,
+    "OPTIMIZER": 7
+  },
+  "all_links_verified_by_external_id_and_correlation": true,
+  "cpu_stage_assignment": "matched CPU op contained in CPU user_annotation; autograd worker threads allowed",
+  "ids": "PID/TID/external_id/correlation remapped; timestamps normalized to first retained event",
+  "metadata_only_examples": [
+    {
+      "name": "aten::t",
+      "input_shapes": [
+        [
+          8,
+          2
+        ]
+      ],
+      "matched_gpu_kernels": 0
+    },
+    {
+      "name": "aten::transpose",
+      "input_shapes": [
+        [
+          8,
+          2
+        ],
+        [],
+        []
+      ],
+      "matched_gpu_kernels": 0
+    },
+    {
+      "name": "aten::t",
+      "input_shapes": [
+        [
+          4,
+          2
+        ]
+      ],
+      "matched_gpu_kernels": 0
+    },
+    {
+      "name": "aten::transpose",
+      "input_shapes": [
+        [
+          4,
+          2
+        ],
+        [],
+        []
+      ],
+      "matched_gpu_kernels": 0
+    },
+    {
+      "name": "aten::t",
+      "input_shapes": [
+        [
+          2,
+          8
+        ]
+      ],
+      "matched_gpu_kernels": 0
+    },
+    {
+      "name": "aten::transpose",
+      "input_shapes": [
+        [
+          2,
+          8
+        ],
+        [],
+        []
+      ],
+      "matched_gpu_kernels": 0
+    },
+    {
+      "name": "aten::view",
+      "input_shapes": [
+        [
+          1,
+          2
+        ],
+        []
+      ],
+      "matched_gpu_kernels": 0
+    },
+    {
+      "name": "aten::t",
+      "input_shapes": [
+        [
+          8,
+          2
+        ]
+      ],
+      "matched_gpu_kernels": 0
+    },
+    {
+      "name": "aten::transpose",
+      "input_shapes": [
+        [
+          8,
+          2
+        ],
+        [],
+        []
+      ],
+      "matched_gpu_kernels": 0
+    },
+    {
+      "name": "aten::t",
+      "input_shapes": [
+        [
+          4,
+          8
+        ]
+      ],
+      "matched_gpu_kernels": 0
+    },
+    {
+      "name": "aten::transpose",
+      "input_shapes": [
+        [
+          4,
+          8
+        ],
+        [],
+        []
+      ],
+      "matched_gpu_kernels": 0
+    },
+    {
+      "name": "aten::t",
+      "input_shapes": [
+        [
+          8,
+          2
+        ]
+      ],
+      "matched_gpu_kernels": 0
+    },
+    {
+      "name": "aten::transpose",
+      "input_shapes": [
+        [
+          8,
+          2
+        ],
+        [],
+        []
+      ],
+      "matched_gpu_kernels": 0
+    },
+    {
+      "name": "aten::view",
+      "input_shapes": [
+        [
+          1,
+          8
+        ],
+        []
+      ],
+      "matched_gpu_kernels": 0
+    },
+    {
+      "name": "aten::t",
+      "input_shapes": [
+        [
+          2,
+          8
+        ]
+      ],
+      "matched_gpu_kernels": 0
+    },
+    {
+      "name": "aten::transpose",
+      "input_shapes": [
+        [
+          2,
+          8
+        ],
+        [],
+        []
+      ],
+      "matched_gpu_kernels": 0
+    },
+    {
+      "name": "aten::t",
+      "input_shapes": [
+        [
+          8,
+          2
+        ]
+      ],
+      "matched_gpu_kernels": 0
+    },
+    {
+      "name": "aten::transpose",
+      "input_shapes": [
+        [
+          8,
+          2
+        ],
+        [],
+        []
+      ],
+      "matched_gpu_kernels": 0
+    },
+    {
+      "name": "aten::t",
+      "input_shapes": [
+        [
+          2,
+          8
+        ]
+      ],
+      "matched_gpu_kernels": 0
+    },
+    {
+      "name": "aten::transpose",
+      "input_shapes": [
+        [
+          2,
+          8
+        ],
+        [],
+        []
+      ],
+      "matched_gpu_kernels": 0
+    }
+  ],
+  "warning": "Dynamic events from one profiled step on this machine, not a universal kernel count or benchmark",
+  "run": {
+    "source": "fresh CUDA eager step",
+    "python": "3.12.15",
+    "torch": "2.14.1+cu130",
+    "cuda_build": "13.0",
+    "gpu": "NVIDIA GeForce RTX 4070 Laptop GPU",
+    "seed": 42,
+    "input": "xor",
+    "input_values": [
+      [
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        1.0
+      ],
+      [
+        1.0,
+        0.0
+      ],
+      [
+        1.0,
+        1.0
+      ]
+    ],
+    "target": [
+      0,
+      1,
+      1,
+      0
+    ],
+    "warmup_steps": 5,
+    "profiled_steps": 1,
+    "model": "Linear(2,8) -> Tanh -> Linear(8,2)",
+    "parameter_count": 42,
+    "optimizer": "Adam",
+    "lr": 0.05,
+    "loss": "CrossEntropyLoss",
+    "profiled_step_loss_before_update": 0.669570803642273
+  }
+}

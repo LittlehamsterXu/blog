@@ -1,0 +1,176 @@
+{
+  "input": [
+    [
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      1.0
+    ],
+    [
+      1.0,
+      0.0
+    ],
+    [
+      1.0,
+      1.0
+    ]
+  ],
+  "target": [
+    0,
+    1,
+    1,
+    0
+  ],
+  "prediction": [
+    0,
+    1,
+    1,
+    0
+  ],
+  "logits": [
+    [
+      3.5524981021881104,
+      -4.319626331329346
+    ],
+    [
+      -4.1846795082092285,
+      4.021024227142334
+    ],
+    [
+      -4.0317535400390625,
+      3.479585886001587
+    ],
+    [
+      3.7575345039367676,
+      -4.0188469886779785
+    ]
+  ],
+  "probabilities": [
+    [
+      0.9996188879013062,
+      0.0003810782509390265
+    ],
+    [
+      0.00027301692171022296,
+      0.9997269511222839
+    ],
+    [
+      0.0005465494468808174,
+      0.9994534850120544
+    ],
+    [
+      0.9995806813240051,
+      0.0004193515924271196
+    ]
+  ],
+  "final_loss_after_all_updates": 0.0004050757270306349,
+  "accuracy": 1.0,
+  "checkpoints_before_update": [
+    {
+      "epoch": 0,
+      "loss_before_update": 0.7392263412475586,
+      "first_layer_weight_grad_norm": 0.08262071758508682
+    },
+    {
+      "epoch": 50,
+      "loss_before_update": 0.009803501889109612,
+      "first_layer_weight_grad_norm": 0.0058183749206364155
+    },
+    {
+      "epoch": 100,
+      "loss_before_update": 0.0018033839296549559,
+      "first_layer_weight_grad_norm": 0.000961599696893245
+    },
+    {
+      "epoch": 150,
+      "loss_before_update": 0.0010843693744391203,
+      "first_layer_weight_grad_norm": 0.0005831436137668788
+    },
+    {
+      "epoch": 200,
+      "loss_before_update": 0.0007345229969359934,
+      "first_layer_weight_grad_norm": 0.00039403667324222624
+    },
+    {
+      "epoch": 250,
+      "loss_before_update": 0.0005336690810509026,
+      "first_layer_weight_grad_norm": 0.0002859740343410522
+    },
+    {
+      "epoch": 300,
+      "loss_before_update": 0.00040713121416047215,
+      "first_layer_weight_grad_norm": 0.00021811477199662477
+    }
+  ],
+  "probes": {
+    "gradient": {
+      "w_is_leaf": true,
+      "intermediate_is_leaf": false,
+      "intermediate_requires_grad": true,
+      "intermediate_grad_fn": "MulBackward0",
+      "input_grad_is_none": true,
+      "intermediate_grad_is_none_by_default": true,
+      "first_backward_w_grad": 36.0,
+      "new_graph_accumulated_w_grad": 72.0,
+      "clear_then_new_graph_w_grad": 36.0,
+      "same_graph_second_backward_raises": true,
+      "retained_intermediate_grad": 12.0
+    },
+    "sgd_update": {
+      "loss": 15.692784309387207,
+      "weight_before": [
+        [
+          0.5406103730201721,
+          0.5869042277336121
+        ]
+      ],
+      "weight_grad": [
+        [
+          -17.03756332397461,
+          -12.760025024414062
+        ]
+      ],
+      "weight_after": [
+        [
+          1.3924885988235474,
+          1.2249054908752441
+        ]
+      ],
+      "backward_leaves_weight_unchanged": true,
+      "step_matches_weight_minus_lr_times_grad": true
+    },
+    "modes": {
+      "cases": [
+        {
+          "training": true,
+          "grad_enabled": true,
+          "output_requires_grad": true
+        },
+        {
+          "training": true,
+          "grad_enabled": false,
+          "output_requires_grad": false
+        },
+        {
+          "training": false,
+          "grad_enabled": true,
+          "output_requires_grad": true
+        },
+        {
+          "training": false,
+          "grad_enabled": false,
+          "output_requires_grad": false
+        }
+      ],
+      "inference_mode": {
+        "training": false,
+        "grad_enabled": false,
+        "output_requires_grad": false,
+        "output_is_inference": true
+      },
+      "train_eval_logits_equal_for_this_model": true
+    }
+  }
+}

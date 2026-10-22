@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="420" viewBox="0 0 1000 420" role="img" aria-labelledby="title desc">
+<title id="title">从算子调用到 CUDA kernel</title>
+<desc id="desc">只展示本次XOR训练记录中的三个具体例子，不能推广到所有形状、设备或实现。aten::t、transpose与view只改变张量元数据，没有发出CUDA launch。Linear对应的aten::addmm由一项cuBLAS GEMM实现，发出1次launch。权重梯度中的aten::mm对应GEMM与split-K reduce两个CUDA kernel，发出2次launch。本次记录前向5个、反向12个、Adam更新7个，共24次CUDA kernel launch。图中的行与箭头表示调用对应关系，不表示时间或性能。</desc>
+<style>text{font-family:"Noto Sans SC","Microsoft YaHei","PingFang SC",sans-serif;font-weight:400}.bold{font-weight:650}.mono{font-family:Consolas,"DejaVu Sans Mono",monospace}</style>
+<defs><marker id="arrow" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L8,4 L0,8 Z" fill="#706760"/></marker></defs>
+<rect width="1000" height="420" rx="16" fill="#fbf7f0"/>
+<text x="30" y="44" font-size="29" fill="#302c2a" text-anchor="start" class="bold">从算子调用到 CUDA kernel</text>
+<text x="30" y="81" font-size="23" fill="#706760" text-anchor="start" class="">只看本次 XOR 训练记录里的三个例子</text>
+<text x="35" y="122" font-size="23" fill="#706760" text-anchor="start" class="bold">上层调用</text>
+<text x="650" y="122" font-size="23" fill="#706760" text-anchor="middle" class="bold">本次 GPU 工作</text>
+<text x="937" y="122" font-size="23" fill="#706760" text-anchor="middle" class="bold">launch</text>
+<line x1="30" y1="135" x2="970" y2="135" stroke="#d9cec3" stroke-width="1.5"/>
+<text x="35" y="179" font-size="23" fill="#302c2a" text-anchor="start" class="bold">aten::t / transpose / view</text>
+<text x="650" y="179" font-size="24" fill="#706760" text-anchor="middle" class="">仅改元数据</text>
+<rect x="907" y="149" width="60" height="44" rx="8" fill="white" stroke="#d9cec3" stroke-width="1.5"/>
+<text x="937" y="181" font-size="28" fill="#706760" text-anchor="middle" class="bold">0</text>
+<line x1="30" y1="209" x2="970" y2="209" stroke="#d9cec3" stroke-width="1.2"/>
+<text x="35" y="254" font-size="23" fill="#302c2a" text-anchor="start" class="bold">Linear：aten::addmm</text>
+<line x1="362" y1="246" x2="460" y2="246" stroke="#706760" stroke-width="2" marker-end="url(#arrow)"/>
+<rect x="478" y="223" width="330" height="47" rx="8" fill="#e3f0f4" stroke="#427e9a" stroke-width="1.5"/>
+<text x="643" y="254" font-size="24" fill="#427e9a" text-anchor="middle" class="bold">cuBLAS GEMM</text>
+<rect x="907" y="224" width="60" height="44" rx="8" fill="#e3f0f4" stroke="#427e9a" stroke-width="1.5"/>
+<text x="937" y="256" font-size="28" fill="#427e9a" text-anchor="middle" class="bold">1</text>
+<line x1="30" y1="285" x2="970" y2="285" stroke="#d9cec3" stroke-width="1.2"/>
+<text x="35" y="330" font-size="23" fill="#302c2a" text-anchor="start" class="bold">权重梯度：aten::mm</text>
+<line x1="362" y1="322" x2="460" y2="322" stroke="#706760" stroke-width="2" marker-end="url(#arrow)"/>
+<rect x="478" y="299" width="151" height="47" rx="8" fill="#eee7f4" stroke="#8668a5" stroke-width="1.5"/>
+<text x="553.5" y="330" font-size="24" fill="#8668a5" text-anchor="middle" class="bold">GEMM</text>
+<line x1="637" y1="322" x2="665" y2="322" stroke="#706760" stroke-width="2" marker-end="url(#arrow)"/>
+<rect x="675" y="299" width="207" height="47" rx="8" fill="#eee7f4" stroke="#8668a5" stroke-width="1.5"/>
+<text x="778.5" y="330" font-size="23" fill="#8668a5" text-anchor="middle" class="bold">split-K reduce</text>
+<rect x="907" y="300" width="60" height="44" rx="8" fill="#eee7f4" stroke="#8668a5" stroke-width="1.5"/>
+<text x="937" y="332" font-size="28" fill="#8668a5" text-anchor="middle" class="bold">2</text>
+<line x1="30" y1="366" x2="970" y2="366" stroke="#d9cec3" stroke-width="1.5"/>
+<text x="500" y="406" font-size="23" fill="#302c2a" text-anchor="middle" class="bold">本次 CUDA launches：Forward 5 + Backward 12 + Adam 7 = 24</text>
+</svg>

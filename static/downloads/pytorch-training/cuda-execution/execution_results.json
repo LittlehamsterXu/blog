@@ -1,0 +1,78 @@
+{
+  "environment": {
+    "python": "3.12.15",
+    "torch": "2.14.1+cu130",
+    "cuda_build": "13.0",
+    "gpu": "NVIDIA GeForce RTX 4070 Laptop GPU",
+    "seed": 42,
+    "dtype": "float32",
+    "allow_tf32": false
+  },
+  "async_call": {
+    "size": 2048,
+    "python_call_ms": 0.05601700104307383,
+    "until_gpu_completed_ms": 1.9654349998745602,
+    "note": "CPU wall time; second value includes synchronization overhead, not a pure CUDA kernel duration"
+  },
+  "dependent_streams": {
+    "size": 1024,
+    "expected_each_element": 2049.0,
+    "actual_first_element": 2049.0,
+    "correct": true,
+    "ordering": "default -> s1 -> s2 -> default",
+    "allocator_lifetime": "c.record_stream(s2) records storage use; it does not establish execution ordering"
+  },
+  "independent_streams": {
+    "size": 1024,
+    "warmup_per_mode": 5,
+    "repeats_per_mode": 20,
+    "one_stream_event_ms": [
+      0.5375999808311462,
+      0.6081920266151428,
+      0.536575973033905,
+      0.536575973033905,
+      0.5355520248413086,
+      0.5427200198173523,
+      0.536575973033905,
+      0.5559359788894653,
+      0.5355520248413086,
+      1.1222399473190308,
+      0.5744640231132507,
+      0.5447360277175903,
+      0.5427200198173523,
+      0.5478399991989136,
+      0.5499200224876404,
+      0.5888000130653381,
+      0.536575973033905,
+      0.5560320019721985,
+      0.5509120225906372,
+      0.5437440276145935
+    ],
+    "two_streams_event_ms": [
+      0.6072319746017456,
+      0.6010879874229431,
+      0.6104639768600464,
+      0.6028800010681152,
+      0.6174719929695129,
+      0.6174719929695129,
+      0.5901439785957336,
+      0.6288639903068542,
+      0.6136959791183472,
+      0.6021119952201843,
+      0.605184018611908,
+      0.6184960007667542,
+      0.6050879955291748,
+      0.6072319746017456,
+      0.6154239773750305,
+      0.6007360219955444,
+      0.5959360003471375,
+      0.6279680132865906,
+      0.5958719849586487,
+      0.5959680080413818
+    ],
+    "one_stream_median_ms": 0.5442400276660919,
+    "two_streams_median_ms": 0.6062079966068268,
+    "timer": "CUDA events on main stream; both work streams wait for start, main joins both before end",
+    "note": "Two independent GEMMs; ordering modes, GPU clock, load and size can change the observed result"
+  }
+}

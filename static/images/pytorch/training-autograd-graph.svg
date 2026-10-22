@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="420" viewBox="0 0 1000 420" role="img" aria-labelledby="title desc">
+<title id="title">反向沿图求导，梯度留在哪里？</title>
+<desc id="desc">标量实验：w等于2，是requires_grad为True的叶子张量；x等于3，requires_grad为False。前向计算v等于w乘x，得到6，v为非叶子张量；loss等于v的平方，得到36。反向时，loss对v的导数为2v等于12，再乘x得到loss对w的导数为36，累积到w.grad。x不累积梯度。v参与求导，但默认不保留.grad，调用retain_grad后才保留。上排灰箭头表示前向依赖，下排橙箭头表示链式法则的反向传播。</desc>
+<style>text{font-family:"Noto Sans SC","Microsoft YaHei","PingFang SC",sans-serif;font-weight:400}.bold{font-weight:650}.mono{font-family:Consolas,"DejaVu Sans Mono",monospace}</style>
+<defs>
+  <marker id="forward" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto" markerUnits="strokeWidth"><path d="M0 0 8 4 0 8Z" fill="#706760"/></marker>
+  <marker id="backward" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto" markerUnits="strokeWidth"><path d="M0 0 8 4 0 8Z" fill="#bf633f"/></marker>
+</defs>
+<rect width="1000" height="420" rx="16" fill="#fbf7f0"/>
+<text x="30" y="44" font-size="29" fill="#302c2a" class="bold">反向沿图求导，梯度留在哪里？</text>
+<text x="30" y="81" font-size="23" fill="#706760">上排算数值，下排用链式法则把梯度传回来。</text>
+
+<rect x="30" y="107" width="275" height="70" rx="9" fill="#fae4da" stroke="#e18568" stroke-width="1.5"/>
+<text x="167.5" y="136" text-anchor="middle" font-size="25" fill="#302c2a" class="bold">w = 2 · leaf</text>
+<text x="167.5" y="163" text-anchor="middle" font-size="22" fill="#706760" class="mono">requires_grad=True</text>
+<rect x="30" y="199" width="275" height="70" rx="9" fill="#eee9e2" stroke="#b7aa9d" stroke-width="1.5"/>
+<text x="167.5" y="228" text-anchor="middle" font-size="25" fill="#302c2a" class="bold">x = 3</text>
+<text x="167.5" y="255" text-anchor="middle" font-size="22" fill="#706760" class="mono">requires_grad=False</text>
+
+<path d="M305 142 L407 180" fill="none" stroke="#706760" stroke-width="2" marker-end="url(#forward)"/>
+<path d="M305 234 L407 213" fill="none" stroke="#706760" stroke-width="2" marker-end="url(#forward)"/>
+<rect x="420" y="150" width="240" height="91" rx="9" fill="#e3f0f4" stroke="#427e9a" stroke-width="1.5"/>
+<text x="540" y="185" text-anchor="middle" font-size="26" fill="#302c2a" class="bold">v = w × x = 6</text>
+<text x="540" y="219" text-anchor="middle" font-size="22" fill="#427e9a">non-leaf · 参与求导</text>
+<path d="M660 195 L758 195" fill="none" stroke="#706760" stroke-width="2" marker-end="url(#forward)"/>
+<rect x="772" y="150" width="198" height="91" rx="9" fill="#e6efe5" stroke="#4c8164" stroke-width="1.5"/>
+<text x="871" y="181" text-anchor="middle" font-size="26" fill="#302c2a" class="bold">loss = v²</text>
+<text x="871" y="222" text-anchor="middle" font-size="27" fill="#4c8164" class="bold">= 36</text>
+
+<line x1="30" y1="290" x2="970" y2="290" stroke="#d9cec3" stroke-width="1.5"/>
+<text x="30" y="341" font-size="23" fill="#bf633f" class="bold">反向</text>
+<text x="167.5" y="342" text-anchor="middle" font-size="26" fill="#bf633f" class="bold">w</text>
+<text x="540" y="342" text-anchor="middle" font-size="26" fill="#bf633f" class="bold">v</text>
+<text x="871" y="342" text-anchor="middle" font-size="26" fill="#bf633f" class="bold">loss</text>
+<path d="M508 334 H203" fill="none" stroke="#bf633f" stroke-width="2.5" marker-end="url(#backward)"/>
+<text x="355" y="322" text-anchor="middle" font-size="22" fill="#bf633f">∂loss/∂w = 12 × x = 36</text>
+<path d="M828 334 H575" fill="none" stroke="#bf633f" stroke-width="2.5" marker-end="url(#backward)"/>
+<text x="701" y="322" text-anchor="middle" font-size="22" fill="#bf633f">∂loss/∂v = 2v = 12</text>
+<text x="500" y="376" text-anchor="middle" font-size="22" fill="#302c2a">w.grad = 36；x 不累积 .grad。</text>
+<text x="500" y="409" text-anchor="middle" font-size="22" fill="#706760">v 默认不留 .grad；retain_grad() 后才保留。</text>
+</svg>
