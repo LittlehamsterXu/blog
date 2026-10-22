@@ -1,7 +1,7 @@
 ---
 title: "Triton Coalesce：布局是怎样选出来的"
 date: 2026-10-19
-draft: true
+draft: false
 tags: [Triton, MLIR, GPU Compiler, CUDA, AI Infra]
 categories: [AI Infra]
 description: "用一个 32×32 的矩阵转置，沿着 AxisInfo、Coalesce 和 RemoveLayoutConversions，看看布局怎样被选出来，又怎样变成最后的 Shared Memory 交换。"

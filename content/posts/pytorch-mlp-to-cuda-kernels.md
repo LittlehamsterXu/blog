@@ -1,7 +1,7 @@
 ---
 title: "PyTorch 训练与执行基础"
 date: 2026-10-22
-draft: true
+draft: false
 tags: [PyTorch, CUDA, Autograd, Profiler, AI Infra]
 categories: [AI Infra]
 description: "从四个 XOR 样本开始，弄清模型、梯度和参数更新，再沿着 Profiler 与 Perfetto，找到一次训练迭代里的 24 次 CUDA kernel 启动。"
