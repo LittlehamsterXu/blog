@@ -1,0 +1,244 @@
+=== single_attention.py ===
+X:       torch.Size([2, 4, 8])
+Q:       torch.Size([2, 4, 8])
+Scores:  torch.Size([2, 4, 4])
+Weights: torch.Size([2, 4, 4])
+V:       torch.Size([2, 4, 8])
+Output:  torch.Size([2, 4, 8])
+
+Attention weights of batch 0:
+tensor([[1.0000, 0.0000, 0.0000, 0.0000],
+        [0.3748, 0.6252, 0.0000, 0.0000],
+        [0.3518, 0.2858, 0.3624, 0.0000],
+        [0.4017, 0.2569, 0.2340, 0.1074]])
+
+Sum of each row:
+tensor([1., 1., 1., 1.], device='cuda:0', grad_fn=<SumBackward1>)
+
+=== multi_head_attention.py ===
+Causal Attention:
+tensor([[1.0000, 0.0000, 0.0000],
+        [0.4726, 0.5274, 0.0000],
+        [0.3276, 0.3687, 0.3037]], grad_fn=<SelectBackward0>)
+
+Full Self-Attention:
+tensor([[0.3259, 0.3638, 0.3104],
+        [0.3261, 0.3639, 0.3099],
+        [0.3276, 0.3687, 0.3037]], grad_fn=<SelectBackward0>)
+
+两种模式下，第三个 Token 的权重：
+Causal: tensor([0.3276, 0.3687, 0.3037], grad_fn=<SelectBackward0>)
+Full:   tensor([0.3276, 0.3687, 0.3037], grad_fn=<SelectBackward0>)
+
+=== positional_encoding_experiment.py ===
+Token embeddings:
+tensor([[[1., 0., 1., 0.],
+         [1., 0., 1., 0.],
+         [1., 0., 1., 0.]]])
+
+Positional encodings:
+tensor([[[ 0.000,  1.000,  0.000,  1.000],
+         [ 0.841,  0.540,  0.010,  1.000],
+         [ 0.909, -0.416,  0.020,  1.000]]])
+
+========== Without positional encoding ==========
+Q:
+tensor([[1., 0., 1., 0.],
+        [1., 0., 1., 0.],
+        [1., 0., 1., 0.]])
+Attention scores:
+tensor([[1., 1., 1.],
+        [1., 1., 1.],
+        [1., 1., 1.]])
+Attention weights:
+tensor([[0.333, 0.333, 0.333],
+        [0.333, 0.333, 0.333],
+        [0.333, 0.333, 0.333]])
+Context:
+tensor([[1., 0., 1., 0.],
+        [1., 0., 1., 0.],
+        [1., 0., 1., 0.]])
+
+========== With positional encoding ==========
+Q:
+tensor([[ 1.000,  1.000,  1.000,  1.000],
+        [ 1.841,  0.540,  1.010,  1.000],
+        [ 1.909, -0.416,  1.020,  1.000]])
+Attention scores:
+tensor([[2.000, 2.196, 1.756],
+        [2.196, 2.851, 2.661],
+        [1.756, 2.661, 2.929]])
+Attention weights:
+tensor([[0.333, 0.405, 0.261],
+        [0.221, 0.426, 0.352],
+        [0.149, 0.369, 0.482]])
+Context:
+tensor([[1.579, 0.444, 1.009, 1.000],
+        [1.679, 0.305, 1.011, 1.000],
+        [1.749, 0.148, 1.013, 1.000]])
+
+Maximum attention-weight difference:
+0.18409395217895508
+
+=== transformer_encoder.py ===
+Token IDs:
+tensor([[11, 25, 70,  0,  0],
+        [ 9,  3,  2,  4,  1]])
+
+Padding mask (True means PAD):
+tensor([[False, False, False,  True,  True],
+        [False, False, False, False, False]])
+
+First sample, Head 1, Query 1:
+Without mask: tensor([0.143, 0.190, 0.247, 0.209, 0.211])
+With mask:    tensor([0.247, 0.327, 0.426, 0.000, 0.000])
+
+Encoder output shape: torch.Size([2, 5, 16])
+Hidden states: 7
+Number of layers: 6
+
+First layer, first sample, Head 1:
+tensor([[0.247, 0.327, 0.426, 0.000, 0.000],
+        [0.786, 0.095, 0.119, 0.000, 0.000],
+        [0.091, 0.465, 0.443, 0.000, 0.000],
+        [0.304, 0.305, 0.392, 0.000, 0.000],
+        [0.301, 0.304, 0.395, 0.000, 0.000]])
+
+All layers: PAD key weights are zero.
+All layers: attention row sums are 1.
+All outputs finite: True
+Padding mask test passed!
+
+Tracked token ID: 70
+Position: 2
+
+Embedding + Position
+First 4 dimensions: tensor([-0.925,  2.584, -0.284,  0.091])
+Distance from initial: 0.0
+Cosine similarity to initial: 1.0
+
+Block 1
+First 4 dimensions: tensor([-0.947,  2.097,  0.063,  0.030])
+Distance from initial: 1.1949
+Cosine similarity to initial: 0.9742
+
+Block 2
+First 4 dimensions: tensor([-1.289,  1.839,  0.031,  0.064])
+Distance from initial: 1.5985
+Cosine similarity to initial: 0.9441
+
+Block 3
+First 4 dimensions: tensor([-1.097,  2.047,  0.097,  0.260])
+Distance from initial: 2.0422
+Cosine similarity to initial: 0.9009
+
+Block 4
+First 4 dimensions: tensor([-0.593,  1.891,  0.023,  0.354])
+Distance from initial: 2.4322
+Cosine similarity to initial: 0.8543
+
+Block 5
+First 4 dimensions: tensor([-0.208,  1.918,  0.301,  0.093])
+Distance from initial: 2.7552
+Cosine similarity to initial: 0.8096
+
+Block 6
+First 4 dimensions: tensor([-0.331,  0.976, -0.290,  0.205])
+Distance from initial: 3.8346
+Cosine similarity to initial: 0.6196
+
+=== cross_attention.py ===
+Encoder output: torch.Size([2, 5, 16])
+Decoder hidden: torch.Size([2, 3, 16])
+Attention weights: torch.Size([2, 4, 3, 5])
+Cross-attention output: torch.Size([2, 3, 16])
+Weight row sums: tensor([[[1.000, 1.000, 1.000],
+         [1.000, 1.000, 1.000],
+         [1.000, 1.000, 1.000],
+         [1.000, 1.000, 1.000]],
+
+        [[1.000, 1.000, 1.000],
+         [1.000, 1.000, 1.000],
+         [1.000, 1.000, 1.000],
+         [1.000, 1.000, 1.000]]], grad_fn=<SumBackward1>)
+
+=== teacher_forcing_loss.py ===
+Full sequences: torch.Size([2, 5])
+Decoder input: torch.Size([2, 4])
+Targets: torch.Size([2, 4])
+
+Decoder input:
+tensor([[1, 2, 3, 4],
+        [1, 3, 2, 4]])
+
+Targets:
+tensor([[2, 3, 4, 5],
+        [3, 2, 4, 5]])
+
+Logits shape: torch.Size([2, 4, 6])
+Cross-Entropy Loss: 2.072
+LM head gradient norm: 1.578478
+Optimizer step completed.
+
+=== decoder_kv_cache.py ===
+Incremental decoding:
+Step 1: input=(2, 1), logits=(2, 1, 20), cache_len=1
+Step 2: input=(2, 1), logits=(2, 1, 20), cache_len=2
+Step 3: input=(2, 1), logits=(2, 1, 20), cache_len=3
+Step 4: input=(2, 1), logits=(2, 1, 20), cache_len=4
+Step 5: input=(2, 1), logits=(2, 1, 20), cache_len=5
+
+Full logits shape: torch.Size([2, 5, 20])
+Cached logits shape: torch.Size([2, 5, 20])
+Maximum absolute difference: 4.76837158203125e-07
+PASS: Full decoding and KV-cache decoding match.
+Layer 1: K=(2, 4, 5, 4), V=(2, 4, 5, 4)
+Layer 2: K=(2, 4, 5, 4), V=(2, 4, 5, 4)
+
+=== train_attention.py ===
+Initial loss: 0.6855
+Q projection gradient norm: 0.0593109056353569
+K projection gradient norm: 0.07417615503072739
+V projection gradient norm: 0.13933216035366058
+
+Final loss: 0.0000
+Q projection parameter change: 0.1798643320798874
+
+First sample, Head 1 attention before training:
+tensor([[1.000, 0.000, 0.000, 0.000, 0.000],
+        [0.490, 0.510, 0.000, 0.000, 0.000],
+        [0.308, 0.382, 0.309, 0.000, 0.000],
+        [0.247, 0.255, 0.244, 0.253, 0.000],
+        [0.183, 0.225, 0.183, 0.224, 0.185]])
+
+First sample, Head 1 attention after training:
+tensor([[1.000, 0.000, 0.000, 0.000, 0.000],
+        [0.000, 1.000, 0.000, 0.000, 0.000],
+        [0.455, 0.000, 0.545, 0.000, 0.000],
+        [0.000, 0.527, 0.000, 0.473, 0.000],
+        [0.292, 0.000, 0.353, 0.000, 0.355]])
+
+Predictions:
+tensor([[1, 0, 1, 0, 1],
+        [0, 1, 0, 1, 0]])
+
+Targets:
+tensor([[1, 0, 1, 0, 1],
+        [0, 1, 0, 1, 0]])
+
+=== attention_ablation.py ===
+
+Without Attention
+Test loss: 0.6733
+Accuracy by position: [1.0, 0.49853515625, 0.497314453125, 0.49609375, 0.504150390625]
+
+With Attention
+Test loss: 0.0000
+Accuracy by position: [1.0, 1.0, 1.0, 1.0, 1.0]
+Example input: [0, 1, 0, 0, 0]
+Head 1 attention:
+tensor([[1.000, 0.000, 0.000, 0.000, 0.000],
+        [0.995, 0.005, 0.000, 0.000, 0.000],
+        [0.890, 0.020, 0.090, 0.000, 0.000],
+        [0.820, 0.017, 0.076, 0.087, 0.000],
+        [0.695, 0.016, 0.068, 0.077, 0.143]])
