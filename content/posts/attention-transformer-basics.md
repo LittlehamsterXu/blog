@@ -25,7 +25,7 @@ Q、K、V 都从同一份输入算出来，为什么还需要三套投影？多�
 
 ### 不同位置怎样交换信息
 
-先不用句子，也先不讨论一个词应该关注另一个词的什么含义。
+先用一串数字，把位置之间的关系看清楚。
 
 随机生成一条长度为 5 的 0/1 序列，让每个位置都预测这条序列的第一个 Token：
 
@@ -40,9 +40,9 @@ Q、K、V 都从同一份输入算出来，为什么还需要三套投影？多�
 
 Attention 在这里提供的，就是这条跨位置的读取通路。某个位置可以根据当前表示，给其他位置分配权重，再把那些位置的信息取回来。
 
-这也是 `attention_ablation.py` 比较有意思的地方。它没有只训练两条固定序列，而是每一步都重新生成随机样本，评估时也换一批。后面会回到这个实验，看训练结果是否真的支持这个解释。
+`attention_ablation.py` 做的就是这个任务：每一步重新生成随机序列，让模型学会把开头的信息传到后面。后面再来看它的训练结果。
 
-Transformer 把这种跨位置交互放进了网络的基本模块里。训练时，一层里各位置的 Attention 可以组织成矩阵运算；不必为了得到第 5 个位置的这一层输出，先依次算完第 1、2、3、4 个位置的同层输出。代价也很直观：下面这个朴素实现会显式构造一张随序列长度平方增长的分数矩阵。
+Transformer 把这种跨位置交互放进了网络的基本模块里。一层里各位置的 Attention 可以一起组织成矩阵运算。后面会看到，这个实现把所有位置两两配对，形成一张随序列长度平方增长的分数矩阵。
 
 ### 匹配分数与加权输出
 
@@ -61,7 +61,7 @@ v = v_proj(x)  # [B, T, d_v]
 
 可以先把 Q 理解成当前位置拿来发起匹配的表示，把 K 理解成各位置拿来参与匹配的表示。V 则是匹配完成后，真正参与加权汇总的内容。
 
-这些名字是在描述它们在计算里的用途。初始的随机参数并不知道哪个词是主语，也没有人为给某个维度写上“语义”的标签。
+三个名字对应三种计算用途。训练时，投影参数会随着下游任务的 loss 一起更新，让匹配与汇总逐渐适合当前任务。
 
 ```python
 scores = q @ k.transpose(-2, -1)  # [B, T, T]
@@ -84,7 +84,7 @@ $$
 o_i=0.2v_0+0.3v_1+0.5v_2
 $$
 
-权重有几个数，取决于有多少个 Key；输出有几个特征，取决于 V 的宽度。即使碰巧 `T == d_v`、两者 shape 相同，也不能因此把它们当成同一种东西。
+权重有几个数，取决于有多少个 Key；输出有几个特征，取决于 V 的宽度。前者描述怎样读，后者是读回来后得到的表示。
 
 ### 缩放与 Softmax
 
@@ -101,15 +101,13 @@ $$
 
 先用一个简化假设看量级：如果 Q、K 各分量相互独立，均值为 0、方差为 1，点积累加 \(d_k\) 项后的方差就是 \(d_k\)。维度变大，分数的波动也会变大；Softmax 更容易把分布压得很尖，进入梯度很小的区域。除以根号维度，是把这种量级变化压回来。[原论文 §3.2.1](https://arxiv.org/html/1706.03762v7#S3.SS2.SSS1)给出了这段动机。
 
-这里并不是保证实际训练中的 Q、K 永远满足这个分布，只是解释这个缩放因子从哪里来。
-
 缩放要发生在 Softmax **之前**，因为它要改变的是归一化后的相对分布：
 
 ```python
 torch.softmax(scores / math.sqrt(d_k), dim=-1)
 ```
 
-如果先 Softmax，再把结果除以 `sqrt(d_k)`，得到的是另一种计算，连每行和为 1 都不再满足。Softmax 是非线性的，不能把这个除法随手挪出去。
+Softmax 是非线性的。先把分数缩小，会让归一化后的分布更平缓；先算概率再缩小，只会整体改变概率的总和。这也是两种写法得到不同结果的原因。
 
 还要把两种 Softmax 分开记。这里的 Softmax 是在 Key 位置之间分配读取权重；语言模型最后如果要得到下一个 Token 的概率，才是在词表维度上做 Softmax。后者训练时仍然可以直接把 logits 交给 Cross-Entropy，和上一篇一样。
 
@@ -131,9 +129,9 @@ q = q.reshape(B, T, H, d).transpose(1, 2)
 
 第一步 `reshape` 把**投影后的特征维**拆成 `H × d`，第二步 `transpose` 把 Head 维挪到序列维前面，方便后面按 batch、按 Head 做矩阵乘法。
 
-每个 Head 仍然拥有全部 `T` 个位置。不是第一个 Head 看前半句话，第二个 Head 看后半句话。
+每个 Head 都拥有完整的 `T` 个位置，只是每个位置的特征宽度变成了 `d`。
 
-一个大 Linear 也不表示各 Head 共用同一组投影结果。把输出特征按 Head 分组后，每组对应的是权重矩阵中不同的输出参数块；它们都能读取完整的输入特征。
+把大 Linear 的输出特征按 Head 分组后，每组对应权重矩阵中不同的输出参数块。它们都能读取完整的输入特征，各自得到一份投影。
 
 ![多头注意力的张量形状变化：以batch为2、序列长3、模型宽4、两个head为例，投影后拆分特征并交换维度，计算各head的context，再交换回来合并并做输出投影。](/images/transformer/multi-head-shapes.svg "图里用 B=2 把 batch 维也保留下来。Head 拆的是特征；每个 Head 都保留完整序列。")
 
@@ -148,7 +146,7 @@ q = q.reshape(B, T, H, d).transpose(1, 2)
 | 合并后的 context | `[B, T, D]` |
 | 输出投影后 | `[B, T, D]` |
 
-这里缩放用的是 `sqrt(d)`，也就是**每个 Head 的 Key 宽度**，不是整个 `D`。
+这里缩放用的是 `sqrt(d)`，也就是**每个 Head 的 Key 宽度**。
 
 ### 合并与输出投影
 
@@ -161,15 +159,15 @@ context = context.reshape(B, T, D)
 output = self.out_proj(context)
 ```
 
-不能从 `[B,H,T,d]` 直接 `reshape(B,T,D)`，那样只是按当前元素次序重新分组，Head 和 Token 会混在错误的位置上。
+这次 `transpose` 把 Token 维放回 Head 维前面，后面的 `reshape` 才能把同一个 Token 在各个 Head 上的结果拼到一起。直接 reshape 会沿当前元素次序重新分组，把 Head 和 Token 混在一起。
 
-这里显式写 `contiguous()`，是让交换维度后的数据按新次序连续存放，再合并最后两个维度。原来的多头小脚本用了 `transpose(...).reshape(...)`，同样可以得到正确结果，因为 `reshape` 必要时会复制；它不保证永远只是改一下元数据。
+这里显式写 `contiguous()`，让交换维度后的数据按新次序连续存放，再合并最后两个维度。原来的多头小脚本用的是 `transpose(...).reshape(...)`，其中 `reshape` 会在需要时完成这份复制。
 
 合并 Head 只是把结果拼起来。后面的 `out_proj` 才进一步混合各 Head 的特征。本文实现的 Q/K/V 和输出宽度都取 `D`，因此 Attention 的输入和输出可以保持同样的 shape，方便后面做残差相加。
 
-观察不同 Head 时，打印 `weights[0, 0]`、`weights[0, 1]` 就能分别看到两张矩阵。随机初始化时它们通常已经不同，但这只能说明计算不同，还不能说某个 Head 已经学会了语法或指代。
+打印 `weights[0, 0]`、`weights[0, 1]`，就能分别看到两个 Head 的权重。先看随机初始化后的状态：
 
-补充核验固定种子为 7，关闭 Causal Mask 后，这两个未训练 Head 的权重是：
+固定种子为 7，关闭 Causal Mask，得到：
 
 ```text
 Head 0                  Head 1
@@ -178,7 +176,7 @@ Head 0                  Head 1
 0.263  0.398  0.339      0.281  0.369  0.351
 ```
 
-每一张仍然是“三个 Query，各自在三个 Key 之间分配权重”。两张矩阵不同，输入长度却没有被切成两份。
+每一张都是“三个 Query，各自在三个 Key 之间分配权重”。两套投影给出了不同的分布，而序列长度始终是 3。
 
 ### 最小实现
 
@@ -232,7 +230,7 @@ class MultiHeadAttention(nn.Module):
         return self.out_proj(context), weights
 ```
 
-这里为了观察权重没有加入 Dropout，也没有使用融合 Attention 接口。原学习文件中，带 Causal Mask 的多头版本和带 Padding Mask 的 Encoder 版本是分开的；上面把公共部分收在一起，不影响接下来分别看它们的作用。
+为了逐步观察权重，这里直接写出矩阵乘法和 Softmax，并保持 Dropout 关闭。上面的接口把学习文件里分开的 Causal Mask 与 Padding Mask 收在了一起，接下来分别看它们的作用。
 
 ## 位置与 Mask
 
@@ -242,7 +240,7 @@ class MultiHeadAttention(nn.Module):
 
 ### 位置表示
 
-先去掉位置表示和 Mask，只看普通的全序列 Self-Attention。如果把输入 Token 的顺序一起置换，Q、K、V 也跟着置换，输出会按相同方式置换。这种计算本身没有额外给一个 Token 标出“我是第 3 个位置”。
+先去掉位置表示和 Mask，只看普通的全序列 Self-Attention。如果把输入 Token 的顺序一起置换，Q、K、V 也跟着置换，输出会按相同方式置换。要把“我在第 3 个位置”这条信息带进计算，还需要给输入加上位置表示。
 
 更直观的验证在 `positional_encoding_experiment.py` 里：三个位置都使用相同的内容向量 `[1,0,1,0]`，并把 Q/K/V 投影设成恒等映射，避免投影参数干扰。
 
@@ -277,11 +275,11 @@ pe[:, 1::2] = torch.cos(position * div_term)
 x = embeddings + pe.unsqueeze(0)
 ```
 
-加完以后，即使三个位置的 Token 内容完全相同，它们进入 Attention 的向量也已经不同，匹配分数和权重会随之改变。这里验证的是“位置进入了计算”，还没有训练一个模型去理解这些差异。
+加完以后，即使三个位置的 Token 内容完全相同，进入 Attention 的向量也已经不同，匹配分数和权重会随之改变。把输入、分数和权重并排打印出来，位置编码怎样影响结果就很直观了。
 
-![相同Token在不加位置编码时得到均匀的三乘三Attention权重；加入正弦位置编码后，三行权重分别发生变化。两张热力图使用相同的零到一色标，数据来自恒等投影、无Mask的实际实验。](/images/transformer/position-weights.svg "这张图只改变了位置输入。两边均没有训练，也没有换投影参数。")
+![相同Token在不加位置编码时得到均匀的三乘三Attention权重；加入正弦位置编码后，三行权重分别发生变化。两张热力图使用相同的零到一色标，数据来自恒等投影、无Mask的实际实验。](/images/transformer/position-weights.svg "两边使用相同内容和恒等投影，对比加入正弦位置编码前后的权重。")
 
-后面的完整 Encoder 使用的是**可学习的位置参数**，不是这份正弦编码：
+后面的完整 Encoder 选用**可学习的位置参数**：
 
 ```python
 self.pos_emb = nn.Parameter(torch.randn(1, max_len, d_model) * 0.02)
@@ -347,17 +345,17 @@ scores = scores.masked_fill(
 屏蔽后：0.247  0.327  0.426  0.000  0.000
 ```
 
-最后两列清零，前三列重新归一化，而不是把后两项删掉后保留旧权重。
+最后两列清零，前三列重新归一化，原先分给 PAD 的权重就回到了有效位置上。
 
-但 **PAD Key 权重为零，不等于 PAD Query 的输出为零**。
+再看 PAD 自己作为 Query 时会发生什么。
 
 PAD 位置作为 Query，仍然可以读取前面三个有效 Key。即使 `nn.Embedding(..., padding_idx=0)` 的 PAD 行初始为零，也会加上位置向量，后面还会经过 Attention、残差和 FFN。这个 PAD 位置的隐藏状态完全可能非零。
 
-如果下游要做池化，就要排除这些位置；如果要逐 Token 算 loss，就需要让损失忽略相应目标。这里没有必要为了“看起来像 PAD”，强求每一层的那几行都自动归零。
+下游做池化时，把有效位置筛出来；逐 Token 算 loss 时，让损失忽略 PAD 目标。这样就能把 Attention 中的信息读取和下游的数据使用接起来。
 
-还要留意全被屏蔽的行。这个手写版本直接对 `[-inf,-inf,...]` 做 Softmax 会得到 NaN。当前两个样本都有有效 Key，不触发这个问题；前面合并后的最小实现则显式拒绝这种输入。不能为了屏蔽 PAD Query，把整行填成 `-inf` 后就不再管它。
+这个手写 Softmax 要求每行至少有一个可见 Key。整行都是 `-inf` 时会得到 NaN，所以最小实现里加了一次检查，在进入 Softmax 前直接报错。
 
-最后记一个接口差异：本文手写代码、`nn.MultiheadAttention` 的布尔 Mask 都以 `True` 表示屏蔽；`F.scaled_dot_product_attention` 的布尔 `attn_mask` 却以 `True` 表示允许参与。换接口时要重新核对，不能直接照搬。[SDPA 文档](https://docs.pytorch.org/docs/2.14/generated/torch.nn.functional.scaled_dot_product_attention.html)明确说明了这个相反的约定。
+换接口时还有一个容易弄反的约定：本文手写代码、`nn.MultiheadAttention` 的布尔 Mask 以 `True` 表示屏蔽；`F.scaled_dot_product_attention` 的布尔 `attn_mask` 以 `True` 表示允许参与。[SDPA 文档](https://docs.pytorch.org/docs/2.14/generated/torch.nn.functional.scaled_dot_product_attention.html)里专门说明了这一点。
 
 ## Encoder
 
@@ -373,9 +371,9 @@ x = self.norm1(x + attn_out)
 x = self.norm2(x + self.ffn(x))
 ```
 
-残差相加要求两个分支形状一致，所以 Attention 和 FFN 最后都要回到 `[B,T,D]`。它给原表示保留一条直接通路，反向时也有直接相加的梯度通路；这不表示堆多深都不用关心训练稳定性。
+残差相加要求两个分支形状一致，所以 Attention 和 FFN 最后都要回到 `[B,T,D]`。它给原表示保留一条直接通路，反向时也有直接相加的梯度通路。
 
-这里的 `nn.LayerNorm(D)` 沿最后的特征维计算均值、方差。对 `[B,T,D]` 而言，是每个样本、每个位置，各自归一化自己的 `D` 个特征，不是把整个 batch 或整句 Token 混在一起求统计量。
+这里的 `nn.LayerNorm(D)` 沿最后的特征维计算均值、方差。对 `[B,T,D]` 而言，就是每个样本、每个位置，各自归一化自己的 `D` 个特征。
 
 LayerNorm 默认还带可学习的缩放和偏移，训练与推理时都使用当前输入的统计量。[接口说明](https://docs.pytorch.org/docs/2.14/generated/torch.nn.LayerNorm.html)可以对照 `normalized_shape` 来看。
 
@@ -395,11 +393,11 @@ self.ffn = nn.Sequential(
 
 它把每个位置的特征从 16 扩展到 64，加入非线性，再映射回 16。同一层的各位置使用同一套 FFN 参数，但每个位置分别计算，不在这里直接交换 Token 信息。
 
-Attention 负责让位置之间读取信息，FFN 则进一步变换各位置已经聚合到的特征。经过 Attention 后，一个位置的表示已经包含其他位置的信息，因此“FFN 逐位置”也不意味着它处理的仍然只是最初那个孤立 Token。
+Attention 负责让位置之间读取信息，FFN 则进一步变换各位置已经聚合到的特征。两者交替执行，一个位置先从别处读取，再把读回来的信息融进自己的表示。
 
 ### 多层隐藏状态
 
-完整 Encoder 把这个 Block 放进 `nn.ModuleList`，依次执行六次。每一层都有自己的参数，结构相同不代表共享权重。
+完整 Encoder 把这个 Block 放进 `nn.ModuleList`，依次执行六次。六层结构相同，各自持有一套参数。
 
 实验配置是 `D=16, H=4, d_ff=64, n_layers=6`，输入 `[2,5]` 的 Token ID，输出 `[2,5,16]`。每一层的 Attention 权重都是 `[2,4,5,5]`。
 
@@ -412,13 +410,13 @@ for layer in self.layers:
     all_hidden_states.append(x.detach().clone())
 ```
 
-这里 `detach().clone()` 只用于保存观察快照，后续层接着使用的仍然是原来的 `x`，没有把层间的梯度链断开。如果把 `x = x.detach()` 放进循环，那才是另一回事。
+这里 `detach().clone()` 保存了一份观察快照，后续层接着使用原来的 `x`，层间的计算图也继续连着。
 
-固定一个 Token 的位置，逐层打印它的向量、范数或与初始表示的 cosine，可以看到表示确实在变化。不过这份六层 Encoder 观察实验还没有经过任务训练，这些变化只能说明计算发生了，不能直接解释成“层越深，语义越高级”。
+固定一个 Token 的位置，逐层打印它的向量、范数或与初始表示的 cosine，就能追踪这一个位置怎样经过六层网络。输入、每层输出以及对应的 Attention 权重，都可以在这里对上。
 
 ## Decoder
 
-到这里已经拼出了 Encoder，但原始 Transformer 的另一半还没有接上。
+Encoder 拼好以后，接着看原始 Transformer 的另一半：Decoder。
 
 原始 Encoder–Decoder 结构里，Encoder 处理源序列；Decoder 一边读取已有目标前缀，一边读取 Encoder 给出的表示，再预测下一个目标 Token。
 
@@ -434,7 +432,7 @@ for layer in self.layers:
 | Decoder Causal Self-Attention | 当前层的目标序列表示 | 同一份目标序列表示 | 当前位置及之前 |
 | Cross-Attention | Decoder 当前表示 | Encoder 最终输出 | 所有有效源位置 |
 
-Cross-Attention 没有换掉 Attention 公式，只是 Q 和 K/V 来自两份表示：
+Cross-Attention 继续使用同一套 Attention 计算，Q 和 K/V 分别从两份表示生成：
 
 ```python
 q = self.q_proj(decoder_hidden)
@@ -455,13 +453,11 @@ output  [2, 3, 16]
 
 所以一般写成 `[B,H,T_dec,T_enc]`。每个目标 Query，在源序列的各个 Key 之间分配权重。输出长度跟着 Query，也就是 `T_dec`，不会因为读了五个源位置就变成五个输出位置。
 
-这里不需要按目标位置去屏蔽“后面的源 Token”，因为源序列已经给定；如果源序列含 PAD，仍然需要屏蔽那些源 Key。当前独立脚本的五个源位置都有效，因此还没有加入源端 Padding Mask。
+源序列已经给定，每个目标 Query 都可以读取整段有效源序列。这个小脚本使用五个有效源位置；文末的变长序列案例会再加上源端 Padding Mask。
 
 ### 两份实现的区别
 
-原始结构可以顺着[论文 §3](https://arxiv.org/html/1706.03762v7#S3)看。先拆开的这几份小实验，还没有把两侧连成完整的 Seq2Seq 模型。
-
-已经连起来的是六层 Encoder；Cross-Attention 单独跑通了输入来源和 shape。接下来训练使用的 `TinyDecoder` 是另一份 **decoder-only** 模型，没有 Encoder，也没有 Cross-Attention。
+前面的六层 Encoder 和 Cross-Attention 分别展示了两侧表示的计算。接下来用一个 **decoder-only** 的 `TinyDecoder` 看训练：输入目标前缀，经因果 Self-Attention 和 FFN，预测下一个 Token。
 
 它的 Block 还采用了 Pre-LN，先归一化，再进入子层：
 
@@ -471,13 +467,13 @@ x = x + attn_out
 x = x + self.ffn(self.norm2(x))
 ```
 
-这份 FFN 用 GELU，整个 Decoder 最后还有一次 LayerNorm。前面的 Encoder 则是 Post-LN、ReLU。两份代码都可以用来理解结构，但不能一边展示前者的图，一边把后者的输出当成原始 Encoder–Decoder 已经训练完成的证据。先用 TinyDecoder 看清训练对齐，后面再补上读取源序列的部分。
+这份 FFN 用 GELU，整个 Decoder 最后还有一次 LayerNorm。前面的 Encoder 使用 Post-LN、ReLU；这里的 TinyDecoder 使用 Pre-LN、GELU。沿着各自的 `forward` 看清子层顺序，再往下接训练对齐。
 
 ## 训练
 
 ### 目标序列右移
 
-训练语言模型时，不需要单独给每个 Token 写一句“应该关注第几位”。先给它一个下游目标：根据已有前缀预测下一个 Token。
+训练时先给模型一个具体目标：根据已有前缀预测下一个 Token。
 
 `teacher_forcing_loss.py` 用六个符号：`PAD=0, BOS=1, A=2, B=3, C=4, EOS=5`。其中 BOS 表示序列开始，EOS 表示结束。这次输入没有 PAD。
 
@@ -497,15 +493,15 @@ targets = sequences[:, 1:]        # [2, 4]
 目标： A   B  C  EOS
 ```
 
-“目标右移作为输入”说的就是这个关系。输入使用真实的历史 Token，而不是模型上一位置自己猜出来的 Token，这就是这里的 Teacher Forcing。
+“目标右移作为输入”说的就是这个关系。训练输入使用真实的历史 Token，这就是这里的 Teacher Forcing。
 
-![Teacher Forcing将BOS、A、B、C输入分别对齐A、B、C、EOS标签；两条样本产生2乘4乘6的logits，展平后与8个标签计算交叉熵，再反向传播并更新参数。](/images/transformer/teacher-forcing.svg "每个输入位置预测它后面的 Token。输入右移与 Causal Mask 要一起看，才能保证没有偷看答案。")
+![Teacher Forcing将BOS、A、B、C输入分别对齐A、B、C、EOS标签；两条样本产生2乘4乘6的logits，展平后与8个标签计算交叉熵，再反向传播并更新参数。](/images/transformer/teacher-forcing.svg "每个输入位置预测它后面的 Token，Causal Mask 限定这一行可读取的前缀。")
 
-为什么训练时可以一次把这四个位置全算出来？因为真实前缀已经在训练数据里，可以同时构造出所有位置的输入。Causal Mask 负责限制每行只能读取到哪里，所以矩阵一起算，不代表当前位置能够读取未来内容。
+为什么训练时可以一次把这四个位置全算出来？因为真实前缀已经在训练数据里，可以同时构造出所有位置的输入。Causal Mask 限定每行的读取范围，各行就可以在保留因果关系的同时一起计算。
 
 如果只有输入、标签错开，却没有因果约束，第一个位置可能直接读到后一个输入 Token，而那个 Token 恰好就是自己的标签。loss 可能降得很好看，但预测时没有这份答案可读。
 
-推理时则不同：下一个 Token 尚未产生，不能预先把真实未来放进输入。这也是并行训练和逐步生成看起来不同的原因。
+生成时，前缀会随着模型的预测逐步增长。训练一次计算整段，生成一步接一步，差别就在输入是怎样得到的。
 
 ### 损失与参数更新
 
@@ -534,9 +530,9 @@ loss.backward()
 optimizer.step()
 ```
 
-把 `[2,4,6]` 展成 `[8,6]`，只是把 batch 和位置合起来，当成八个分类样本；目标则是八个整数类别。展平没有让原来不同位置之间多出一种新的依赖。
+把 `[2,4,6]` 展成 `[8,6]`，就是把 batch 和位置合起来，当成八个分类样本；目标则是八个整数类别。
 
-不要直接把 `[B,T,V]` 原样交给这个整数标签接口，误以为它默认把最后一维当成类别维。这里显式展平，是为了对齐 `CrossEntropyLoss` 的类别维约定，也和上一篇的 `[N,C]` 写法接上。
+`CrossEntropyLoss` 的这个整数标签接口把第二维作为类别维，所以这里显式展平成 `[B*T,V]`，也和上一篇的 `[N,C]` 写法接上。
 
 Q、K、V 的投影怎样学到东西，也可以沿这条链往回看：
 
@@ -548,13 +544,11 @@ loss ← logits ← 隐藏状态 ← Attention 输出
                      softmax(QKᵀ / √d)
 ```
 
-loss 对输出的梯度，会经由加权求和传给 V 和权重，再经 Softmax、点积传给 Q、K，最后传到三组投影参数。`weights` 是当前输入、当前参数计算出的中间结果；优化器更新的是投影矩阵等 Parameter，不是把这张权重表存起来逐项更新。
+loss 对输出的梯度，会经由加权求和传给 V 和权重，再经 Softmax、点积传给 Q、K，最后传到三组投影参数。优化器更新这些 Parameter 后，下一次前向就会用新参数重新算出 `weights`。
 
-某个具体样本、某个被 Mask 的位置，梯度当然可能为零。这不妨碍用实际训练中的投影梯度，检查整条计算链有没有连通。
+### 训练实验
 
-### 用实验检查结论
-
-这次把 `teacher_forcing_loss.py` 按原配置重新跑了一遍，另外保存 step 前后的参数做比较。它只执行一次更新，所以首先检查的是 shape、有限的 loss、非零梯度，以及参数确实发生变化。
+先用 `teacher_forcing_loss.py` 跑一次完整更新，比较 step 前后的 loss、梯度和参数：
 
 | 检查项 | 本次 CPU 实测 |
 | --- | ---: |
@@ -563,19 +557,15 @@ loss 对输出的梯度，会经由加权求和传给 V 和权重，再经 Softm
 | LM head 权重最大绝对变化 | `0.001000002` |
 | 更新后，同一 batch 的 loss | `2.010830` |
 
-38 份参数 tensor 都有有限梯度，并且在这一步后发生了变化。当前数据没有 PAD，TinyDecoder 也还没有实现 Padding Mask；前面 Encoder 的 PAD 验证不能直接当成这份训练脚本也支持任意补齐 batch 的证据。
+38 份参数 tensor 都有有限梯度，并且在这一步后发生了变化。前向、loss、反向和参数更新，到这里就连成了一轮。
 
-这里还有一个小限制：两条样本都以 BOS 开始，但第一个目标分别是 A 和 B。在没有额外条件输入的 decoder-only 模型里，完全一样的 BOS 前缀对应两个不同答案，本来就不能指望两个位置都预测成确定的正确类别。
-
-因此，一次 `optimizer.step()` 成功，只说明训练链路跑通了，不表示模型已经学会生成这两条序列。
-
-另一份 `train_attention.py` 确实训练了 300 步，任务是两条交替的 0/1 序列。它可以用来观察 loss 下降、Q/K/V 的非零梯度，以及 Q 投影参数和 Attention 权重随训练改变。
+接着用 `train_attention.py` 训练两条交替的 0/1 序列，连续跑 300 步，观察 loss、Q/K/V 梯度和 Attention 权重怎样变化。
 
 首步 Q、K、V 投影权重的梯度范数，分别约为 `0.05931`、`0.07418`、`0.13933`。训练后 Q 权重的最大绝对变化约为 `0.17986`。这就把前面那条抽象的反向链路，落到了具体参数上。
 
-但交替序列还有一个取巧办法：看到 0 预测 1，看到 1 预测 0。即使不读取很远的位置，也可能做好这个任务。所以只凭它训练成功，不能证明 Attention 已经学到了长距离依赖。
+交替序列可以用“看到 0 预测 1，看到 1 预测 0”来解决。如果想进一步观察信息怎样跨位置传递，就换回开头的首 Token 任务。
 
-再回到开头的“各位置预测首 Token”实验，情况就清楚一些。后四个输入 Token 是独立随机生成的，模型如果只看当前位置，没法知道首 Token；加入 Attention 后才有读取它的通路。
+在首 Token 任务里，后四个输入 Token 都是独立随机生成的，各位置要通过 Attention 从开头读取答案。
 
 两种模型各训练 1200 步，再各取 4096 条新随机序列评估，按位置统计准确率：
 
@@ -584,21 +574,17 @@ loss 对输出的梯度，会经由加权求和传给 V 和权重，再经 Softm
 | 没有 Attention | 100% | 49.85% | 49.73% | 49.61% | 50.42% |
 | 加入 Attention | 100% | 100% | 100% | 100% | 100% |
 
-两个模型各自生成评估样本，不是完全相同的一批；这里展示这一次运行的结果。第一个位置两者都能答对，真正拉开差距的是需要读取别处的后四个位置。
+第一个位置两者都能答对，差距出现在后四个位置。加入 Attention 后，这几个位置也能读到开头的信息，并把答案传到自己的输出里。
 
-这里的对比验证的是这个具体任务需要跨位置信息，以及这份带 Attention 的模型能够学会使用它。它没有验证真实语言理解，也不意味着每个 Head 都会学出人能命名的分工。
-
-为了检查因果约束，复现脚本还增加了一组对照：固定模型，只修改输入较后的 Token，再比较较早位置的 logits。带 Causal Mask 时，较早输出应保持不变。这样检查的是模型实际算出来的依赖，而不只是 Mask 的图案看起来对不对。
+还可以固定模型，修改输入较后的 Token，再比较较早位置的 logits，直接观察 Causal Mask 是否限定了信息传播的范围。
 
 这次修改最后一个输入位置，较早三个位置的 logits 最大绝对变化是 `0`，最后位置的变化约为 `1.5271`，符合预期的依赖范围。
 
 ## 完整案例：序列反转
 
-前面那个 TinyDecoder 有一个很具体的限制：两条样本都从 BOS 开始，第一个目标却不一样。没有额外输入，模型只能面对同样的前缀，猜两个不同答案。
+前面的 TinyDecoder 根据目标前缀预测下一个 Token。现在再加一份源序列：Decoder 从 BOS 开始，通过 Cross-Attention 读取 Encoder 为当前源输入生成的 memory。相同的目标前缀，就能结合不同的源内容，得到不同预测。
 
-这次把源序列加进来。Decoder 仍然从 BOS 开始，但它可以通过 Cross-Attention，读取当前源序列经过 Encoder 得到的表示。相同的目标前缀，也就有了不同的条件。
-
-任务选得很简单：给一串 Token，输出它的反转序列，最后补上 EOS。先不引入自然语言和分词，把结构本身跑完整。
+任务选得很简单：给一串 Token，输出它的反转序列，最后补上 EOS。输入和输出都直接用整数编号，方便逐个位置检查。
 
 ### 输入与目标
 
@@ -619,13 +605,11 @@ targets        [9, 7, 4, 2, 0, 0]
 
 ![完整Seq2Seq Transformer双塔结构：左侧源序列经过Token与位置嵌入、两层Encoder，右侧右移目标经过两层Decoder。每个子层都画出残差和Add与Norm，Encoder最终memory提供Cross-Attention的K和V；Decoder栈外经过最终LayerNorm与Linear输出logits，用交叉熵训练。](/images/transformer/seq2seq-example.svg "从下往上读。Add & Norm 表示先加残差，再做 LayerNorm；两侧各重复两层。")
 
-图的布局参考 [《Attention Is All You Need》图 1](https://arxiv.org/html/1706.03762v7#S3)，按这份实现重新绘制。位置嵌入、GELU 和 Decoder 栈外的最终 LayerNorm 都保留代码里的选择；训练时 logits 直接交给交叉熵，没有额外插入一次 Softmax。
+图的布局参考 [《Attention Is All You Need》图 1](https://arxiv.org/html/1706.03762v7#S3)，按这份实现重新绘制。位置嵌入、GELU 和 Decoder 栈外的最终 LayerNorm 都与代码对应；训练时 logits 直接交给交叉熵。
 
 ### 模型与 Mask
 
 新模型的宽度是 `D=32`，四个 Head，FFN 中间宽度为 64，Encoder 和 Decoder **各两层**。两侧的 Block 都采用 Post-LN，FFN 使用 GELU；源、目标还分别有自己的 Token Embedding 和可学习位置 Embedding。
-
-它没有直接复用前面六层 Encoder 或 Pre-LN TinyDecoder 的配置。沿用的是已经拆开验证过的计算关系。
 
 整个前向的入口很短：
 
@@ -682,11 +666,9 @@ loss = F.cross_entropy(
 )
 ```
 
-Attention Mask 决定信息可以从哪里读，`ignore_index` 决定哪些目标参与监督。忽略 PAD 标签，并不会自动阻止有效 Query 读取 PAD Key。默认取均值时，这里的 loss 也是在**未忽略的标签**上平均，而不是补零后除以所有位置数。[CrossEntropyLoss 文档](https://docs.pytorch.org/docs/2.14/generated/torch.nn.CrossEntropyLoss.html)说明了这个约定。
+Attention Mask 决定信息可以从哪里读，`ignore_index` 决定哪些目标参与监督。两处各自处理好，变长序列就能一起组成 batch。默认取均值时，loss 在有效标签上平均。[CrossEntropyLoss 文档](https://docs.pytorch.org/docs/2.14/generated/torch.nn.CrossEntropyLoss.html)说明了这个约定。
 
-这份模型的 Embedding 没有设置 `padding_idx`，因此也没有把“PAD 向量固定为零”当作前提。真正限制读取范围的是 Mask。
-
-当前数据至少有一个有效源 Token，目标输入始终从 BOS 开始。即使后面是 PAD，每个 Query 仍然至少有一个可见 Key，因此没有触发前面提过的全屏蔽行问题。
+这里继续通过 Key Mask 处理 PAD；各位置经过 Embedding、位置相加和子层计算后，再按各自的 Mask 参与读取。源序列至少有一个内容 Token，目标输入以 BOS 开始，每个 Query 都有可见的 Key。
 
 ### 训练与生成
 
@@ -700,9 +682,9 @@ Attention Mask 决定信息可以从哪里读，`ignore_index` 决定哪些目�
 | 100 | `0.022996` |
 | 1000 | `0.000295` |
 
-第一步反向时，92 份参数 tensor 都有有限梯度，并且在更新后发生变化。后面的完整序列生成，才继续检查这些参数有没有把任务学会。
+第一步反向时，92 份参数 tensor 都有有限梯度，并且在更新后发生变化。接下来用训练后的模型生成完整序列。
 
-训练时，真实的右移目标仍然一次性送进 Decoder。生成时就不能这样做了：只有源序列和最初的 BOS，后面的输入要靠模型自己接着写。
+训练时，真实的右移目标一次性送进 Decoder。生成时，从源序列和 BOS 开始，后面的输入由模型自己接着写。
 
 `greedy_decode()` 先编码源序列，再从 BOS 开始：
 
@@ -720,15 +702,13 @@ for _ in range(max_new_tokens):
 
 上面只保留主要计算；完整脚本还维护每条样本的 `finished` 状态。取的是最后一个位置的 logits，选最大分数的 Token，再把自己的预测追加到前缀。遇到 EOS 表示这条输出已经结束，不要求不同长度的样本同一轮结束。
 
-这里 Encoder 只执行一次，memory 会反复使用。不过 Decoder 每一步仍然把**完整目标前缀重新计算一遍**，各层 Cross-Attention 也会重新投影 memory。它还没有加入 KV Cache，生成能跑通与生成是否高效，是接下来可以继续分开看的两件事。
+这里 Encoder 执行一次，memory 反复使用。Decoder 则在每一步重新计算**完整目标前缀**，各层 Cross-Attention 也重新投影 memory。这些重复计算，正好是后面看 KV Cache 时可以继续追下去的地方。
 
 ### 结果与源序列扰动
 
-这次除了观察训练 loss，还检查完整生成序列。判断正确的条件是：反转后的内容和 EOS 全部一致，少一个 Token、顺序不对或没有正确结束，都不算答对。
+训练结束后，再看完整生成序列：反转后的内容和 EOS 全部匹配，就记作一条正确输出。
 
-原脚本在训练后另外抽取 64 条随机序列做评估。这里说的是新抽取的样本，**没有保证它们与训练样本完全不重复**，尤其长度为 1 时，内容只有 12 种可能。所以这组结果用于检查这个长度范围内的反转任务，不把它当成严格隔离测试集上的泛化成绩。
-
-这次 64 条都完整匹配，包括 EOS。例如其中一条实际生成结果是：
+训练后再抽取 64 条长度为 1 到 5 的随机序列，这次全部生成正确，包括 EOS。例如其中一条是：
 
 ```text
 源序列：[8, 7, 13, 4]
@@ -736,7 +716,7 @@ for _ in range(max_new_tokens):
 生成值：[4, 13, 7, 8, 2]
 ```
 
-这里的生成值是从 BOS 开始逐步得到的，没有把真实的反转目标作为 Decoder 输入。
+生成值从 BOS 开始，由模型逐步预测并追加得到。
 
 再做一组源序列扰动：固定训练好的模型和目标生成方式，只修改源输入。把每个有效 Token 在 `3..14` 之间循环加一，长度和 PAD 位置不动：
 
@@ -746,9 +726,7 @@ changed_src[valid_mask] = (
 )
 ```
 
-这时需要一起看两个结果：输出有没有随源输入变化，以及变化后的输出是否正确反转了新源序列。只看到输出变了，还不足以说明任务做对了。
-
-本次记录是：
+重新生成后，同时统计输出的变化和新目标的匹配情况：
 
 ```text
 原始源序列：完整输出正确 64 / 64
@@ -758,9 +736,9 @@ changed_src[valid_mask] = (
 
 上面那条样本循环加一以后，源序列变成 `[9,8,14,5]`，模型生成 `[5,14,8,9,2]`，也与新的反转目标一致。
 
-附加核验还把每层权重拿出来检查：源 PAD Key、目标 PAD Key、未来 Key 和 Cross-Attention 的源 PAD Key，权重都为零。固定源序列，只修改最后一个目标输入位置，前五个位置的 logits 也没有变化。前面分开画过的几种依赖，在这个完整模型里仍然成立。
+再把每层权重拿出来，源 PAD Key、目标 PAD Key、未来 Key 和 Cross-Attention 的源 PAD Key 权重都为零。固定源序列，修改最后一个目标输入位置，前五个位置的 logits 保持不变。前面分开看过的信息依赖，在完整模型里也能逐层对上。
 
-前面那个 decoder-only 小实验缺少的条件输入，到这里才真正补上。Decoder 先读取已有目标前缀，再通过 Cross-Attention 读取源 memory，最后预测下一个 Token；loss 也能沿着这条路径传回两侧参数。
+到这里，源和目标两条路径就接在了一起。Decoder 先读取已有目标前缀，再通过 Cross-Attention 读取源 memory，最后预测下一个 Token；loss 沿着这条路径传回两侧参数。
 
 ## 源码与复现
 
@@ -788,11 +766,11 @@ changed_src[valid_mask] = (
 python verify_experiments.py --output-dir ./my-results
 ```
 
-复现记录使用 PyTorch `2.14.1+cu130`。补充核验使用 CPU、float32、种子 7、单线程；原 `single_attention.py` 在本次运行时自动选择了 CUDA，其余原脚本在 CPU 运行。所有实验也都能在没有 CUDA 的环境里执行。
+复现记录使用 PyTorch `2.14.1+cu130`。补充核验使用 CPU、float32、种子 7、单线程；原 `single_attention.py` 在本次运行时自动选择了 CUDA，其余原脚本在 CPU 运行。这些实验也支持 CPU 环境。
 
 正文的最小多头实现是合并接口后的说明版本，原实验包保留各脚本原本的结构。具体配置、矩阵和数值以结果文件及运行说明为准。
 
-后补的完整 Seq2Seq 案例单独放在这里，避免与前面那组独立实验混在一起：
+完整 Seq2Seq 案例的源码和运行记录放在这里：
 
 - [Seq2Seq 完整实验包](../../downloads/seq2seq-transformer/experiments.zip)
 - [原模型与训练脚本](../../downloads/seq2seq-transformer/seq2seq_transformer.py)
@@ -806,16 +784,16 @@ python -B seq2seq_transformer.py
 python -B verify_seq2seq.py --output-dir ./my-seq2seq-results
 ```
 
-这组新增结果使用相同的 PyTorch `2.14.1+cu130`，实际在 CUDA 上训练。脚本没有额外数据集和预训练权重依赖，没有 GPU 时会使用 CPU。逐步训练 loss 保存在 [loss.csv](../../downloads/seq2seq-transformer/loss.csv)，原控制台输出保存在 [original_stdout.txt](../../downloads/seq2seq-transformer/original_stdout.txt)。
+这组结果使用相同的 PyTorch `2.14.1+cu130`，在 CUDA 上训练；脚本也会按环境选择 CPU。逐步训练 loss 保存在 [loss.csv](../../downloads/seq2seq-transformer/loss.csv)，原控制台输出保存在 [original_stdout.txt](../../downloads/seq2seq-transformer/original_stdout.txt)。
+
+几项实验设置一并记在这里：单头、多头和六层 Encoder 的观察从随机初始化开始；TinyDecoder 的 Teacher Forcing 片段执行一次更新，使用等长样本。首 Token 对照的两个模型各自生成评估数据；Seq2Seq 的 64 条评估序列是训练后重新抽样，未与训练序列去重。具体配置和完整矩阵都保存在两份结果文件中。
 
 ## 后续学习
 
 这次先把一条计算过程接起来：Token 变成向量，投影成 Q、K、V，经过 Attention 和 FFN 更新表示，再输出 logits，与右移的目标计算 loss。反向传播和参数更新，还是上一篇那套流程，只是中间的函数复杂了一些。
 
-有些结论现在可以直接打开代码验证。Head 没有切断序列，PAD Key 的权重确实归零，Cross-Attention 的输出长度跟着 Query，Teacher Forcing 也没有取消因果约束。
+最后的序列反转案例，把之前分开看的部分接成了一个完整模型。源序列经过 Encoder，目标前缀经过 Decoder，两边在 Cross-Attention 相遇，再一起走到 loss 和参数更新。
 
-最后的序列反转案例，把之前单独验证的部分接成了一个完整模型。它有源序列、有目标前缀，也真的经过 Cross-Attention 传递条件信息，训练后再用自己的预测继续生成。
-
-不过它处理的仍然是短序列反转。随机权重不该直接解释成语义，固定长度范围内的任务结果，也还没有回答更长序列或真实语言任务会怎样。
+再回头看最开始那张结构图，每条箭头终于都能在代码里找到对应的位置。生成时怎样重新读取前缀，哪些结果已经算过，也开始变成可以继续追的问题。
 
 代码里已经开始做完整序列前向与 KV Cache 增量前向的等价检查。下一篇再接着看缓存和推理时的重复计算。这篇先把结构、训练和最小生成过程整理到这里，免得下次又从那几个 shape 开始重新想一遍。
