@@ -1,0 +1,3056 @@
+{
+  "schema_version": 1,
+  "run_date": "2026-10-24",
+  "torch_version": "2.14.1+cu130",
+  "device": "cuda",
+  "device_name": "NVIDIA GeForce RTX 4070 Laptop GPU",
+  "cpu_threads": 1,
+  "dtype": "float32",
+  "seed": 7,
+  "source_sha256": "0b05a870cfd8c81642ced6bf8b008d6f8f121d12610bbd6f8e93bc1137f327eb",
+  "original_entrypoint": {
+    "steps": 1000,
+    "batch_size": 64,
+    "optimizer": "Adam",
+    "learning_rate": 0.003,
+    "first_loss_before_update": 2.8266358375549316,
+    "final_training_batch_loss_before_update": 0.0002954189258161932,
+    "loss_checkpoints": {
+      "1": 2.8266358375549316,
+      "100": 0.0229964517056942,
+      "200": 0.0039082979783415794,
+      "300": 0.0021485218312591314,
+      "400": 0.0013765284093096852,
+      "500": 0.0009642776567488909,
+      "600": 0.0007026426028460264,
+      "700": 0.0005480652907863259,
+      "800": 0.0004485954996198416,
+      "900": 0.0003470692317932844,
+      "1000": 0.0002954189258161932
+    },
+    "elapsed_seconds_including_observation": 12.80765774899919,
+    "first_optimizer_step": {
+      "parameter_tensors": 92,
+      "parameter_scalars": 44623,
+      "gradient_tensors_present": 92,
+      "all_gradients_finite": true,
+      "combined_gradient_l2_norm": 1.1770861806032,
+      "parameter_tensors_changed": 92,
+      "maximum_absolute_parameter_change": 0.003000020980834961
+    },
+    "initial_shape_check": {
+      "Source": [
+        4,
+        5
+      ],
+      "Decoder input": [
+        4,
+        6
+      ],
+      "Targets": [
+        4,
+        6
+      ],
+      "Logits": [
+        4,
+        6,
+        15
+      ]
+    }
+  },
+  "evaluation": {
+    "sample_count": 64,
+    "exact_correct": 64,
+    "modified_exact_correct": 64,
+    "outputs_changed": 64,
+    "train_eval_overlap_checked": false,
+    "sampling": "New random draws after training; overlap with training sequences not checked.",
+    "examples": [
+      {
+        "source": [
+          8,
+          7,
+          13,
+          4
+        ],
+        "expected": [
+          4,
+          13,
+          7,
+          8,
+          2
+        ],
+        "prediction": [
+          4,
+          13,
+          7,
+          8,
+          2
+        ],
+        "source_modified": [
+          9,
+          8,
+          14,
+          5
+        ],
+        "modified_expected": [
+          5,
+          14,
+          8,
+          9,
+          2
+        ],
+        "modified_prediction": [
+          5,
+          14,
+          8,
+          9,
+          2
+        ],
+        "exact": true,
+        "modified_exact": true,
+        "output_changed": true
+      },
+      {
+        "source": [
+          7,
+          5,
+          3,
+          11
+        ],
+        "expected": [
+          11,
+          3,
+          5,
+          7,
+          2
+        ],
+        "prediction": [
+          11,
+          3,
+          5,
+          7,
+          2
+        ],
+        "source_modified": [
+          8,
+          6,
+          4,
+          12
+        ],
+        "modified_expected": [
+          12,
+          4,
+          6,
+          8,
+          2
+        ],
+        "modified_prediction": [
+          12,
+          4,
+          6,
+          8,
+          2
+        ],
+        "exact": true,
+        "modified_exact": true,
+        "output_changed": true
+      },
+      {
+        "source": [
+          5,
+          12
+        ],
+        "expected": [
+          12,
+          5,
+          2
+        ],
+        "prediction": [
+          12,
+          5,
+          2
+        ],
+        "source_modified": [
+          6,
+          13
+        ],
+        "modified_expected": [
+          13,
+          6,
+          2
+        ],
+        "modified_prediction": [
+          13,
+          6,
+          2
+        ],
+        "exact": true,
+        "modified_exact": true,
+        "output_changed": true
+      },
+      {
+        "source": [
+          4
+        ],
+        "expected": [
+          4,
+          2
+        ],
+        "prediction": [
+          4,
+          2
+        ],
+        "source_modified": [
+          5
+        ],
+        "modified_expected": [
+          5,
+          2
+        ],
+        "modified_prediction": [
+          5,
+          2
+        ],
+        "exact": true,
+        "modified_exact": true,
+        "output_changed": true
+      },
+      {
+        "source": [
+          3
+        ],
+        "expected": [
+          3,
+          2
+        ],
+        "prediction": [
+          3,
+          2
+        ],
+        "source_modified": [
+          4
+        ],
+        "modified_expected": [
+          4,
+          2
+        ],
+        "modified_prediction": [
+          4,
+          2
+        ],
+        "exact": true,
+        "modified_exact": true,
+        "output_changed": true
+      },
+      {
+        "source": [
+          4,
+          7,
+          4,
+          4
+        ],
+        "expected": [
+          4,
+          4,
+          7,
+          4,
+          2
+        ],
+        "prediction": [
+          4,
+          4,
+          7,
+          4,
+          2
+        ],
+        "source_modified": [
+          5,
+          8,
+          5,
+          5
+        ],
+        "modified_expected": [
+          5,
+          5,
+          8,
+          5,
+          2
+        ],
+        "modified_prediction": [
+          5,
+          5,
+          8,
+          5,
+          2
+        ],
+        "exact": true,
+        "modified_exact": true,
+        "output_changed": true
+      },
+      {
+        "source": [
+          11,
+          13,
+          3,
+          4
+        ],
+        "expected": [
+          4,
+          3,
+          13,
+          11,
+          2
+        ],
+        "prediction": [
+          4,
+          3,
+          13,
+          11,
+          2
+        ],
+        "source_modified": [
+          12,
+          14,
+          4,
+          5
+        ],
+        "modified_expected": [
+          5,
+          4,
+          14,
+          12,
+          2
+        ],
+        "modified_prediction": [
+          5,
+          4,
+          14,
+          12,
+          2
+        ],
+        "exact": true,
+        "modified_exact": true,
+        "output_changed": true
+      },
+      {
+        "source": [
+          5
+        ],
+        "expected": [
+          5,
+          2
+        ],
+        "prediction": [
+          5,
+          2
+        ],
+        "source_modified": [
+          6
+        ],
+        "modified_expected": [
+          6,
+          2
+        ],
+        "modified_prediction": [
+          6,
+          2
+        ],
+        "exact": true,
+        "modified_exact": true,
+        "output_changed": true
+      },
+      {
+        "source": [
+          4,
+          8
+        ],
+        "expected": [
+          8,
+          4,
+          2
+        ],
+        "prediction": [
+          8,
+          4,
+          2
+        ],
+        "source_modified": [
+          5,
+          9
+        ],
+        "modified_expected": [
+          9,
+          5,
+          2
+        ],
+        "modified_prediction": [
+          9,
+          5,
+          2
+        ],
+        "exact": true,
+        "modified_exact": true,
+        "output_changed": true
+      },
+      {
+        "source": [
+          7,
+          3
+        ],
+        "expected": [
+          3,
+          7,
+          2
+        ],
+        "prediction": [
+          3,
+          7,
+          2
+        ],
+        "source_modified": [
+          8,
+          4
+        ],
+        "modified_expected": [
+          4,
+          8,
+          2
+        ],
+        "modified_prediction": [
+          4,
+          8,
+          2
+        ],
+        "exact": true,
+        "modified_exact": true,
+        "output_changed": true
+      },
+      {
+        "source": [
+          12,
+          8,
+          8,
+          5,
+          6
+        ],
+        "expected": [
+          6,
+          5,
+          8,
+          8,
+          12,
+          2
+        ],
+        "prediction": [
+          6,
+          5,
+          8,
+          8,
+          12,
+          2
+        ],
+        "source_modified": [
+          13,
+          9,
+          9,
+          6,
+          7
+        ],
+        "modified_expected": [
+          7,
+          6,
+          9,
+          9,
+          13,
+          2
+        ],
+        "modified_prediction": [
+          7,
+          6,
+          9,
+          9,
+          13,
+          2
+        ],
+        "exact": true,
+        "modified_exact": true,
+        "output_changed": true
+      },
+      {
+        "source": [
+          10,
+          6,
+          12,
+          5
+        ],
+        "expected": [
+          5,
+          12,
+          6,
+          10,
+          2
+        ],
+        "prediction": [
+          5,
+          12,
+          6,
+          10,
+          2
+        ],
+        "source_modified": [
+          11,
+          7,
+          13,
+          6
+        ],
+        "modified_expected": [
+          6,
+          13,
+          7,
+          11,
+          2
+        ],
+        "modified_prediction": [
+          6,
+          13,
+          7,
+          11,
+          2
+        ],
+        "exact": true,
+        "modified_exact": true,
+        "output_changed": true
+      },
+      {
+        "source": [
+          9,
+          5,
+          8,
+          9,
+          9
+        ],
+        "expected": [
+          9,
+          9,
+          8,
+          5,
+          9,
+          2
+        ],
+        "prediction": [
+          9,
+          9,
+          8,
+          5,
+          9,
+          2
+        ],
+        "source_modified": [
+          10,
+          6,
+          9,
+          10,
+          10
+        ],
+        "modified_expected": [
+          10,
+          10,
+          9,
+          6,
+          10,
+          2
+        ],
+        "modified_prediction": [
+          10,
+          10,
+          9,
+          6,
+          10,
+          2
+        ],
+        "exact": true,
+        "modified_exact": true,
+        "output_changed": true
+      },
+      {
+        "source": [
+          3
+        ],
+        "expected": [
+          3,
+          2
+        ],
+        "prediction": [
+          3,
+          2
+        ],
+        "source_modified": [
+          4
+        ],
+        "modified_expected": [
+          4,
+          2
+        ],
+        "modified_prediction": [
+          4,
+          2
+        ],
+        "exact": true,
+        "modified_exact": true,
+        "output_changed": true
+      },
+      {
+        "source": [
+          11,
+          14,
+          12
+        ],
+        "expected": [
+          12,
+          14,
+          11,
+          2
+        ],
+        "prediction": [
+          12,
+          14,
+          11,
+          2
+        ],
+        "source_modified": [
+          12,
+          3,
+          13
+        ],
+        "modified_expected": [
+          13,
+          3,
+          12,
+          2
+        ],
+        "modified_prediction": [
+          13,
+          3,
+          12,
+          2
+        ],
+        "exact": true,
+        "modified_exact": true,
+        "output_changed": true
+      },
+      {
+        "source": [
+          5,
+          9
+        ],
+        "expected": [
+          9,
+          5,
+          2
+        ],
+        "prediction": [
+          9,
+          5,
+          2
+        ],
+        "source_modified": [
+          6,
+          10
+        ],
+        "modified_expected": [
+          10,
+          6,
+          2
+        ],
+        "modified_prediction": [
+          10,
+          6,
+          2
+        ],
+        "exact": true,
+        "modified_exact": true,
+        "output_changed": true
+      },
+      {
+        "source": [
+          11,
+          4,
+          14,
+          10
+        ],
+        "expected": [
+          10,
+          14,
+          4,
+          11,
+          2
+        ],
+        "prediction": [
+          10,
+          14,
+          4,
+          11,
+          2
+        ],
+        "source_modified": [
+          12,
+          5,
+          3,
+          11
+        ],
+        "modified_expected": [
+          11,
+          3,
+          5,
+          12,
+          2
+        ],
+        "modified_prediction": [
+          11,
+          3,
+          5,
+          12,
+          2
+        ],
+        "exact": true,
+        "modified_exact": true,
+        "output_changed": true
+      },
+      {
+        "source": [
+          4,
+          12,
+          12,
+          10
+        ],
+        "expected": [
+          10,
+          12,
+          12,
+          4,
+          2
+        ],
+        "prediction": [
+          10,
+          12,
+          12,
+          4,
+          2
+        ],
+        "source_modified": [
+          5,
+          13,
+          13,
+          11
+        ],
+        "modified_expected": [
+          11,
+          13,
+          13,
+          5,
+          2
+        ],
+        "modified_prediction": [
+          11,
+          13,
+          13,
+          5,
+          2
+        ],
+        "exact": true,
+        "modified_exact": true,
+        "output_changed": true
+      },
+      {
+        "source": [
+          5
+        ],
+        "expected": [
+          5,
+          2
+        ],
+        "prediction": [
+          5,
+          2
+        ],
+        "source_modified": [
+          6
+        ],
+        "modified_expected": [
+          6,
+          2
+        ],
+        "modified_prediction": [
+          6,
+          2
+        ],
+        "exact": true,
+        "modified_exact": true,
+        "output_changed": true
+      },
+      {
+        "source": [
+          14,
+          3,
+          8,
+          4
+        ],
+        "expected": [
+          4,
+          8,
+          3,
+          14,
+          2
+        ],
+        "prediction": [
+          4,
+          8,
+          3,
+          14,
+          2
+        ],
+        "source_modified": [
+          3,
+          4,
+          9,
+          5
+        ],
+        "modified_expected": [
+          5,
+          9,
+          4,
+          3,
+          2
+        ],
+        "modified_prediction": [
+          5,
+          9,
+          4,
+          3,
+          2
+        ],
+        "exact": true,
+        "modified_exact": true,
+        "output_changed": true
+      },
+      {
+        "source": [
+          8,
+          11,
+          13,
+          3,
+          3
+        ],
+        "expected": [
+          3,
+          3,
+          13,
+          11,
+          8,
+          2
+        ],
+        "prediction": [
+          3,
+          3,
+          13,
+          11,
+          8,
+          2
+        ],
+        "source_modified": [
+          9,
+          12,
+          14,
+          4,
+          4
+        ],
+        "modified_expected": [
+          4,
+          4,
+          14,
+          12,
+          9,
+          2
+        ],
+        "modified_prediction": [
+          4,
+          4,
+          14,
+          12,
+          9,
+          2
+        ],
+        "exact": true,
+        "modified_exact": true,
+        "output_changed": true
+      },
+      {
+        "source": [
+          10,
+          13,
+          6,
+          10,
+          12
+        ],
+        "expected": [
+          12,
+          10,
+          6,
+          13,
+          10,
+          2
+        ],
+        "prediction": [
+          12,
+          10,
+          6,
+          13,
+          10,
+          2
+        ],
+        "source_modified": [
+          11,
+          14,
+          7,
+          11,
+          13
+        ],
+        "modified_expected": [
+          13,
+          11,
+          7,
+          14,
+          11,
+          2
+        ],
+        "modified_prediction": [
+          13,
+          11,
+          7,
+          14,
+          11,
+          2
+        ],
+        "exact": true,
+        "modified_exact": true,
+        "output_changed": true
+      },
+      {
+        "source": [
+          6,
+          7,
+          10,
+          14,
+          11
+        ],
+        "expected": [
+          11,
+          14,
+          10,
+          7,
+          6,
+          2
+        ],
+        "prediction": [
+          11,
+          14,
+          10,
+          7,
+          6,
+          2
+        ],
+        "source_modified": [
+          7,
+          8,
+          11,
+          3,
+          12
+        ],
+        "modified_expected": [
+          12,
+          3,
+          11,
+          8,
+          7,
+          2
+        ],
+        "modified_prediction": [
+          12,
+          3,
+          11,
+          8,
+          7,
+          2
+        ],
+        "exact": true,
+        "modified_exact": true,
+        "output_changed": true
+      },
+      {
+        "source": [
+          13,
+          9,
+          14
+        ],
+        "expected": [
+          14,
+          9,
+          13,
+          2
+        ],
+        "prediction": [
+          14,
+          9,
+          13,
+          2
+        ],
+        "source_modified": [
+          14,
+          10,
+          3
+        ],
+        "modified_expected": [
+          3,
+          10,
+          14,
+          2
+        ],
+        "modified_prediction": [
+          3,
+          10,
+          14,
+          2
+        ],
+        "exact": true,
+        "modified_exact": true,
+        "output_changed": true
+      },
+      {
+        "source": [
+          4
+        ],
+        "expected": [
+          4,
+          2
+        ],
+        "prediction": [
+          4,
+          2
+        ],
+        "source_modified": [
+          5
+        ],
+        "modified_expected": [
+          5,
+          2
+        ],
+        "modified_prediction": [
+          5,
+          2
+        ],
+        "exact": true,
+        "modified_exact": true,
+        "output_changed": true
+      },
+      {
+        "source": [
+          7,
+          10,
+          9
+        ],
+        "expected": [
+          9,
+          10,
+          7,
+          2
+        ],
+        "prediction": [
+          9,
+          10,
+          7,
+          2
+        ],
+        "source_modified": [
+          8,
+          11,
+          10
+        ],
+        "modified_expected": [
+          10,
+          11,
+          8,
+          2
+        ],
+        "modified_prediction": [
+          10,
+          11,
+          8,
+          2
+        ],
+        "exact": true,
+        "modified_exact": true,
+        "output_changed": true
+      },
+      {
+        "source": [
+          4,
+          9,
+          10,
+          4
+        ],
+        "expected": [
+          4,
+          10,
+          9,
+          4,
+          2
+        ],
+        "prediction": [
+          4,
+          10,
+          9,
+          4,
+          2
+        ],
+        "source_modified": [
+          5,
+          10,
+          11,
+          5
+        ],
+        "modified_expected": [
+          5,
+          11,
+          10,
+          5,
+          2
+        ],
+        "modified_prediction": [
+          5,
+          11,
+          10,
+          5,
+          2
+        ],
+        "exact": true,
+        "modified_exact": true,
+        "output_changed": true
+      },
+      {
+        "source": [
+          12
+        ],
+        "expected": [
+          12,
+          2
+        ],
+        "prediction": [
+          12,
+          2
+        ],
+        "source_modified": [
+          13
+        ],
+        "modified_expected": [
+          13,
+          2
+        ],
+        "modified_prediction": [
+          13,
+          2
+        ],
+        "exact": true,
+        "modified_exact": true,
+        "output_changed": true
+      },
+      {
+        "source": [
+          3,
+          8,
+          6,
+          14
+        ],
+        "expected": [
+          14,
+          6,
+          8,
+          3,
+          2
+        ],
+        "prediction": [
+          14,
+          6,
+          8,
+          3,
+          2
+        ],
+        "source_modified": [
+          4,
+          9,
+          7,
+          3
+        ],
+        "modified_expected": [
+          3,
+          7,
+          9,
+          4,
+          2
+        ],
+        "modified_prediction": [
+          3,
+          7,
+          9,
+          4,
+          2
+        ],
+        "exact": true,
+        "modified_exact": true,
+        "output_changed": true
+      },
+      {
+        "source": [
+          3,
+          13,
+          5,
+          6,
+          11
+        ],
+        "expected": [
+          11,
+          6,
+          5,
+          13,
+          3,
+          2
+        ],
+        "prediction": [
+          11,
+          6,
+          5,
+          13,
+          3,
+          2
+        ],
+        "source_modified": [
+          4,
+          14,
+          6,
+          7,
+          12
+        ],
+        "modified_expected": [
+          12,
+          7,
+          6,
+          14,
+          4,
+          2
+        ],
+        "modified_prediction": [
+          12,
+          7,
+          6,
+          14,
+          4,
+          2
+        ],
+        "exact": true,
+        "modified_exact": true,
+        "output_changed": true
+      },
+      {
+        "source": [
+          14
+        ],
+        "expected": [
+          14,
+          2
+        ],
+        "prediction": [
+          14,
+          2
+        ],
+        "source_modified": [
+          3
+        ],
+        "modified_expected": [
+          3,
+          2
+        ],
+        "modified_prediction": [
+          3,
+          2
+        ],
+        "exact": true,
+        "modified_exact": true,
+        "output_changed": true
+      },
+      {
+        "source": [
+          4
+        ],
+        "expected": [
+          4,
+          2
+        ],
+        "prediction": [
+          4,
+          2
+        ],
+        "source_modified": [
+          5
+        ],
+        "modified_expected": [
+          5,
+          2
+        ],
+        "modified_prediction": [
+          5,
+          2
+        ],
+        "exact": true,
+        "modified_exact": true,
+        "output_changed": true
+      },
+      {
+        "source": [
+          6,
+          4,
+          3
+        ],
+        "expected": [
+          3,
+          4,
+          6,
+          2
+        ],
+        "prediction": [
+          3,
+          4,
+          6,
+          2
+        ],
+        "source_modified": [
+          7,
+          5,
+          4
+        ],
+        "modified_expected": [
+          4,
+          5,
+          7,
+          2
+        ],
+        "modified_prediction": [
+          4,
+          5,
+          7,
+          2
+        ],
+        "exact": true,
+        "modified_exact": true,
+        "output_changed": true
+      },
+      {
+        "source": [
+          3
+        ],
+        "expected": [
+          3,
+          2
+        ],
+        "prediction": [
+          3,
+          2
+        ],
+        "source_modified": [
+          4
+        ],
+        "modified_expected": [
+          4,
+          2
+        ],
+        "modified_prediction": [
+          4,
+          2
+        ],
+        "exact": true,
+        "modified_exact": true,
+        "output_changed": true
+      },
+      {
+        "source": [
+          9,
+          9,
+          3
+        ],
+        "expected": [
+          3,
+          9,
+          9,
+          2
+        ],
+        "prediction": [
+          3,
+          9,
+          9,
+          2
+        ],
+        "source_modified": [
+          10,
+          10,
+          4
+        ],
+        "modified_expected": [
+          4,
+          10,
+          10,
+          2
+        ],
+        "modified_prediction": [
+          4,
+          10,
+          10,
+          2
+        ],
+        "exact": true,
+        "modified_exact": true,
+        "output_changed": true
+      },
+      {
+        "source": [
+          9,
+          5,
+          14,
+          7,
+          5
+        ],
+        "expected": [
+          5,
+          7,
+          14,
+          5,
+          9,
+          2
+        ],
+        "prediction": [
+          5,
+          7,
+          14,
+          5,
+          9,
+          2
+        ],
+        "source_modified": [
+          10,
+          6,
+          3,
+          8,
+          6
+        ],
+        "modified_expected": [
+          6,
+          8,
+          3,
+          6,
+          10,
+          2
+        ],
+        "modified_prediction": [
+          6,
+          8,
+          3,
+          6,
+          10,
+          2
+        ],
+        "exact": true,
+        "modified_exact": true,
+        "output_changed": true
+      },
+      {
+        "source": [
+          12
+        ],
+        "expected": [
+          12,
+          2
+        ],
+        "prediction": [
+          12,
+          2
+        ],
+        "source_modified": [
+          13
+        ],
+        "modified_expected": [
+          13,
+          2
+        ],
+        "modified_prediction": [
+          13,
+          2
+        ],
+        "exact": true,
+        "modified_exact": true,
+        "output_changed": true
+      },
+      {
+        "source": [
+          11,
+          10,
+          13
+        ],
+        "expected": [
+          13,
+          10,
+          11,
+          2
+        ],
+        "prediction": [
+          13,
+          10,
+          11,
+          2
+        ],
+        "source_modified": [
+          12,
+          11,
+          14
+        ],
+        "modified_expected": [
+          14,
+          11,
+          12,
+          2
+        ],
+        "modified_prediction": [
+          14,
+          11,
+          12,
+          2
+        ],
+        "exact": true,
+        "modified_exact": true,
+        "output_changed": true
+      },
+      {
+        "source": [
+          9,
+          7,
+          6,
+          14,
+          8
+        ],
+        "expected": [
+          8,
+          14,
+          6,
+          7,
+          9,
+          2
+        ],
+        "prediction": [
+          8,
+          14,
+          6,
+          7,
+          9,
+          2
+        ],
+        "source_modified": [
+          10,
+          8,
+          7,
+          3,
+          9
+        ],
+        "modified_expected": [
+          9,
+          3,
+          7,
+          8,
+          10,
+          2
+        ],
+        "modified_prediction": [
+          9,
+          3,
+          7,
+          8,
+          10,
+          2
+        ],
+        "exact": true,
+        "modified_exact": true,
+        "output_changed": true
+      },
+      {
+        "source": [
+          7,
+          12,
+          8,
+          6,
+          13
+        ],
+        "expected": [
+          13,
+          6,
+          8,
+          12,
+          7,
+          2
+        ],
+        "prediction": [
+          13,
+          6,
+          8,
+          12,
+          7,
+          2
+        ],
+        "source_modified": [
+          8,
+          13,
+          9,
+          7,
+          14
+        ],
+        "modified_expected": [
+          14,
+          7,
+          9,
+          13,
+          8,
+          2
+        ],
+        "modified_prediction": [
+          14,
+          7,
+          9,
+          13,
+          8,
+          2
+        ],
+        "exact": true,
+        "modified_exact": true,
+        "output_changed": true
+      },
+      {
+        "source": [
+          9,
+          4,
+          11
+        ],
+        "expected": [
+          11,
+          4,
+          9,
+          2
+        ],
+        "prediction": [
+          11,
+          4,
+          9,
+          2
+        ],
+        "source_modified": [
+          10,
+          5,
+          12
+        ],
+        "modified_expected": [
+          12,
+          5,
+          10,
+          2
+        ],
+        "modified_prediction": [
+          12,
+          5,
+          10,
+          2
+        ],
+        "exact": true,
+        "modified_exact": true,
+        "output_changed": true
+      },
+      {
+        "source": [
+          11,
+          14,
+          11,
+          5,
+          3
+        ],
+        "expected": [
+          3,
+          5,
+          11,
+          14,
+          11,
+          2
+        ],
+        "prediction": [
+          3,
+          5,
+          11,
+          14,
+          11,
+          2
+        ],
+        "source_modified": [
+          12,
+          3,
+          12,
+          6,
+          4
+        ],
+        "modified_expected": [
+          4,
+          6,
+          12,
+          3,
+          12,
+          2
+        ],
+        "modified_prediction": [
+          4,
+          6,
+          12,
+          3,
+          12,
+          2
+        ],
+        "exact": true,
+        "modified_exact": true,
+        "output_changed": true
+      },
+      {
+        "source": [
+          4
+        ],
+        "expected": [
+          4,
+          2
+        ],
+        "prediction": [
+          4,
+          2
+        ],
+        "source_modified": [
+          5
+        ],
+        "modified_expected": [
+          5,
+          2
+        ],
+        "modified_prediction": [
+          5,
+          2
+        ],
+        "exact": true,
+        "modified_exact": true,
+        "output_changed": true
+      },
+      {
+        "source": [
+          10,
+          13,
+          9,
+          14
+        ],
+        "expected": [
+          14,
+          9,
+          13,
+          10,
+          2
+        ],
+        "prediction": [
+          14,
+          9,
+          13,
+          10,
+          2
+        ],
+        "source_modified": [
+          11,
+          14,
+          10,
+          3
+        ],
+        "modified_expected": [
+          3,
+          10,
+          14,
+          11,
+          2
+        ],
+        "modified_prediction": [
+          3,
+          10,
+          14,
+          11,
+          2
+        ],
+        "exact": true,
+        "modified_exact": true,
+        "output_changed": true
+      },
+      {
+        "source": [
+          10,
+          4,
+          13,
+          6,
+          14
+        ],
+        "expected": [
+          14,
+          6,
+          13,
+          4,
+          10,
+          2
+        ],
+        "prediction": [
+          14,
+          6,
+          13,
+          4,
+          10,
+          2
+        ],
+        "source_modified": [
+          11,
+          5,
+          14,
+          7,
+          3
+        ],
+        "modified_expected": [
+          3,
+          7,
+          14,
+          5,
+          11,
+          2
+        ],
+        "modified_prediction": [
+          3,
+          7,
+          14,
+          5,
+          11,
+          2
+        ],
+        "exact": true,
+        "modified_exact": true,
+        "output_changed": true
+      },
+      {
+        "source": [
+          8
+        ],
+        "expected": [
+          8,
+          2
+        ],
+        "prediction": [
+          8,
+          2
+        ],
+        "source_modified": [
+          9
+        ],
+        "modified_expected": [
+          9,
+          2
+        ],
+        "modified_prediction": [
+          9,
+          2
+        ],
+        "exact": true,
+        "modified_exact": true,
+        "output_changed": true
+      },
+      {
+        "source": [
+          7,
+          14,
+          7
+        ],
+        "expected": [
+          7,
+          14,
+          7,
+          2
+        ],
+        "prediction": [
+          7,
+          14,
+          7,
+          2
+        ],
+        "source_modified": [
+          8,
+          3,
+          8
+        ],
+        "modified_expected": [
+          8,
+          3,
+          8,
+          2
+        ],
+        "modified_prediction": [
+          8,
+          3,
+          8,
+          2
+        ],
+        "exact": true,
+        "modified_exact": true,
+        "output_changed": true
+      },
+      {
+        "source": [
+          13,
+          5
+        ],
+        "expected": [
+          5,
+          13,
+          2
+        ],
+        "prediction": [
+          5,
+          13,
+          2
+        ],
+        "source_modified": [
+          14,
+          6
+        ],
+        "modified_expected": [
+          6,
+          14,
+          2
+        ],
+        "modified_prediction": [
+          6,
+          14,
+          2
+        ],
+        "exact": true,
+        "modified_exact": true,
+        "output_changed": true
+      },
+      {
+        "source": [
+          12,
+          14
+        ],
+        "expected": [
+          14,
+          12,
+          2
+        ],
+        "prediction": [
+          14,
+          12,
+          2
+        ],
+        "source_modified": [
+          13,
+          3
+        ],
+        "modified_expected": [
+          3,
+          13,
+          2
+        ],
+        "modified_prediction": [
+          3,
+          13,
+          2
+        ],
+        "exact": true,
+        "modified_exact": true,
+        "output_changed": true
+      },
+      {
+        "source": [
+          11
+        ],
+        "expected": [
+          11,
+          2
+        ],
+        "prediction": [
+          11,
+          2
+        ],
+        "source_modified": [
+          12
+        ],
+        "modified_expected": [
+          12,
+          2
+        ],
+        "modified_prediction": [
+          12,
+          2
+        ],
+        "exact": true,
+        "modified_exact": true,
+        "output_changed": true
+      },
+      {
+        "source": [
+          8,
+          10,
+          12,
+          11
+        ],
+        "expected": [
+          11,
+          12,
+          10,
+          8,
+          2
+        ],
+        "prediction": [
+          11,
+          12,
+          10,
+          8,
+          2
+        ],
+        "source_modified": [
+          9,
+          11,
+          13,
+          12
+        ],
+        "modified_expected": [
+          12,
+          13,
+          11,
+          9,
+          2
+        ],
+        "modified_prediction": [
+          12,
+          13,
+          11,
+          9,
+          2
+        ],
+        "exact": true,
+        "modified_exact": true,
+        "output_changed": true
+      },
+      {
+        "source": [
+          11,
+          11,
+          3,
+          8,
+          14
+        ],
+        "expected": [
+          14,
+          8,
+          3,
+          11,
+          11,
+          2
+        ],
+        "prediction": [
+          14,
+          8,
+          3,
+          11,
+          11,
+          2
+        ],
+        "source_modified": [
+          12,
+          12,
+          4,
+          9,
+          3
+        ],
+        "modified_expected": [
+          3,
+          9,
+          4,
+          12,
+          12,
+          2
+        ],
+        "modified_prediction": [
+          3,
+          9,
+          4,
+          12,
+          12,
+          2
+        ],
+        "exact": true,
+        "modified_exact": true,
+        "output_changed": true
+      },
+      {
+        "source": [
+          7,
+          12,
+          9,
+          12
+        ],
+        "expected": [
+          12,
+          9,
+          12,
+          7,
+          2
+        ],
+        "prediction": [
+          12,
+          9,
+          12,
+          7,
+          2
+        ],
+        "source_modified": [
+          8,
+          13,
+          10,
+          13
+        ],
+        "modified_expected": [
+          13,
+          10,
+          13,
+          8,
+          2
+        ],
+        "modified_prediction": [
+          13,
+          10,
+          13,
+          8,
+          2
+        ],
+        "exact": true,
+        "modified_exact": true,
+        "output_changed": true
+      },
+      {
+        "source": [
+          9
+        ],
+        "expected": [
+          9,
+          2
+        ],
+        "prediction": [
+          9,
+          2
+        ],
+        "source_modified": [
+          10
+        ],
+        "modified_expected": [
+          10,
+          2
+        ],
+        "modified_prediction": [
+          10,
+          2
+        ],
+        "exact": true,
+        "modified_exact": true,
+        "output_changed": true
+      },
+      {
+        "source": [
+          3,
+          3
+        ],
+        "expected": [
+          3,
+          3,
+          2
+        ],
+        "prediction": [
+          3,
+          3,
+          2
+        ],
+        "source_modified": [
+          4,
+          4
+        ],
+        "modified_expected": [
+          4,
+          4,
+          2
+        ],
+        "modified_prediction": [
+          4,
+          4,
+          2
+        ],
+        "exact": true,
+        "modified_exact": true,
+        "output_changed": true
+      },
+      {
+        "source": [
+          8,
+          8,
+          3,
+          4,
+          4
+        ],
+        "expected": [
+          4,
+          4,
+          3,
+          8,
+          8,
+          2
+        ],
+        "prediction": [
+          4,
+          4,
+          3,
+          8,
+          8,
+          2
+        ],
+        "source_modified": [
+          9,
+          9,
+          4,
+          5,
+          5
+        ],
+        "modified_expected": [
+          5,
+          5,
+          4,
+          9,
+          9,
+          2
+        ],
+        "modified_prediction": [
+          5,
+          5,
+          4,
+          9,
+          9,
+          2
+        ],
+        "exact": true,
+        "modified_exact": true,
+        "output_changed": true
+      },
+      {
+        "source": [
+          5,
+          5,
+          8,
+          12
+        ],
+        "expected": [
+          12,
+          8,
+          5,
+          5,
+          2
+        ],
+        "prediction": [
+          12,
+          8,
+          5,
+          5,
+          2
+        ],
+        "source_modified": [
+          6,
+          6,
+          9,
+          13
+        ],
+        "modified_expected": [
+          13,
+          9,
+          6,
+          6,
+          2
+        ],
+        "modified_prediction": [
+          13,
+          9,
+          6,
+          6,
+          2
+        ],
+        "exact": true,
+        "modified_exact": true,
+        "output_changed": true
+      },
+      {
+        "source": [
+          12,
+          8,
+          10,
+          6,
+          13
+        ],
+        "expected": [
+          13,
+          6,
+          10,
+          8,
+          12,
+          2
+        ],
+        "prediction": [
+          13,
+          6,
+          10,
+          8,
+          12,
+          2
+        ],
+        "source_modified": [
+          13,
+          9,
+          11,
+          7,
+          14
+        ],
+        "modified_expected": [
+          14,
+          7,
+          11,
+          9,
+          13,
+          2
+        ],
+        "modified_prediction": [
+          14,
+          7,
+          11,
+          9,
+          13,
+          2
+        ],
+        "exact": true,
+        "modified_exact": true,
+        "output_changed": true
+      },
+      {
+        "source": [
+          10,
+          4,
+          6,
+          3,
+          12
+        ],
+        "expected": [
+          12,
+          3,
+          6,
+          4,
+          10,
+          2
+        ],
+        "prediction": [
+          12,
+          3,
+          6,
+          4,
+          10,
+          2
+        ],
+        "source_modified": [
+          11,
+          5,
+          7,
+          4,
+          13
+        ],
+        "modified_expected": [
+          13,
+          4,
+          7,
+          5,
+          11,
+          2
+        ],
+        "modified_prediction": [
+          13,
+          4,
+          7,
+          5,
+          11,
+          2
+        ],
+        "exact": true,
+        "modified_exact": true,
+        "output_changed": true
+      },
+      {
+        "source": [
+          12,
+          6,
+          11
+        ],
+        "expected": [
+          11,
+          6,
+          12,
+          2
+        ],
+        "prediction": [
+          11,
+          6,
+          12,
+          2
+        ],
+        "source_modified": [
+          13,
+          7,
+          12
+        ],
+        "modified_expected": [
+          12,
+          7,
+          13,
+          2
+        ],
+        "modified_prediction": [
+          12,
+          7,
+          13,
+          2
+        ],
+        "exact": true,
+        "modified_exact": true,
+        "output_changed": true
+      },
+      {
+        "source": [
+          11
+        ],
+        "expected": [
+          11,
+          2
+        ],
+        "prediction": [
+          11,
+          2
+        ],
+        "source_modified": [
+          12
+        ],
+        "modified_expected": [
+          12,
+          2
+        ],
+        "modified_prediction": [
+          12,
+          2
+        ],
+        "exact": true,
+        "modified_exact": true,
+        "output_changed": true
+      },
+      {
+        "source": [
+          12,
+          5
+        ],
+        "expected": [
+          5,
+          12,
+          2
+        ],
+        "prediction": [
+          5,
+          12,
+          2
+        ],
+        "source_modified": [
+          13,
+          6
+        ],
+        "modified_expected": [
+          6,
+          13,
+          2
+        ],
+        "modified_prediction": [
+          6,
+          13,
+          2
+        ],
+        "exact": true,
+        "modified_exact": true,
+        "output_changed": true
+      },
+      {
+        "source": [
+          12,
+          9,
+          5,
+          8,
+          6
+        ],
+        "expected": [
+          6,
+          8,
+          5,
+          9,
+          12,
+          2
+        ],
+        "prediction": [
+          6,
+          8,
+          5,
+          9,
+          12,
+          2
+        ],
+        "source_modified": [
+          13,
+          10,
+          6,
+          9,
+          7
+        ],
+        "modified_expected": [
+          7,
+          9,
+          6,
+          10,
+          13,
+          2
+        ],
+        "modified_prediction": [
+          7,
+          9,
+          6,
+          10,
+          13,
+          2
+        ],
+        "exact": true,
+        "modified_exact": true,
+        "output_changed": true
+      },
+      {
+        "source": [
+          5,
+          7,
+          10,
+          6,
+          13
+        ],
+        "expected": [
+          13,
+          6,
+          10,
+          7,
+          5,
+          2
+        ],
+        "prediction": [
+          13,
+          6,
+          10,
+          7,
+          5,
+          2
+        ],
+        "source_modified": [
+          6,
+          8,
+          11,
+          7,
+          14
+        ],
+        "modified_expected": [
+          14,
+          7,
+          11,
+          8,
+          6,
+          2
+        ],
+        "modified_prediction": [
+          14,
+          7,
+          11,
+          8,
+          6,
+          2
+        ],
+        "exact": true,
+        "modified_exact": true,
+        "output_changed": true
+      }
+    ]
+  },
+  "additional_checks": {
+    "source_ids": [
+      [
+        3,
+        4,
+        5,
+        0,
+        0
+      ],
+      [
+        6,
+        7,
+        8,
+        9,
+        10
+      ]
+    ],
+    "decoder_input_ids": [
+      [
+        1,
+        5,
+        4,
+        3,
+        2,
+        0
+      ],
+      [
+        1,
+        10,
+        9,
+        8,
+        7,
+        6
+      ]
+    ],
+    "target_ids": [
+      [
+        5,
+        4,
+        3,
+        2,
+        0,
+        0
+      ],
+      [
+        10,
+        9,
+        8,
+        7,
+        6,
+        2
+      ]
+    ],
+    "source_shape": [
+      2,
+      5
+    ],
+    "decoder_input_shape": [
+      2,
+      6
+    ],
+    "memory_shape": [
+      2,
+      5,
+      32
+    ],
+    "logits_shape": [
+      2,
+      6,
+      15
+    ],
+    "all_logits_finite": true,
+    "attention_layers": [
+      {
+        "module": "encoder.0.attn",
+        "kind": "encoder_self",
+        "weights_shape": [
+          2,
+          4,
+          5,
+          5
+        ],
+        "pad_key_max_weight": 0.0,
+        "future_key_max_weight": null,
+        "maximum_row_sum_error": 1.1920928955078125e-07,
+        "first_sample_first_head_weights": [
+          [
+            0.38410845398902893,
+            0.3961522579193115,
+            0.21973924338817596,
+            0.0,
+            0.0
+          ],
+          [
+            0.25987422466278076,
+            0.25852999091148376,
+            0.4815957546234131,
+            0.0,
+            0.0
+          ],
+          [
+            0.5131338238716125,
+            0.3009711802005768,
+            0.18589502573013306,
+            0.0,
+            0.0
+          ],
+          [
+            0.09284814447164536,
+            0.1393638253211975,
+            0.7677880525588989,
+            0.0,
+            0.0
+          ],
+          [
+            0.1326572448015213,
+            0.17471806704998016,
+            0.6926247477531433,
+            0.0,
+            0.0
+          ]
+        ]
+      },
+      {
+        "module": "encoder.1.attn",
+        "kind": "encoder_self",
+        "weights_shape": [
+          2,
+          4,
+          5,
+          5
+        ],
+        "pad_key_max_weight": 0.0,
+        "future_key_max_weight": null,
+        "maximum_row_sum_error": 5.960464477539063e-08,
+        "first_sample_first_head_weights": [
+          [
+            0.5493507981300354,
+            0.30612388253211975,
+            0.14452527463436127,
+            0.0,
+            0.0
+          ],
+          [
+            0.2096358686685562,
+            0.31128624081611633,
+            0.47907790541648865,
+            0.0,
+            0.0
+          ],
+          [
+            0.11629404127597809,
+            0.13109131157398224,
+            0.7526146173477173,
+            0.0,
+            0.0
+          ],
+          [
+            0.2617618441581726,
+            0.3308473229408264,
+            0.40739086270332336,
+            0.0,
+            0.0
+          ],
+          [
+            0.28787147998809814,
+            0.2933533787727356,
+            0.41877514123916626,
+            0.0,
+            0.0
+          ]
+        ]
+      },
+      {
+        "module": "decoder.0.self_attn",
+        "kind": "decoder_self",
+        "weights_shape": [
+          2,
+          4,
+          6,
+          6
+        ],
+        "pad_key_max_weight": 0.0,
+        "future_key_max_weight": 0.0,
+        "maximum_row_sum_error": 1.1920928955078125e-07,
+        "first_sample_first_head_weights": [
+          [
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.8926096558570862,
+            0.1073903888463974,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.9754776358604431,
+            0.017985621467232704,
+            0.006536741275340319,
+            0.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0013769603101536632,
+            0.00955220777541399,
+            0.022462423890829086,
+            0.9666083455085754,
+            0.0,
+            0.0
+          ],
+          [
+            0.008509845472872257,
+            0.013142000883817673,
+            0.027103666216135025,
+            0.9035225510597229,
+            0.047721900045871735,
+            0.0
+          ],
+          [
+            0.006553944665938616,
+            0.039879534393548965,
+            0.11702637374401093,
+            0.7886402010917664,
+            0.047899920493364334,
+            0.0
+          ]
+        ]
+      },
+      {
+        "module": "decoder.0.cross_attn",
+        "kind": "cross",
+        "weights_shape": [
+          2,
+          4,
+          6,
+          5
+        ],
+        "pad_key_max_weight": 0.0,
+        "future_key_max_weight": null,
+        "maximum_row_sum_error": 1.1920928955078125e-07,
+        "first_sample_first_head_weights": [
+          [
+            0.013249754905700684,
+            0.18203595280647278,
+            0.8047142624855042,
+            0.0,
+            0.0
+          ],
+          [
+            0.2038593739271164,
+            0.6682133674621582,
+            0.1279272884130478,
+            0.0,
+            0.0
+          ],
+          [
+            0.4499622881412506,
+            0.3781205415725708,
+            0.17191720008850098,
+            0.0,
+            0.0
+          ],
+          [
+            0.3872615098953247,
+            0.5439139604568481,
+            0.06882451474666595,
+            0.0,
+            0.0
+          ],
+          [
+            0.7970856428146362,
+            0.18684163689613342,
+            0.016072705388069153,
+            0.0,
+            0.0
+          ],
+          [
+            0.34110626578330994,
+            0.13645753264427185,
+            0.522436261177063,
+            0.0,
+            0.0
+          ]
+        ]
+      },
+      {
+        "module": "decoder.1.self_attn",
+        "kind": "decoder_self",
+        "weights_shape": [
+          2,
+          4,
+          6,
+          6
+        ],
+        "pad_key_max_weight": 0.0,
+        "future_key_max_weight": 0.0,
+        "maximum_row_sum_error": 1.1920928955078125e-07,
+        "first_sample_first_head_weights": [
+          [
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.45699289441108704,
+            0.5430070757865906,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.3493659198284149,
+            0.31311580538749695,
+            0.3375183343887329,
+            0.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.16779956221580505,
+            0.13966132700443268,
+            0.4318400025367737,
+            0.2606991231441498,
+            0.0,
+            0.0
+          ],
+          [
+            0.09771338850259781,
+            0.10100351274013519,
+            0.33166658878326416,
+            0.20235367119312286,
+            0.26726287603378296,
+            0.0
+          ],
+          [
+            0.10232242196798325,
+            0.10010569542646408,
+            0.31543827056884766,
+            0.2050982266664505,
+            0.2770354151725769,
+            0.0
+          ]
+        ]
+      },
+      {
+        "module": "decoder.1.cross_attn",
+        "kind": "cross",
+        "weights_shape": [
+          2,
+          4,
+          6,
+          5
+        ],
+        "pad_key_max_weight": 0.0,
+        "future_key_max_weight": null,
+        "maximum_row_sum_error": 1.1920928955078125e-07,
+        "first_sample_first_head_weights": [
+          [
+            4.296436600270681e-06,
+            0.007952340878546238,
+            0.9920434355735779,
+            0.0,
+            0.0
+          ],
+          [
+            0.03743918612599373,
+            0.8011545538902283,
+            0.1614062339067459,
+            0.0,
+            0.0
+          ],
+          [
+            0.9576338529586792,
+            0.04232517629861832,
+            4.096391057828441e-05,
+            0.0,
+            0.0
+          ],
+          [
+            0.9999128580093384,
+            8.715124567970634e-05,
+            1.3687396771544513e-09,
+            0.0,
+            0.0
+          ],
+          [
+            0.9999655485153198,
+            3.446424670983106e-05,
+            6.053685330797975e-10,
+            0.0,
+            0.0
+          ],
+          [
+            0.9999326467514038,
+            6.737260991940275e-05,
+            2.0973800474166637e-09,
+            0.0,
+            0.0
+          ]
+        ]
+      }
+    ],
+    "future_target_perturbation": {
+      "changed_target_input_position": 5,
+      "earlier_logits_max_difference": 0.0,
+      "final_position_logits_max_difference": 0.5774210691452026
+    },
+    "loss_padding_check": {
+      "non_pad_target_count": 10,
+      "ignore_pad_loss": 0.0002981285215355456,
+      "manually_selected_non_pad_loss": 0.0002981285215355456
+    },
+    "source_padding": {
+      "embedding_padding_idx": null,
+      "pad_input_representation_max_absolute_value": 2.9582014083862305,
+      "pad_memory_max_absolute_value": 2.937910318374634,
+      "pad_key_weights_are_zero": true
+    }
+  },
+  "notes": [
+    "The original source is unchanged; runpy executes its main entrypoint.",
+    "Loss observation and the first-step optimizer observer add synchronization overhead but do not change random draws or optimizer formulas.",
+    "The original auto-device choice selected CUDA for this record. CPU runs may yield different training results.",
+    "The evaluation samples are new random draws; training/evaluation sequence overlap is not checked.",
+    "All additional diagnostics use the same trained model, not an independently trained replacement.",
+    "The model is Post-LN/GELU with learned absolute positions and two Encoder/two Decoder blocks; it is not a literal original-paper reproduction.",
+    "Inputs are right-padded, source length is at least one, and target inputs begin with BOS. All-masked rows and arbitrary left padding are not validated.",
+    "Greedy decoding reuses Encoder memory but recomputes the entire Decoder prefix each step; it has no KV Cache."
+  ]
+}

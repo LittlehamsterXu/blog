@@ -1,0 +1,32 @@
+Device: cuda
+Source: torch.Size([4, 5])
+Decoder input: torch.Size([4, 6])
+Targets: torch.Size([4, 6])
+Logits: torch.Size([4, 6, 15])
+All logits finite: True
+Step    1 | Loss: 2.8266
+Step  100 | Loss: 0.0230
+Step  200 | Loss: 0.0039
+Step  300 | Loss: 0.0021
+Step  400 | Loss: 0.0014
+Step  500 | Loss: 0.0010
+Step  600 | Loss: 0.0007
+Step  700 | Loss: 0.0005
+Step  800 | Loss: 0.0004
+Step  900 | Loss: 0.0003
+Step 1000 | Loss: 0.0003
+
+Exact sequence accuracy: 64/64 = 100.00%
+Example source: [8, 7, 13, 4]
+Expected output: [4, 13, 7, 8, 2]
+Predicted output: [4, 13, 7, 8, 2]
+
+===== Source Perturbation Test =====
+Original exact accuracy: 64/64
+Modified exact accuracy: 64/64
+Outputs changed: 64/64
+
+Original source: [5, 7, 10, 6, 13]
+Modified source: [6, 8, 11, 7, 14]
+Expected modified output: [14, 7, 11, 8, 6, 2]
+Predicted modified output: [14, 7, 11, 8, 6, 2]

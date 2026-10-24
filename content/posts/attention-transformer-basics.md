@@ -4,8 +4,8 @@ date: 2026-10-24
 draft: false
 tags: [PyTorch, Attention, Transformer, 深度学习]
 categories: [AI Infra]
-description: "从一个读取序列首 Token 的小实验开始，用 PyTorch 拆开 Attention、多头、位置与 Mask，再拼出 Encoder，走到 Decoder 的一次训练。"
-summary: "公式不长，真正写起来却有不少地方需要停一下：Q、K、V 从哪来，Head 拆的是哪一维，PAD Key 被屏蔽后为什么还有输出，以及训练时为什么能一次预测整段序列。"
+description: "用 PyTorch 拆开 Attention、多头、位置与 Mask，再把 Encoder 和 Decoder 接成一个能反转变长序列的 Seq2Seq Transformer。"
+summary: "从 Q、K、V 和张量形状开始，逐步理解 Attention、Encoder 与 Decoder。最后用一个完整的序列反转案例，验证 Cross-Attention、PAD 处理、训练和自回归生成怎样接在一起。"
 math: true
 ShowToc: true
 TocOpen: true
@@ -19,7 +19,7 @@ TocOpen: true
 
 Q、K、V 都从同一份输入算出来，为什么还需要三套投影？多头里的“拆分”，到底是在拆 Token，还是在拆特征？Mask 已经把 PAD 屏蔽了，怎么 PAD 的输出还不是零？
 
-这些地方如果只记住一张结构图，过几天大概还是会混。所以这次继续把例子缩小，先看数据怎样走，再看模块怎样拼起来，最后跑一次训练。
+这些地方如果只记住一张结构图，过几天大概还是会混。所以这次继续把例子缩小，先看数据怎样走，再看模块怎样拼起来。后面又补了一个完整的 Seq2Seq 模型，用变长序列反转，把前面分开看的部分接到一起。
 
 ## Attention
 
@@ -414,7 +414,7 @@ for layer in self.layers:
 
 这里 `detach().clone()` 只用于保存观察快照，后续层接着使用的仍然是原来的 `x`，没有把层间的梯度链断开。如果把 `x = x.detach()` 放进循环，那才是另一回事。
 
-固定一个 Token 的位置，逐层打印它的向量、范数或与初始表示的 cosine，可以看到表示确实在变化。不过当前 Encoder 还没有经过任务训练，这些变化只能说明计算发生了，不能直接解释成“层越深，语义越高级”。
+固定一个 Token 的位置，逐层打印它的向量、范数或与初始表示的 cosine，可以看到表示确实在变化。不过这份六层 Encoder 观察实验还没有经过任务训练，这些变化只能说明计算发生了，不能直接解释成“层越深，语义越高级”。
 
 ## Decoder
 
@@ -422,7 +422,7 @@ for layer in self.layers:
 
 原始 Encoder–Decoder 结构里，Encoder 处理源序列；Decoder 一边读取已有目标前缀，一边读取 Encoder 给出的表示，再预测下一个目标 Token。
 
-![原始Transformer的Encoder与Decoder横向结构：源Token经过Encoder形成memory，右移目标进入Decoder的因果Self-Attention，再以Decoder状态作为Q、memory作为K和V做Cross-Attention，经过FFN输出logits。](/images/transformer/encoder-decoder.svg "这是原始 Encoder–Decoder 的关系图。这次分别实现了 Encoder 和 Cross-Attention；训练实验使用的 TinyDecoder 没有中间的 Cross-Attention。")
+![原始Transformer的Encoder与Decoder横向结构：源Token经过Encoder形成memory，右移目标进入Decoder的因果Self-Attention，再以Decoder状态作为Q、memory作为K和V做Cross-Attention，经过FFN输出logits。](/images/transformer/encoder-decoder.svg "先看原始 Encoder–Decoder 的关系。前面的独立实验分开验证各个模块，文末的序列反转案例再把两侧接起来。")
 
 ### 自注意力与交叉注意力
 
@@ -457,9 +457,9 @@ output  [2, 3, 16]
 
 这里不需要按目标位置去屏蔽“后面的源 Token”，因为源序列已经给定；如果源序列含 PAD，仍然需要屏蔽那些源 Key。当前独立脚本的五个源位置都有效，因此还没有加入源端 Padding Mask。
 
-### 当前实现的范围
+### 两份实现的区别
 
-原始结构可以顺着[论文 §3](https://arxiv.org/html/1706.03762v7#S3)看，但这次代码没有把它完整训练成一个翻译模型。
+原始结构可以顺着[论文 §3](https://arxiv.org/html/1706.03762v7#S3)看。先拆开的这几份小实验，还没有把两侧连成完整的 Seq2Seq 模型。
 
 已经连起来的是六层 Encoder；Cross-Attention 单独跑通了输入来源和 shape。接下来训练使用的 `TinyDecoder` 是另一份 **decoder-only** 模型，没有 Encoder，也没有 Cross-Attention。
 
@@ -471,7 +471,7 @@ x = x + attn_out
 x = x + self.ffn(self.norm2(x))
 ```
 
-这份 FFN 用 GELU，整个 Decoder 最后还有一次 LayerNorm。前面的 Encoder 则是 Post-LN、ReLU。两份代码都可以用来理解结构，但不能一边展示前者的图，一边把后者的输出当成原始 Encoder–Decoder 已经训练完成的证据。
+这份 FFN 用 GELU，整个 Decoder 最后还有一次 LayerNorm。前面的 Encoder 则是 Post-LN、ReLU。两份代码都可以用来理解结构，但不能一边展示前者的图，一边把后者的输出当成原始 Encoder–Decoder 已经训练完成的证据。先用 TinyDecoder 看清训练对齐，后面再补上读取源序列的部分。
 
 ## 训练
 
@@ -592,6 +592,176 @@ loss 对输出的梯度，会经由加权求和传给 V 和权重，再经 Softm
 
 这次修改最后一个输入位置，较早三个位置的 logits 最大绝对变化是 `0`，最后位置的变化约为 `1.5271`，符合预期的依赖范围。
 
+## 完整案例：序列反转
+
+前面那个 TinyDecoder 有一个很具体的限制：两条样本都从 BOS 开始，第一个目标却不一样。没有额外输入，模型只能面对同样的前缀，猜两个不同答案。
+
+这次把源序列加进来。Decoder 仍然从 BOS 开始，但它可以通过 Cross-Attention，读取当前源序列经过 Encoder 得到的表示。相同的目标前缀，也就有了不同的条件。
+
+任务选得很简单：给一串 Token，输出它的反转序列，最后补上 EOS。先不引入自然语言和分词，把结构本身跑完整。
+
+### 输入与目标
+
+`seq2seq_transformer.py` 重新定义了一套编号：`PAD=0, BOS=1, EOS=2`，内容 Token 使用 `3..14`，词表大小为 15。这里的 EOS 是 2，和前面 Teacher Forcing 小实验里的 5 不同。
+
+源序列长度从 1 到 5 随机生成，右侧补 PAD。例如下面这条**示意样本**：
+
+```text
+src            [4, 7, 9, 0, 0]
+target_full    [1, 9, 7, 4, 2, 0, 0]
+decoder_input  [1, 9, 7, 4, 2, 0]
+targets        [9, 7, 4, 2, 0, 0]
+```
+
+`target_full` 最长要容纳 BOS、五个内容 Token 和 EOS，因此宽度为 7。错开一位后，Decoder 输入和标签的宽度都是 6。
+
+注意 EOS 后面的位置。在这条长度为 3 的样本中，输入里的 EOS 和后续 PAD 对应的目标都是 PAD，后面算 loss 时会忽略它们；EOS 自己仍然是需要预测的有效标签。
+
+![完整Seq2Seq Transformer双塔结构：左侧源序列经过Token与位置嵌入、两层Encoder，右侧右移目标经过两层Decoder。每个子层都画出残差和Add与Norm，Encoder最终memory提供Cross-Attention的K和V；Decoder栈外经过最终LayerNorm与Linear输出logits，用交叉熵训练。](/images/transformer/seq2seq-example.svg "从下往上读。Add & Norm 表示先加残差，再做 LayerNorm；两侧各重复两层。")
+
+图的布局参考 [《Attention Is All You Need》图 1](https://arxiv.org/html/1706.03762v7#S3)，按这份实现重新绘制。位置嵌入、GELU 和 Decoder 栈外的最终 LayerNorm 都保留代码里的选择；训练时 logits 直接交给交叉熵，没有额外插入一次 Softmax。
+
+### 模型与 Mask
+
+新模型的宽度是 `D=32`，四个 Head，FFN 中间宽度为 64，Encoder 和 Decoder **各两层**。两侧的 Block 都采用 Post-LN，FFN 使用 GELU；源、目标还分别有自己的 Token Embedding 和可学习位置 Embedding。
+
+它没有直接复用前面六层 Encoder 或 Pre-LN TinyDecoder 的配置。沿用的是已经拆开验证过的计算关系。
+
+整个前向的入口很短：
+
+```python
+def forward(self, src, tgt_input):
+    memory, src_pad_mask = self.encode(src)
+    return self.decode(tgt_input, memory, src_pad_mask)
+```
+
+形状可以顺着这条链往下看：
+
+| 数据 | 形状 |
+| --- | --- |
+| 源 Token ID | `[B, 5]` |
+| Encoder 最终 memory | `[B, 5, 32]` |
+| 右移目标 Token ID | `[B, 6]` |
+| Decoder 隐藏状态 | `[B, 6, 32]` |
+| 每层 Cross-Attention 权重 | `[B, 4, 6, 5]` |
+| 最终 logits | `[B, 6, 15]` |
+
+Decoder 每层都有三个子层。这次 Cross-Attention 真正进入了前向计算，接在 Causal Self-Attention 后面：
+
+```python
+attn_out, _ = self.self_attn(
+    x, x, key_padding_mask=tgt_pad_mask, causal=True,
+)
+x = self.norm1(x + attn_out)
+
+cross_out, _ = self.cross_attn(
+    x, memory, key_padding_mask=src_pad_mask,
+)
+x = self.norm2(x + cross_out)
+x = self.norm3(x + self.ffn(x))
+```
+
+每层的 Q 来自当前 Decoder 表示，K、V 来自同一份 Encoder 最终 memory，再由该层自己的参数分别投影。
+
+变长数据把前面的 Mask 问题都带进来了：
+
+| 计算位置 | 需要屏蔽什么 |
+| --- | --- |
+| Encoder Self-Attention | 源序列中的 PAD Key |
+| Decoder Self-Attention | 未来位置，以及目标输入中的 PAD Key |
+| Decoder Cross-Attention | 源序列中的 PAD Key |
+| Cross-Entropy | 标签中的 PAD 位置 |
+
+最后一项写在损失函数里：
+
+```python
+loss = F.cross_entropy(
+    logits.reshape(-1, VOCAB_SIZE),
+    targets.reshape(-1),
+    ignore_index=PAD,
+)
+```
+
+Attention Mask 决定信息可以从哪里读，`ignore_index` 决定哪些目标参与监督。忽略 PAD 标签，并不会自动阻止有效 Query 读取 PAD Key。默认取均值时，这里的 loss 也是在**未忽略的标签**上平均，而不是补零后除以所有位置数。[CrossEntropyLoss 文档](https://docs.pytorch.org/docs/2.14/generated/torch.nn.CrossEntropyLoss.html)说明了这个约定。
+
+这份模型的 Embedding 没有设置 `padding_idx`，因此也没有把“PAD 向量固定为零”当作前提。真正限制读取范围的是 Mask。
+
+当前数据至少有一个有效源 Token，目标输入始终从 BOS 开始。即使后面是 PAD，每个 Query 仍然至少有一个可见 Key，因此没有触发前面提过的全屏蔽行问题。
+
+### 训练与生成
+
+训练使用 Adam，学习率 `3e-3`，batch size 为 64，跑 1000 步。每一步都会重新抽取随机长度、随机内容的源序列，反转后构造目标。
+
+这次按原脚本固定种子 7，在 RTX 4070 Laptop 上重新运行，记录到的训练 loss 是：
+
+| step | 当前训练 batch 的 loss，更新前 |
+| ---: | ---: |
+| 1 | `2.826636` |
+| 100 | `0.022996` |
+| 1000 | `0.000295` |
+
+第一步反向时，92 份参数 tensor 都有有限梯度，并且在更新后发生变化。后面的完整序列生成，才继续检查这些参数有没有把任务学会。
+
+训练时，真实的右移目标仍然一次性送进 Decoder。生成时就不能这样做了：只有源序列和最初的 BOS，后面的输入要靠模型自己接着写。
+
+`greedy_decode()` 先编码源序列，再从 BOS 开始：
+
+```python
+memory, src_pad_mask = model.encode(src)
+generated = torch.full((B, 1), BOS, dtype=torch.long, device=src.device)
+
+for _ in range(max_new_tokens):
+    logits = model.decode(generated, memory, src_pad_mask)
+    next_token = logits[:, -1, :].argmax(dim=-1, keepdim=True)
+    # 原脚本在这里处理已生成 EOS 的样本：之后补 PAD。
+    generated = torch.cat([generated, next_token], dim=1)
+    # 整个 batch 都生成 EOS 后，提前结束。
+```
+
+上面只保留主要计算；完整脚本还维护每条样本的 `finished` 状态。取的是最后一个位置的 logits，选最大分数的 Token，再把自己的预测追加到前缀。遇到 EOS 表示这条输出已经结束，不要求不同长度的样本同一轮结束。
+
+这里 Encoder 只执行一次，memory 会反复使用。不过 Decoder 每一步仍然把**完整目标前缀重新计算一遍**，各层 Cross-Attention 也会重新投影 memory。它还没有加入 KV Cache，生成能跑通与生成是否高效，是接下来可以继续分开看的两件事。
+
+### 结果与源序列扰动
+
+这次除了观察训练 loss，还检查完整生成序列。判断正确的条件是：反转后的内容和 EOS 全部一致，少一个 Token、顺序不对或没有正确结束，都不算答对。
+
+原脚本在训练后另外抽取 64 条随机序列做评估。这里说的是新抽取的样本，**没有保证它们与训练样本完全不重复**，尤其长度为 1 时，内容只有 12 种可能。所以这组结果用于检查这个长度范围内的反转任务，不把它当成严格隔离测试集上的泛化成绩。
+
+这次 64 条都完整匹配，包括 EOS。例如其中一条实际生成结果是：
+
+```text
+源序列：[8, 7, 13, 4]
+期望值：[4, 13, 7, 8, 2]
+生成值：[4, 13, 7, 8, 2]
+```
+
+这里的生成值是从 BOS 开始逐步得到的，没有把真实的反转目标作为 Decoder 输入。
+
+再做一组源序列扰动：固定训练好的模型和目标生成方式，只修改源输入。把每个有效 Token 在 `3..14` 之间循环加一，长度和 PAD 位置不动：
+
+```python
+changed_src[valid_mask] = (
+    3 + (changed_src[valid_mask] - 3 + 1) % (VOCAB_SIZE - 3)
+)
+```
+
+这时需要一起看两个结果：输出有没有随源输入变化，以及变化后的输出是否正确反转了新源序列。只看到输出变了，还不足以说明任务做对了。
+
+本次记录是：
+
+```text
+原始源序列：完整输出正确 64 / 64
+修改源序列：完整输出正确 64 / 64
+生成结果随源输入改变   64 / 64
+```
+
+上面那条样本循环加一以后，源序列变成 `[9,8,14,5]`，模型生成 `[5,14,8,9,2]`，也与新的反转目标一致。
+
+附加核验还把每层权重拿出来检查：源 PAD Key、目标 PAD Key、未来 Key 和 Cross-Attention 的源 PAD Key，权重都为零。固定源序列，只修改最后一个目标输入位置，前五个位置的 logits 也没有变化。前面分开画过的几种依赖，在这个完整模型里仍然成立。
+
+前面那个 decoder-only 小实验缺少的条件输入，到这里才真正补上。Decoder 先读取已有目标前缀，再通过 Cross-Attention 读取源 memory，最后预测下一个 Token；loss 也能沿着这条路径传回两侧参数。
+
 ## 源码与复现
 
 源码来自这几天的 Attention 学习实验，公开副本和新增的核验放在同一个目录。需要相互导入的文件一起打包，解压后可以直接在装有 PyTorch 的环境中运行：
@@ -622,12 +792,30 @@ python verify_experiments.py --output-dir ./my-results
 
 正文的最小多头实现是合并接口后的说明版本，原实验包保留各脚本原本的结构。具体配置、矩阵和数值以结果文件及运行说明为准。
 
+后补的完整 Seq2Seq 案例单独放在这里，避免与前面那组独立实验混在一起：
+
+- [Seq2Seq 完整实验包](../../downloads/seq2seq-transformer/experiments.zip)
+- [原模型与训练脚本](../../downloads/seq2seq-transformer/seq2seq_transformer.py)
+- [Seq2Seq 运行说明](../../downloads/seq2seq-transformer/README.md)
+- [Seq2Seq 本次结果](../../downloads/seq2seq-transformer/results.json)
+
+解压后可以直接运行原脚本，也可以运行附加核验，保存训练日志和结构化结果：
+
+```bash
+python -B seq2seq_transformer.py
+python -B verify_seq2seq.py --output-dir ./my-seq2seq-results
+```
+
+这组新增结果使用相同的 PyTorch `2.14.1+cu130`，实际在 CUDA 上训练。脚本没有额外数据集和预训练权重依赖，没有 GPU 时会使用 CPU。逐步训练 loss 保存在 [loss.csv](../../downloads/seq2seq-transformer/loss.csv)，原控制台输出保存在 [original_stdout.txt](../../downloads/seq2seq-transformer/original_stdout.txt)。
+
 ## 后续学习
 
 这次先把一条计算过程接起来：Token 变成向量，投影成 Q、K、V，经过 Attention 和 FFN 更新表示，再输出 logits，与右移的目标计算 loss。反向传播和参数更新，还是上一篇那套流程，只是中间的函数复杂了一些。
 
 有些结论现在可以直接打开代码验证。Head 没有切断序列，PAD Key 的权重确实归零，Cross-Attention 的输出长度跟着 Query，Teacher Forcing 也没有取消因果约束。
 
-还有些地方，只看这些小实验远远不够。随机模型的权重矩阵不能直接解释成语义；一次更新不能当成训练收敛；单独跑通 Encoder 和 Cross-Attention，也不等于完整的 Encoder–Decoder 已经训练好了。
+最后的序列反转案例，把之前单独验证的部分接成了一个完整模型。它有源序列、有目标前缀，也真的经过 Cross-Attention 传递条件信息，训练后再用自己的预测继续生成。
 
-代码里已经开始做完整序列前向与 KV Cache 增量前向的等价检查。下一篇再接着看自回归生成、缓存和推理时的重复计算。这篇先把结构与训练整理到这里，免得下次又从那几个 shape 开始重新想一遍。
+不过它处理的仍然是短序列反转。随机权重不该直接解释成语义，固定长度范围内的任务结果，也还没有回答更长序列或真实语言任务会怎样。
+
+代码里已经开始做完整序列前向与 KV Cache 增量前向的等价检查。下一篇再接着看缓存和推理时的重复计算。这篇先把结构、训练和最小生成过程整理到这里，免得下次又从那几个 shape 开始重新想一遍。
