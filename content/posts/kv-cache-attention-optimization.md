@@ -1,6 +1,6 @@
 ---
 title: "KV Cache：从缓存机制到 Attention 架构优化"
-date: 2026-10-26
+date: 2026-10-26T14:30:00+08:00
 draft: false
 tags: [Transformer, KV Cache, GQA, MLA, DeepSeek]
 categories: [AI Infra]
