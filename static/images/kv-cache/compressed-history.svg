@@ -1,0 +1,258 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="820" viewBox="0 0 1440 820" role="img" aria-labelledby="title desc">
+<title id="title">CSA 与 HCA：把历史压短以后，怎样读？</title><desc id="desc">CSA左栏显示16个Token按4个一块，压缩条目结合相邻两块形成重叠。完整池保留C0到C3；单独的较窄索引Key池由当前Query评分，本图示意选C1和C3。HCA右栏显示每128个Token非重叠压成H0、H1，读取全部可见压缩条目。两路都与最近128个未压缩Token一起做Attention，同一共享向量兼作K和V。</desc>
+<style>text{font-family:"Noto Sans SC","Microsoft YaHei","PingFang SC",sans-serif}</style>
+<defs><linearGradient id="paper" x2="0" y2="1"><stop stop-color="#fffdf9"/><stop offset="1" stop-color="#f5f1e9"/></linearGradient>
+<linearGradient id="blueCard" x2="0" y2="1"><stop stop-color="#eaf5fc"/><stop offset="1" stop-color="#f9fcff"/></linearGradient>
+<linearGradient id="orangeCard" x2="0" y2="1"><stop stop-color="#fff0e3"/><stop offset="1" stop-color="#fffaf5"/></linearGradient>
+<filter id="shadow" x="-10%" y="-10%" width="120%" height="130%"><feDropShadow dx="0" dy="3" stdDeviation="4" flood-color="#3b4659" flood-opacity=".08"/></filter>
+<marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto" markerUnits="strokeWidth"><path d="M0 0 8 4 0 8Z" fill="context-stroke"/></marker></defs>
+<rect width="1440" height="820" rx="20" fill="url(#paper)"/>
+<text x="36" y="49" font-size="40" fill="#273345" text-anchor="start" font-weight="650">CSA 与 HCA：把历史压短以后，怎样读？</text>
+<text x="36" y="95" font-size="28" fill="#657080" text-anchor="start" font-weight="400">左边保留较细粒度后再挑选，右边压得更短后全部读取。</text>
+<rect x="28" y="119" width="676" height="647" rx="18" fill="url(#blueCard)" stroke="#256e9b" stroke-width="1.5" opacity="1" filter="url(#shadow)"/>
+<rect x="28" y="119" width="676" height="63" rx="18" fill="#256e9b" stroke="none" stroke-width="1.5" opacity="1"/>
+<rect x="28" y="151" width="676" height="31" rx="0" fill="#256e9b" stroke="none" stroke-width="1.5" opacity="1"/>
+<text x="50" y="160" font-size="31" fill="#ffffff" text-anchor="start" font-weight="650">CSA · 4 倍压缩 + 稀疏选择</text>
+<text x="50" y="211" font-size="24" fill="#256e9b" text-anchor="start" font-weight="400">Compressed Sparse Attention</text>
+<rect x="736" y="119" width="676" height="647" rx="18" fill="url(#orangeCard)" stroke="#c76737" stroke-width="1.5" opacity="1" filter="url(#shadow)"/>
+<rect x="736" y="119" width="676" height="63" rx="18" fill="#c76737" stroke="none" stroke-width="1.5" opacity="1"/>
+<rect x="736" y="151" width="676" height="31" rx="0" fill="#c76737" stroke="none" stroke-width="1.5" opacity="1"/>
+<text x="758" y="160" font-size="31" fill="#ffffff" text-anchor="start" font-weight="650">HCA · 128 倍压缩 + 稠密读取</text>
+<text x="758" y="211" font-size="24" fill="#c76737" text-anchor="start" font-weight="400">Heavily Compressed Attention</text>
+<rect x="52" y="234" width="36" height="42" rx="5" fill="#e5f2fb" stroke="#256e9b" stroke-width="1.5" opacity="1"/>
+<text x="70.0" y="263" font-size="24" fill="#256e9b" text-anchor="middle" font-weight="650">0</text>
+<rect x="89" y="234" width="36" height="42" rx="5" fill="#e5f2fb" stroke="#256e9b" stroke-width="1.5" opacity="1"/>
+<text x="107.0" y="263" font-size="24" fill="#256e9b" text-anchor="middle" font-weight="650">1</text>
+<rect x="126" y="234" width="36" height="42" rx="5" fill="#e5f2fb" stroke="#256e9b" stroke-width="1.5" opacity="1"/>
+<text x="144.0" y="263" font-size="24" fill="#256e9b" text-anchor="middle" font-weight="650">2</text>
+<rect x="163" y="234" width="36" height="42" rx="5" fill="#e5f2fb" stroke="#256e9b" stroke-width="1.5" opacity="1"/>
+<text x="181.0" y="263" font-size="24" fill="#256e9b" text-anchor="middle" font-weight="650">3</text>
+<rect x="200" y="234" width="36" height="42" rx="5" fill="#efe9f8" stroke="#8062a6" stroke-width="1.5" opacity="1"/>
+<text x="218.0" y="263" font-size="24" fill="#8062a6" text-anchor="middle" font-weight="650">4</text>
+<rect x="237" y="234" width="36" height="42" rx="5" fill="#efe9f8" stroke="#8062a6" stroke-width="1.5" opacity="1"/>
+<text x="255.0" y="263" font-size="24" fill="#8062a6" text-anchor="middle" font-weight="650">5</text>
+<rect x="274" y="234" width="36" height="42" rx="5" fill="#efe9f8" stroke="#8062a6" stroke-width="1.5" opacity="1"/>
+<text x="292.0" y="263" font-size="24" fill="#8062a6" text-anchor="middle" font-weight="650">6</text>
+<rect x="311" y="234" width="36" height="42" rx="5" fill="#efe9f8" stroke="#8062a6" stroke-width="1.5" opacity="1"/>
+<text x="329.0" y="263" font-size="24" fill="#8062a6" text-anchor="middle" font-weight="650">7</text>
+<rect x="348" y="234" width="36" height="42" rx="5" fill="#e4f3e8" stroke="#2b8268" stroke-width="1.5" opacity="1"/>
+<text x="366.0" y="263" font-size="24" fill="#2b8268" text-anchor="middle" font-weight="650">8</text>
+<rect x="385" y="234" width="36" height="42" rx="5" fill="#e4f3e8" stroke="#2b8268" stroke-width="1.5" opacity="1"/>
+<text x="403.0" y="263" font-size="24" fill="#2b8268" text-anchor="middle" font-weight="650">9</text>
+<rect x="422" y="234" width="36" height="42" rx="5" fill="#e4f3e8" stroke="#2b8268" stroke-width="1.5" opacity="1"/>
+<text x="440.0" y="263" font-size="24" fill="#2b8268" text-anchor="middle" font-weight="650">10</text>
+<rect x="459" y="234" width="36" height="42" rx="5" fill="#e4f3e8" stroke="#2b8268" stroke-width="1.5" opacity="1"/>
+<text x="477.0" y="263" font-size="24" fill="#2b8268" text-anchor="middle" font-weight="650">11</text>
+<rect x="496" y="234" width="36" height="42" rx="5" fill="#fff0e3" stroke="#c76737" stroke-width="1.5" opacity="1"/>
+<text x="514.0" y="263" font-size="24" fill="#c76737" text-anchor="middle" font-weight="650">12</text>
+<rect x="533" y="234" width="36" height="42" rx="5" fill="#fff0e3" stroke="#c76737" stroke-width="1.5" opacity="1"/>
+<text x="551.0" y="263" font-size="24" fill="#c76737" text-anchor="middle" font-weight="650">13</text>
+<rect x="570" y="234" width="36" height="42" rx="5" fill="#fff0e3" stroke="#c76737" stroke-width="1.5" opacity="1"/>
+<text x="588.0" y="263" font-size="24" fill="#c76737" text-anchor="middle" font-weight="650">14</text>
+<rect x="607" y="234" width="36" height="42" rx="5" fill="#fff0e3" stroke="#c76737" stroke-width="1.5" opacity="1"/>
+<text x="625.0" y="263" font-size="24" fill="#c76737" text-anchor="middle" font-weight="650">15</text>
+<path d="M52 283 v8 h144 v-8" fill="none" stroke="#256e9b" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" opacity="1"/>
+<text x="124" y="320" font-size="24" fill="#256e9b" text-anchor="middle" font-weight="400">块 0</text>
+<path d="M200 283 v8 h144 v-8" fill="none" stroke="#8062a6" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" opacity="1"/>
+<text x="272" y="320" font-size="24" fill="#8062a6" text-anchor="middle" font-weight="400">块 1</text>
+<path d="M348 283 v8 h144 v-8" fill="none" stroke="#2b8268" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" opacity="1"/>
+<text x="420" y="320" font-size="24" fill="#2b8268" text-anchor="middle" font-weight="400">块 2</text>
+<path d="M496 283 v8 h144 v-8" fill="none" stroke="#c76737" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" opacity="1"/>
+<text x="568" y="320" font-size="24" fill="#c76737" text-anchor="middle" font-weight="400">块 3</text>
+<path d="M124 325 C124 337 118 337 118 344" fill="none" stroke="#256e9b" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round" opacity="1" marker-end="url(#arrow)"/>
+<rect x="52" y="348" width="132" height="62" rx="10" fill="#e5f2fb" stroke="#256e9b" stroke-width="2.2" opacity="1"/>
+<text x="118.0" y="377" font-size="28" fill="#256e9b" text-anchor="middle" font-weight="650">C0</text>
+<rect x="64.0" y="390" width="12.857142857142858" height="10" rx="2" fill="#256e9b" stroke="none" stroke-width="1.5" opacity="0.6133333333333333"/>
+<rect x="79.85714285714286" y="390" width="12.857142857142858" height="10" rx="2" fill="#256e9b" stroke="none" stroke-width="1.5" opacity="0.9033333333333333"/>
+<rect x="95.71428571428572" y="390" width="12.857142857142858" height="10" rx="2" fill="#256e9b" stroke="none" stroke-width="1.5" opacity="0.5166666666666666"/>
+<rect x="111.57142857142857" y="390" width="12.857142857142858" height="10" rx="2" fill="#256e9b" stroke="none" stroke-width="1.5" opacity="0.8066666666666666"/>
+<rect x="127.42857142857143" y="390" width="12.857142857142858" height="10" rx="2" fill="#256e9b" stroke="none" stroke-width="1.5" opacity="0.42"/>
+<rect x="143.28571428571428" y="390" width="12.857142857142858" height="10" rx="2" fill="#256e9b" stroke="none" stroke-width="1.5" opacity="0.71"/>
+<rect x="159.14285714285714" y="390" width="12.857142857142858" height="10" rx="2" fill="#256e9b" stroke="none" stroke-width="1.5" opacity="1.0"/>
+<path d="M272 325 C272 337 271 337 271 344" fill="none" stroke="#8062a6" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round" opacity="1" marker-end="url(#arrow)"/>
+<path d="M124 325 C124 339 253 329 253 344" fill="none" stroke="#256e9b" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round" opacity="0.65" marker-end="url(#arrow)"/>
+<rect x="205" y="348" width="132" height="62" rx="10" fill="#e5f2fb" stroke="#256e9b" stroke-width="2.2" opacity="1"/>
+<text x="271.0" y="377" font-size="28" fill="#256e9b" text-anchor="middle" font-weight="650">C1</text>
+<rect x="217.0" y="390" width="12.857142857142858" height="10" rx="2" fill="#256e9b" stroke="none" stroke-width="1.5" opacity="0.6133333333333333"/>
+<rect x="232.85714285714286" y="390" width="12.857142857142858" height="10" rx="2" fill="#256e9b" stroke="none" stroke-width="1.5" opacity="0.9033333333333333"/>
+<rect x="248.71428571428572" y="390" width="12.857142857142858" height="10" rx="2" fill="#256e9b" stroke="none" stroke-width="1.5" opacity="0.5166666666666666"/>
+<rect x="264.57142857142856" y="390" width="12.857142857142858" height="10" rx="2" fill="#256e9b" stroke="none" stroke-width="1.5" opacity="0.8066666666666666"/>
+<rect x="280.42857142857144" y="390" width="12.857142857142858" height="10" rx="2" fill="#256e9b" stroke="none" stroke-width="1.5" opacity="0.42"/>
+<rect x="296.2857142857143" y="390" width="12.857142857142858" height="10" rx="2" fill="#256e9b" stroke="none" stroke-width="1.5" opacity="0.71"/>
+<rect x="312.1428571428571" y="390" width="12.857142857142858" height="10" rx="2" fill="#256e9b" stroke="none" stroke-width="1.5" opacity="1.0"/>
+<path d="M420 325 C420 337 424 337 424 344" fill="none" stroke="#2b8268" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round" opacity="1" marker-end="url(#arrow)"/>
+<path d="M272 325 C272 339 406 329 406 344" fill="none" stroke="#8062a6" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round" opacity="0.65" marker-end="url(#arrow)"/>
+<rect x="358" y="348" width="132" height="62" rx="10" fill="#e5f2fb" stroke="#256e9b" stroke-width="2.2" opacity="1"/>
+<text x="424.0" y="377" font-size="28" fill="#256e9b" text-anchor="middle" font-weight="650">C2</text>
+<rect x="370.0" y="390" width="12.857142857142858" height="10" rx="2" fill="#256e9b" stroke="none" stroke-width="1.5" opacity="0.6133333333333333"/>
+<rect x="385.85714285714283" y="390" width="12.857142857142858" height="10" rx="2" fill="#256e9b" stroke="none" stroke-width="1.5" opacity="0.9033333333333333"/>
+<rect x="401.7142857142857" y="390" width="12.857142857142858" height="10" rx="2" fill="#256e9b" stroke="none" stroke-width="1.5" opacity="0.5166666666666666"/>
+<rect x="417.57142857142856" y="390" width="12.857142857142858" height="10" rx="2" fill="#256e9b" stroke="none" stroke-width="1.5" opacity="0.8066666666666666"/>
+<rect x="433.42857142857144" y="390" width="12.857142857142858" height="10" rx="2" fill="#256e9b" stroke="none" stroke-width="1.5" opacity="0.42"/>
+<rect x="449.2857142857143" y="390" width="12.857142857142858" height="10" rx="2" fill="#256e9b" stroke="none" stroke-width="1.5" opacity="0.71"/>
+<rect x="465.1428571428571" y="390" width="12.857142857142858" height="10" rx="2" fill="#256e9b" stroke="none" stroke-width="1.5" opacity="1.0"/>
+<path d="M568 325 C568 337 577 337 577 344" fill="none" stroke="#c76737" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round" opacity="1" marker-end="url(#arrow)"/>
+<path d="M420 325 C420 339 559 329 559 344" fill="none" stroke="#2b8268" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round" opacity="0.65" marker-end="url(#arrow)"/>
+<rect x="511" y="348" width="132" height="62" rx="10" fill="#e5f2fb" stroke="#256e9b" stroke-width="2.2" opacity="1"/>
+<text x="577.0" y="377" font-size="28" fill="#256e9b" text-anchor="middle" font-weight="650">C3</text>
+<rect x="523.0" y="390" width="12.857142857142858" height="10" rx="2" fill="#256e9b" stroke="none" stroke-width="1.5" opacity="0.6133333333333333"/>
+<rect x="538.8571428571429" y="390" width="12.857142857142858" height="10" rx="2" fill="#256e9b" stroke="none" stroke-width="1.5" opacity="0.9033333333333333"/>
+<rect x="554.7142857142857" y="390" width="12.857142857142858" height="10" rx="2" fill="#256e9b" stroke="none" stroke-width="1.5" opacity="0.5166666666666666"/>
+<rect x="570.5714285714286" y="390" width="12.857142857142858" height="10" rx="2" fill="#256e9b" stroke="none" stroke-width="1.5" opacity="0.8066666666666666"/>
+<rect x="586.4285714285714" y="390" width="12.857142857142858" height="10" rx="2" fill="#256e9b" stroke="none" stroke-width="1.5" opacity="0.42"/>
+<rect x="602.2857142857143" y="390" width="12.857142857142858" height="10" rx="2" fill="#256e9b" stroke="none" stroke-width="1.5" opacity="0.71"/>
+<rect x="618.1428571428571" y="390" width="12.857142857142858" height="10" rx="2" fill="#256e9b" stroke="none" stroke-width="1.5" opacity="1.0"/>
+<text x="52" y="441" font-size="24" fill="#657080" text-anchor="start" font-weight="400">步长 4；后续条目由相邻两块共同压缩。</text>
+<text x="52" y="480" font-size="25" fill="#8062a6" text-anchor="start" font-weight="650">独立索引 Key → 当前 Query 评分（示意）</text>
+<rect x="52" y="497" width="132" height="54" rx="8" fill="#efe9f8" stroke="#d6c7e7" stroke-width="1.5" opacity="1"/>
+<rect x="62.0" y="507" width="8.25" height="8" rx="2" fill="#8062a6" stroke="none" stroke-width="1.5" opacity="0.6133333333333333"/>
+<rect x="73.25" y="507" width="8.25" height="8" rx="2" fill="#8062a6" stroke="none" stroke-width="1.5" opacity="0.9033333333333333"/>
+<rect x="84.5" y="507" width="8.25" height="8" rx="2" fill="#8062a6" stroke="none" stroke-width="1.5" opacity="0.5166666666666666"/>
+<rect x="95.75" y="507" width="8.25" height="8" rx="2" fill="#8062a6" stroke="none" stroke-width="1.5" opacity="0.8066666666666666"/>
+<text x="164" y="522" font-size="24" fill="#8062a6" text-anchor="end" font-weight="650">0.12</text>
+<rect x="62" y="533" width="112" height="8" rx="3" fill="#ddd2ec" stroke="none" stroke-width="1.5" opacity="1"/>
+<rect x="62" y="533" width="13.44" height="8" rx="3" fill="#8062a6" stroke="none" stroke-width="1.5" opacity="1"/>
+<rect x="205" y="497" width="132" height="54" rx="8" fill="#efe9f8" stroke="#d6c7e7" stroke-width="1.5" opacity="1"/>
+<rect x="215.0" y="507" width="8.25" height="8" rx="2" fill="#8062a6" stroke="none" stroke-width="1.5" opacity="0.6133333333333333"/>
+<rect x="226.25" y="507" width="8.25" height="8" rx="2" fill="#8062a6" stroke="none" stroke-width="1.5" opacity="0.9033333333333333"/>
+<rect x="237.5" y="507" width="8.25" height="8" rx="2" fill="#8062a6" stroke="none" stroke-width="1.5" opacity="0.5166666666666666"/>
+<rect x="248.75" y="507" width="8.25" height="8" rx="2" fill="#8062a6" stroke="none" stroke-width="1.5" opacity="0.8066666666666666"/>
+<text x="317" y="522" font-size="24" fill="#8062a6" text-anchor="end" font-weight="650">0.91</text>
+<rect x="215" y="533" width="112" height="8" rx="3" fill="#ddd2ec" stroke="none" stroke-width="1.5" opacity="1"/>
+<rect x="215" y="533" width="101.92" height="8" rx="3" fill="#8062a6" stroke="none" stroke-width="1.5" opacity="1"/>
+<rect x="358" y="497" width="132" height="54" rx="8" fill="#efe9f8" stroke="#d6c7e7" stroke-width="1.5" opacity="1"/>
+<rect x="368.0" y="507" width="8.25" height="8" rx="2" fill="#8062a6" stroke="none" stroke-width="1.5" opacity="0.6133333333333333"/>
+<rect x="379.25" y="507" width="8.25" height="8" rx="2" fill="#8062a6" stroke="none" stroke-width="1.5" opacity="0.9033333333333333"/>
+<rect x="390.5" y="507" width="8.25" height="8" rx="2" fill="#8062a6" stroke="none" stroke-width="1.5" opacity="0.5166666666666666"/>
+<rect x="401.75" y="507" width="8.25" height="8" rx="2" fill="#8062a6" stroke="none" stroke-width="1.5" opacity="0.8066666666666666"/>
+<text x="470" y="522" font-size="24" fill="#8062a6" text-anchor="end" font-weight="650">0.28</text>
+<rect x="368" y="533" width="112" height="8" rx="3" fill="#ddd2ec" stroke="none" stroke-width="1.5" opacity="1"/>
+<rect x="368" y="533" width="31.360000000000003" height="8" rx="3" fill="#8062a6" stroke="none" stroke-width="1.5" opacity="1"/>
+<rect x="511" y="497" width="132" height="54" rx="8" fill="#efe9f8" stroke="#d6c7e7" stroke-width="1.5" opacity="1"/>
+<rect x="521.0" y="507" width="8.25" height="8" rx="2" fill="#8062a6" stroke="none" stroke-width="1.5" opacity="0.6133333333333333"/>
+<rect x="532.25" y="507" width="8.25" height="8" rx="2" fill="#8062a6" stroke="none" stroke-width="1.5" opacity="0.9033333333333333"/>
+<rect x="543.5" y="507" width="8.25" height="8" rx="2" fill="#8062a6" stroke="none" stroke-width="1.5" opacity="0.5166666666666666"/>
+<rect x="554.75" y="507" width="8.25" height="8" rx="2" fill="#8062a6" stroke="none" stroke-width="1.5" opacity="0.8066666666666666"/>
+<text x="623" y="522" font-size="24" fill="#8062a6" text-anchor="end" font-weight="650">0.82</text>
+<rect x="521" y="533" width="112" height="8" rx="3" fill="#ddd2ec" stroke="none" stroke-width="1.5" opacity="1"/>
+<rect x="521" y="533" width="91.83999999999999" height="8" rx="3" fill="#8062a6" stroke="none" stroke-width="1.5" opacity="1"/>
+<text x="52" y="583" font-size="25" fill="#256e9b" text-anchor="start" font-weight="650">本轮 Top-k：这里仅示意选 C1、C3</text>
+<rect x="52" y="597" width="132" height="62" rx="10" fill="#e8e9eb" stroke="#c7ccd2" stroke-width="1.3" opacity="1"/>
+<text x="118.0" y="626" font-size="28" fill="#858d97" text-anchor="middle" font-weight="650">C0</text>
+<rect x="64.0" y="639" width="12.857142857142858" height="10" rx="2" fill="#858d97" stroke="none" stroke-width="1.5" opacity="0.3373333333333333"/>
+<rect x="79.85714285714286" y="639" width="12.857142857142858" height="10" rx="2" fill="#858d97" stroke="none" stroke-width="1.5" opacity="0.49683333333333335"/>
+<rect x="95.71428571428572" y="639" width="12.857142857142858" height="10" rx="2" fill="#858d97" stroke="none" stroke-width="1.5" opacity="0.2841666666666667"/>
+<rect x="111.57142857142857" y="639" width="12.857142857142858" height="10" rx="2" fill="#858d97" stroke="none" stroke-width="1.5" opacity="0.4436666666666667"/>
+<rect x="127.42857142857143" y="639" width="12.857142857142858" height="10" rx="2" fill="#858d97" stroke="none" stroke-width="1.5" opacity="0.231"/>
+<rect x="143.28571428571428" y="639" width="12.857142857142858" height="10" rx="2" fill="#858d97" stroke="none" stroke-width="1.5" opacity="0.3905"/>
+<rect x="159.14285714285714" y="639" width="12.857142857142858" height="10" rx="2" fill="#858d97" stroke="none" stroke-width="1.5" opacity="0.55"/>
+<rect x="205" y="597" width="132" height="62" rx="10" fill="#e5f2fb" stroke="#256e9b" stroke-width="2.2" opacity="1"/>
+<text x="271.0" y="626" font-size="28" fill="#256e9b" text-anchor="middle" font-weight="650">C1</text>
+<rect x="217.0" y="639" width="12.857142857142858" height="10" rx="2" fill="#256e9b" stroke="none" stroke-width="1.5" opacity="0.6133333333333333"/>
+<rect x="232.85714285714286" y="639" width="12.857142857142858" height="10" rx="2" fill="#256e9b" stroke="none" stroke-width="1.5" opacity="0.9033333333333333"/>
+<rect x="248.71428571428572" y="639" width="12.857142857142858" height="10" rx="2" fill="#256e9b" stroke="none" stroke-width="1.5" opacity="0.5166666666666666"/>
+<rect x="264.57142857142856" y="639" width="12.857142857142858" height="10" rx="2" fill="#256e9b" stroke="none" stroke-width="1.5" opacity="0.8066666666666666"/>
+<rect x="280.42857142857144" y="639" width="12.857142857142858" height="10" rx="2" fill="#256e9b" stroke="none" stroke-width="1.5" opacity="0.42"/>
+<rect x="296.2857142857143" y="639" width="12.857142857142858" height="10" rx="2" fill="#256e9b" stroke="none" stroke-width="1.5" opacity="0.71"/>
+<rect x="312.1428571428571" y="639" width="12.857142857142858" height="10" rx="2" fill="#256e9b" stroke="none" stroke-width="1.5" opacity="1.0"/>
+<path d="M271 661 V675 H505 V684" fill="none" stroke="#256e9b" stroke-width="2.8" stroke-linejoin="round" stroke-linecap="round" opacity="1" marker-end="url(#arrow)"/>
+<rect x="358" y="597" width="132" height="62" rx="10" fill="#e8e9eb" stroke="#c7ccd2" stroke-width="1.3" opacity="1"/>
+<text x="424.0" y="626" font-size="28" fill="#858d97" text-anchor="middle" font-weight="650">C2</text>
+<rect x="370.0" y="639" width="12.857142857142858" height="10" rx="2" fill="#858d97" stroke="none" stroke-width="1.5" opacity="0.3373333333333333"/>
+<rect x="385.85714285714283" y="639" width="12.857142857142858" height="10" rx="2" fill="#858d97" stroke="none" stroke-width="1.5" opacity="0.49683333333333335"/>
+<rect x="401.7142857142857" y="639" width="12.857142857142858" height="10" rx="2" fill="#858d97" stroke="none" stroke-width="1.5" opacity="0.2841666666666667"/>
+<rect x="417.57142857142856" y="639" width="12.857142857142858" height="10" rx="2" fill="#858d97" stroke="none" stroke-width="1.5" opacity="0.4436666666666667"/>
+<rect x="433.42857142857144" y="639" width="12.857142857142858" height="10" rx="2" fill="#858d97" stroke="none" stroke-width="1.5" opacity="0.231"/>
+<rect x="449.2857142857143" y="639" width="12.857142857142858" height="10" rx="2" fill="#858d97" stroke="none" stroke-width="1.5" opacity="0.3905"/>
+<rect x="465.1428571428571" y="639" width="12.857142857142858" height="10" rx="2" fill="#858d97" stroke="none" stroke-width="1.5" opacity="0.55"/>
+<rect x="511" y="597" width="132" height="62" rx="10" fill="#e5f2fb" stroke="#256e9b" stroke-width="2.2" opacity="1"/>
+<text x="577.0" y="626" font-size="28" fill="#256e9b" text-anchor="middle" font-weight="650">C3</text>
+<rect x="523.0" y="639" width="12.857142857142858" height="10" rx="2" fill="#256e9b" stroke="none" stroke-width="1.5" opacity="0.6133333333333333"/>
+<rect x="538.8571428571429" y="639" width="12.857142857142858" height="10" rx="2" fill="#256e9b" stroke="none" stroke-width="1.5" opacity="0.9033333333333333"/>
+<rect x="554.7142857142857" y="639" width="12.857142857142858" height="10" rx="2" fill="#256e9b" stroke="none" stroke-width="1.5" opacity="0.5166666666666666"/>
+<rect x="570.5714285714286" y="639" width="12.857142857142858" height="10" rx="2" fill="#256e9b" stroke="none" stroke-width="1.5" opacity="0.8066666666666666"/>
+<rect x="586.4285714285714" y="639" width="12.857142857142858" height="10" rx="2" fill="#256e9b" stroke="none" stroke-width="1.5" opacity="0.42"/>
+<rect x="602.2857142857143" y="639" width="12.857142857142858" height="10" rx="2" fill="#256e9b" stroke="none" stroke-width="1.5" opacity="0.71"/>
+<rect x="618.1428571428571" y="639" width="12.857142857142858" height="10" rx="2" fill="#256e9b" stroke="none" stroke-width="1.5" opacity="1.0"/>
+<path d="M577 661 V675 H505 V684" fill="none" stroke="#256e9b" stroke-width="2.8" stroke-linejoin="round" stroke-linecap="round" opacity="1" marker-end="url(#arrow)"/>
+<rect x="52" y="687" width="275" height="52" rx="10" fill="#e4f3e8" stroke="#2b8268" stroke-width="1.5" opacity="1"/>
+<text x="68" y="721" font-size="25" fill="#2b8268" text-anchor="start" font-weight="650">近期 128 个 Token</text>
+<rect x="285.0" y="702" width="7.333333333333333" height="23" rx="2" fill="#2b8268" stroke="none" stroke-width="1.5" opacity="0.6133333333333333"/>
+<rect x="295.3333333333333" y="702" width="7.333333333333333" height="23" rx="2" fill="#2b8268" stroke="none" stroke-width="1.5" opacity="0.9033333333333333"/>
+<rect x="305.6666666666667" y="702" width="7.333333333333333" height="23" rx="2" fill="#2b8268" stroke="none" stroke-width="1.5" opacity="0.5166666666666666"/>
+<path d="M337 713 L389 713" fill="none" stroke="#2b8268" stroke-width="3" stroke-linejoin="round" stroke-linecap="round" opacity="1" marker-end="url(#arrow)"/>
+<rect x="401" y="686" width="272" height="54" rx="11" fill="#ffffff" stroke="#256e9b" stroke-width="2" opacity="1"/>
+<text x="537" y="721" font-size="29" fill="#256e9b" text-anchor="middle" font-weight="650">核心 Attention</text>
+<text x="904" y="247" font-size="27" fill="#c76737" text-anchor="middle" font-weight="650">128 个 Token</text>
+<rect x="760" y="264" width="66" height="42" rx="5" fill="#fff0e3" stroke="#c76737" stroke-width="1.5" opacity="1"/>
+<text x="793" y="293" font-size="24" fill="#c76737" text-anchor="middle" font-weight="650">0</text>
+<rect x="830" y="264" width="66" height="42" rx="5" fill="#fff0e3" stroke="#c76737" stroke-width="1.5" opacity="1"/>
+<text x="863" y="293" font-size="24" fill="#c76737" text-anchor="middle" font-weight="650">1</text>
+<rect x="900" y="264" width="66" height="42" rx="5" fill="#fff0e3" stroke="#c76737" stroke-width="1.5" opacity="1"/>
+<text x="933" y="293" font-size="24" fill="#c76737" text-anchor="middle" font-weight="650">…</text>
+<rect x="970" y="264" width="66" height="42" rx="5" fill="#fff0e3" stroke="#c76737" stroke-width="1.5" opacity="1"/>
+<text x="1003" y="293" font-size="24" fill="#c76737" text-anchor="middle" font-weight="650">127</text>
+<path d="M760 315 v10 h276 v-10" fill="none" stroke="#c76737" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" opacity="1"/>
+<path d="M898 329 V350" fill="none" stroke="#c76737" stroke-width="3" stroke-linejoin="round" stroke-linecap="round" opacity="1" marker-end="url(#arrow)"/>
+<rect x="822" y="363" width="156" height="62" rx="10" fill="#fff0e3" stroke="#c76737" stroke-width="2.2" opacity="1"/>
+<text x="900.0" y="392" font-size="28" fill="#c76737" text-anchor="middle" font-weight="650">H0</text>
+<rect x="834.0" y="405" width="16.285714285714285" height="10" rx="2" fill="#c76737" stroke="none" stroke-width="1.5" opacity="0.6133333333333333"/>
+<rect x="853.2857142857143" y="405" width="16.285714285714285" height="10" rx="2" fill="#c76737" stroke="none" stroke-width="1.5" opacity="0.9033333333333333"/>
+<rect x="872.5714285714286" y="405" width="16.285714285714285" height="10" rx="2" fill="#c76737" stroke="none" stroke-width="1.5" opacity="0.5166666666666666"/>
+<rect x="891.8571428571429" y="405" width="16.285714285714285" height="10" rx="2" fill="#c76737" stroke="none" stroke-width="1.5" opacity="0.8066666666666666"/>
+<rect x="911.1428571428571" y="405" width="16.285714285714285" height="10" rx="2" fill="#c76737" stroke="none" stroke-width="1.5" opacity="0.42"/>
+<rect x="930.4285714285714" y="405" width="16.285714285714285" height="10" rx="2" fill="#c76737" stroke="none" stroke-width="1.5" opacity="0.71"/>
+<rect x="949.7142857142857" y="405" width="16.285714285714285" height="10" rx="2" fill="#c76737" stroke="none" stroke-width="1.5" opacity="1.0"/>
+<text x="1224" y="247" font-size="27" fill="#c76737" text-anchor="middle" font-weight="650">128 个 Token</text>
+<rect x="1080" y="264" width="66" height="42" rx="5" fill="#fff0e3" stroke="#c76737" stroke-width="1.5" opacity="1"/>
+<text x="1113" y="293" font-size="24" fill="#c76737" text-anchor="middle" font-weight="650">128</text>
+<rect x="1150" y="264" width="66" height="42" rx="5" fill="#fff0e3" stroke="#c76737" stroke-width="1.5" opacity="1"/>
+<text x="1183" y="293" font-size="24" fill="#c76737" text-anchor="middle" font-weight="650">129</text>
+<rect x="1220" y="264" width="66" height="42" rx="5" fill="#fff0e3" stroke="#c76737" stroke-width="1.5" opacity="1"/>
+<text x="1253" y="293" font-size="24" fill="#c76737" text-anchor="middle" font-weight="650">…</text>
+<rect x="1290" y="264" width="66" height="42" rx="5" fill="#fff0e3" stroke="#c76737" stroke-width="1.5" opacity="1"/>
+<text x="1323" y="293" font-size="24" fill="#c76737" text-anchor="middle" font-weight="650">255</text>
+<path d="M1080 315 v10 h276 v-10" fill="none" stroke="#c76737" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" opacity="1"/>
+<path d="M1218 329 V350" fill="none" stroke="#c76737" stroke-width="3" stroke-linejoin="round" stroke-linecap="round" opacity="1" marker-end="url(#arrow)"/>
+<rect x="1142" y="363" width="156" height="62" rx="10" fill="#fff0e3" stroke="#c76737" stroke-width="2.2" opacity="1"/>
+<text x="1220.0" y="392" font-size="28" fill="#c76737" text-anchor="middle" font-weight="650">H1</text>
+<rect x="1154.0" y="405" width="16.285714285714285" height="10" rx="2" fill="#c76737" stroke="none" stroke-width="1.5" opacity="0.6133333333333333"/>
+<rect x="1173.2857142857142" y="405" width="16.285714285714285" height="10" rx="2" fill="#c76737" stroke="none" stroke-width="1.5" opacity="0.9033333333333333"/>
+<rect x="1192.5714285714287" y="405" width="16.285714285714285" height="10" rx="2" fill="#c76737" stroke="none" stroke-width="1.5" opacity="0.5166666666666666"/>
+<rect x="1211.857142857143" y="405" width="16.285714285714285" height="10" rx="2" fill="#c76737" stroke="none" stroke-width="1.5" opacity="0.8066666666666666"/>
+<rect x="1231.142857142857" y="405" width="16.285714285714285" height="10" rx="2" fill="#c76737" stroke="none" stroke-width="1.5" opacity="0.42"/>
+<rect x="1250.4285714285713" y="405" width="16.285714285714285" height="10" rx="2" fill="#c76737" stroke="none" stroke-width="1.5" opacity="0.71"/>
+<rect x="1269.7142857142858" y="405" width="16.285714285714285" height="10" rx="2" fill="#c76737" stroke="none" stroke-width="1.5" opacity="1.0"/>
+<text x="760" y="462" font-size="25" fill="#657080" text-anchor="start" font-weight="400">非重叠压缩：每 128 个 Token 聚合为 1 条。</text>
+<text x="760" y="504" font-size="27" fill="#c76737" text-anchor="start" font-weight="650">主 Attention 读取全部可见压缩条目</text>
+<rect x="790" y="548" width="180" height="62" rx="10" fill="#fff0e3" stroke="#c76737" stroke-width="2.2" opacity="1"/>
+<text x="880.0" y="577" font-size="28" fill="#c76737" text-anchor="middle" font-weight="650">H0</text>
+<rect x="802.0" y="590" width="19.714285714285715" height="10" rx="2" fill="#c76737" stroke="none" stroke-width="1.5" opacity="0.6133333333333333"/>
+<rect x="824.7142857142857" y="590" width="19.714285714285715" height="10" rx="2" fill="#c76737" stroke="none" stroke-width="1.5" opacity="0.9033333333333333"/>
+<rect x="847.4285714285714" y="590" width="19.714285714285715" height="10" rx="2" fill="#c76737" stroke="none" stroke-width="1.5" opacity="0.5166666666666666"/>
+<rect x="870.1428571428571" y="590" width="19.714285714285715" height="10" rx="2" fill="#c76737" stroke="none" stroke-width="1.5" opacity="0.8066666666666666"/>
+<rect x="892.8571428571429" y="590" width="19.714285714285715" height="10" rx="2" fill="#c76737" stroke="none" stroke-width="1.5" opacity="0.42"/>
+<rect x="915.5714285714286" y="590" width="19.714285714285715" height="10" rx="2" fill="#c76737" stroke="none" stroke-width="1.5" opacity="0.71"/>
+<rect x="938.2857142857142" y="590" width="19.714285714285715" height="10" rx="2" fill="#c76737" stroke="none" stroke-width="1.5" opacity="1.0"/>
+<path d="M880 612 V643 H1216 V683" fill="none" stroke="#c76737" stroke-width="3" stroke-linejoin="round" stroke-linecap="round" opacity="1" marker-end="url(#arrow)"/>
+<rect x="1110" y="548" width="180" height="62" rx="10" fill="#fff0e3" stroke="#c76737" stroke-width="2.2" opacity="1"/>
+<text x="1200.0" y="577" font-size="28" fill="#c76737" text-anchor="middle" font-weight="650">H1</text>
+<rect x="1122.0" y="590" width="19.714285714285715" height="10" rx="2" fill="#c76737" stroke="none" stroke-width="1.5" opacity="0.6133333333333333"/>
+<rect x="1144.7142857142858" y="590" width="19.714285714285715" height="10" rx="2" fill="#c76737" stroke="none" stroke-width="1.5" opacity="0.9033333333333333"/>
+<rect x="1167.4285714285713" y="590" width="19.714285714285715" height="10" rx="2" fill="#c76737" stroke="none" stroke-width="1.5" opacity="0.5166666666666666"/>
+<rect x="1190.142857142857" y="590" width="19.714285714285715" height="10" rx="2" fill="#c76737" stroke="none" stroke-width="1.5" opacity="0.8066666666666666"/>
+<rect x="1212.857142857143" y="590" width="19.714285714285715" height="10" rx="2" fill="#c76737" stroke="none" stroke-width="1.5" opacity="0.42"/>
+<rect x="1235.5714285714287" y="590" width="19.714285714285715" height="10" rx="2" fill="#c76737" stroke="none" stroke-width="1.5" opacity="0.71"/>
+<rect x="1258.2857142857142" y="590" width="19.714285714285715" height="10" rx="2" fill="#c76737" stroke="none" stroke-width="1.5" opacity="1.0"/>
+<path d="M1200 612 V643 H1216 V683" fill="none" stroke="#c76737" stroke-width="3" stroke-linejoin="round" stroke-linecap="round" opacity="1" marker-end="url(#arrow)"/>
+<text x="1073" y="586" font-size="30" fill="#c76737" text-anchor="middle" font-weight="650">…</text>
+<rect x="760" y="687" width="275" height="52" rx="10" fill="#e4f3e8" stroke="#2b8268" stroke-width="1.5" opacity="1"/>
+<text x="776" y="721" font-size="25" fill="#2b8268" text-anchor="start" font-weight="650">近期 128 个 Token</text>
+<rect x="993.0" y="702" width="7.333333333333333" height="23" rx="2" fill="#2b8268" stroke="none" stroke-width="1.5" opacity="0.6133333333333333"/>
+<rect x="1003.3333333333334" y="702" width="7.333333333333333" height="23" rx="2" fill="#2b8268" stroke="none" stroke-width="1.5" opacity="0.9033333333333333"/>
+<rect x="1013.6666666666666" y="702" width="7.333333333333333" height="23" rx="2" fill="#2b8268" stroke="none" stroke-width="1.5" opacity="0.5166666666666666"/>
+<path d="M1045 713 L1090 713" fill="none" stroke="#2b8268" stroke-width="3" stroke-linejoin="round" stroke-linecap="round" opacity="1" marker-end="url(#arrow)"/>
+<rect x="1102" y="686" width="285" height="54" rx="11" fill="#ffffff" stroke="#c76737" stroke-width="2" opacity="1"/>
+<text x="1244" y="721" font-size="29" fill="#c76737" text-anchor="middle" font-weight="650">核心 Attention</text>
+<text x="720" y="802" font-size="26" fill="#657080" text-anchor="middle" font-weight="400">同一压缩向量同时作 K、V；近期窗口保留细节，完整压缩池持续保存在缓存中。</text>
+</svg>

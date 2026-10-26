@@ -1,0 +1,194 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="810" viewBox="0 0 1440 810" role="img" aria-labelledby="title desc">
+<title id="title">KV Cache：旧的三行留下，新的这一行写进去</title>
+<desc id="desc">上方比较无缓存时反复输入ABC、ABCD、ABCDE。下方先Prefill ABC保存Key和Value三行；输入D仅投影当前qD、kD、vD，把新K/V追加到历史，qD对ABCD四个Key打分，四个权重聚合ABCD四行Value。</desc>
+<style>text{font-family:"Noto Sans SC","Microsoft YaHei","PingFang SC",sans-serif}</style>
+<defs><linearGradient id="page" x2="1" y2="1"><stop stop-color="#f8fbfd"/><stop offset="1" stop-color="#fffaf4"/></linearGradient><filter id="shadow" x="-10%" y="-10%" width="120%" height="130%"><feDropShadow dx="0" dy="3" stdDeviation="5" flood-color="#536578" flood-opacity=".09"/></filter><marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto" markerUnits="strokeWidth"><path d="M0 0 8 4 0 8Z" fill="context-stroke"/></marker></defs>
+<rect width="1440" height="810" rx="22" fill="url(#page)"/>
+<defs><linearGradient id="blue-wash" x2="0" y2="1"><stop stop-color="#e9f4fa"/><stop offset="1" stop-color="#ffffff"/></linearGradient></defs>
+<defs><linearGradient id="green-wash" x2="0" y2="1"><stop stop-color="#e9f5ed"/><stop offset="1" stop-color="#ffffff"/></linearGradient></defs>
+<defs><linearGradient id="coral-wash" x2="0" y2="1"><stop stop-color="#fff0e5"/><stop offset="1" stop-color="#ffffff"/></linearGradient></defs>
+<defs><linearGradient id="purple-wash" x2="0" y2="1"><stop stop-color="#f2ebf8"/><stop offset="1" stop-color="#ffffff"/></linearGradient></defs>
+<defs><linearGradient id="gray-wash" x2="0" y2="1"><stop stop-color="#eef1f4"/><stop offset="1" stop-color="#ffffff"/></linearGradient></defs>
+<text x="32" y="56" font-size="40" fill="#253444" text-anchor="start" font-weight="650">KV Cache：旧的三行留下，新的这一行写进去</text>
+<text x="32" y="100" font-size="26" fill="#697887" text-anchor="start" font-weight="400">以一层、一个 Head 为例：Prefill 先得到 D；这一轮输入 D，再预测 E。</text>
+<rect x="32" y="126" width="1376" height="142" rx="14" fill="#eef1f4" stroke="#d6dfe4" stroke-width="1.6"/>
+<text x="52" y="165" font-size="28" fill="#697887" text-anchor="start" font-weight="650">完整前缀</text>
+<text x="52" y="205" font-size="25" fill="#697887" text-anchor="start" font-weight="400">每轮重算</text>
+<rect x="250" y="149" width="36" height="42" rx="8" fill="#eef1f4" stroke="#a2adb6" stroke-width="1.6"/>
+<text x="268.0" y="178.84" font-size="26" fill="#a2adb6" text-anchor="middle" font-weight="650">A</text>
+<rect x="292" y="149" width="36" height="42" rx="8" fill="#eef1f4" stroke="#a2adb6" stroke-width="1.6"/>
+<text x="310.0" y="178.84" font-size="26" fill="#a2adb6" text-anchor="middle" font-weight="650">B</text>
+<rect x="334" y="149" width="36" height="42" rx="8" fill="#fff0e5" stroke="#ca704b" stroke-width="1.6"/>
+<text x="352.0" y="178.84" font-size="26" fill="#ca704b" text-anchor="middle" font-weight="650">C</text>
+<path d="M386 170 H422" fill="none" stroke="#697887" stroke-width="2.4" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<rect x="436" y="149" width="42" height="42" rx="8" fill="#fff0e5" stroke="#ca704b" stroke-width="1.6"/>
+<text x="457.0" y="179.52" font-size="28" fill="#ca704b" text-anchor="middle" font-weight="650">D</text>
+<text x="250" y="232" font-size="24" fill="#697887" text-anchor="start" font-weight="400">旧 A/B/C 又进入模型</text>
+<rect x="623" y="149" width="36" height="42" rx="8" fill="#eef1f4" stroke="#a2adb6" stroke-width="1.6"/>
+<text x="641.0" y="178.84" font-size="26" fill="#a2adb6" text-anchor="middle" font-weight="650">A</text>
+<rect x="665" y="149" width="36" height="42" rx="8" fill="#eef1f4" stroke="#a2adb6" stroke-width="1.6"/>
+<text x="683.0" y="178.84" font-size="26" fill="#a2adb6" text-anchor="middle" font-weight="650">B</text>
+<rect x="707" y="149" width="36" height="42" rx="8" fill="#eef1f4" stroke="#a2adb6" stroke-width="1.6"/>
+<text x="725.0" y="178.84" font-size="26" fill="#a2adb6" text-anchor="middle" font-weight="650">C</text>
+<rect x="749" y="149" width="36" height="42" rx="8" fill="#fff0e5" stroke="#ca704b" stroke-width="1.6"/>
+<text x="767.0" y="178.84" font-size="26" fill="#ca704b" text-anchor="middle" font-weight="650">D</text>
+<path d="M801 170 H837" fill="none" stroke="#697887" stroke-width="2.4" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<rect x="851" y="149" width="42" height="42" rx="8" fill="#fff0e5" stroke="#ca704b" stroke-width="1.6"/>
+<text x="872.0" y="179.52" font-size="28" fill="#ca704b" text-anchor="middle" font-weight="650">E</text>
+<text x="623" y="232" font-size="24" fill="#697887" text-anchor="start" font-weight="400">旧 A/B/C/D 又进入模型</text>
+<rect x="996" y="149" width="36" height="42" rx="8" fill="#eef1f4" stroke="#a2adb6" stroke-width="1.6"/>
+<text x="1014.0" y="178.84" font-size="26" fill="#a2adb6" text-anchor="middle" font-weight="650">A</text>
+<rect x="1038" y="149" width="36" height="42" rx="8" fill="#eef1f4" stroke="#a2adb6" stroke-width="1.6"/>
+<text x="1056.0" y="178.84" font-size="26" fill="#a2adb6" text-anchor="middle" font-weight="650">B</text>
+<rect x="1080" y="149" width="36" height="42" rx="8" fill="#eef1f4" stroke="#a2adb6" stroke-width="1.6"/>
+<text x="1098.0" y="178.84" font-size="26" fill="#a2adb6" text-anchor="middle" font-weight="650">C</text>
+<rect x="1122" y="149" width="36" height="42" rx="8" fill="#eef1f4" stroke="#a2adb6" stroke-width="1.6"/>
+<text x="1140.0" y="178.84" font-size="26" fill="#a2adb6" text-anchor="middle" font-weight="650">D</text>
+<rect x="1164" y="149" width="36" height="42" rx="8" fill="#fff0e5" stroke="#ca704b" stroke-width="1.6"/>
+<text x="1182.0" y="178.84" font-size="26" fill="#ca704b" text-anchor="middle" font-weight="650">E</text>
+<path d="M1216 170 H1252" fill="none" stroke="#697887" stroke-width="2.4" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<rect x="1266" y="149" width="42" height="42" rx="8" fill="#fff0e5" stroke="#ca704b" stroke-width="1.6"/>
+<text x="1287.0" y="179.52" font-size="28" fill="#ca704b" text-anchor="middle" font-weight="650">F</text>
+<text x="996" y="232" font-size="24" fill="#697887" text-anchor="start" font-weight="400">旧 A/B/C/D/E 又进入模型</text>
+<rect x="32" y="294" width="270" height="456" rx="16" fill="url(#blue-wash)" stroke="#2f7aa0" stroke-width="1.6" filter="url(#shadow)"/>
+<text x="52" y="336" font-size="30" fill="#2f7aa0" text-anchor="start" font-weight="650">① Prefill：A B C</text>
+<rect x="62" y="355" width="52" height="44" rx="8" fill="#e9f4fa" stroke="#2f7aa0" stroke-width="1.6"/>
+<text x="88.0" y="385.84" font-size="26" fill="#2f7aa0" text-anchor="middle" font-weight="650">A</text>
+<rect x="128" y="355" width="52" height="44" rx="8" fill="#e9f4fa" stroke="#2f7aa0" stroke-width="1.6"/>
+<text x="154.0" y="385.84" font-size="26" fill="#2f7aa0" text-anchor="middle" font-weight="650">B</text>
+<rect x="194" y="355" width="52" height="44" rx="8" fill="#e9f4fa" stroke="#2f7aa0" stroke-width="1.6"/>
+<text x="220.0" y="385.84" font-size="26" fill="#2f7aa0" text-anchor="middle" font-weight="650">C</text>
+<text x="139" y="442" font-size="28" fill="#2f7aa0" text-anchor="middle" font-weight="650">K</text>
+<text x="249" y="442" font-size="28" fill="#378b6d" text-anchor="middle" font-weight="650">V</text>
+<rect x="103" y="459" width="15" height="36" rx="3" fill="#2f7aa0" stroke="#2f7aa0" stroke-width="1.6"/>
+<rect x="121" y="459" width="15" height="36" rx="3" fill="#e9f4fa" stroke="#2f7aa0" stroke-width="1.6"/>
+<rect x="139" y="459" width="15" height="36" rx="3" fill="#e9f4fa" stroke="#2f7aa0" stroke-width="1.6"/>
+<rect x="157" y="459" width="15" height="36" rx="3" fill="#e9f4fa" stroke="#2f7aa0" stroke-width="1.6"/>
+<text x="91" y="487.08" font-size="24" fill="#697887" text-anchor="end" font-weight="400">A</text>
+<rect x="103" y="498" width="15" height="36" rx="3" fill="#e9f4fa" stroke="#2f7aa0" stroke-width="1.6"/>
+<rect x="121" y="498" width="15" height="36" rx="3" fill="#e9f4fa" stroke="#2f7aa0" stroke-width="1.6"/>
+<rect x="139" y="498" width="15" height="36" rx="3" fill="#e9f4fa" stroke="#2f7aa0" stroke-width="1.6"/>
+<rect x="157" y="498" width="15" height="36" rx="3" fill="#2f7aa0" stroke="#2f7aa0" stroke-width="1.6"/>
+<text x="91" y="526.08" font-size="24" fill="#697887" text-anchor="end" font-weight="400">B</text>
+<rect x="103" y="537" width="15" height="36" rx="3" fill="#e9f4fa" stroke="#2f7aa0" stroke-width="1.6"/>
+<rect x="121" y="537" width="15" height="36" rx="3" fill="#e9f4fa" stroke="#2f7aa0" stroke-width="1.6"/>
+<rect x="139" y="537" width="15" height="36" rx="3" fill="#2f7aa0" stroke="#2f7aa0" stroke-width="1.6"/>
+<rect x="157" y="537" width="15" height="36" rx="3" fill="#e9f4fa" stroke="#2f7aa0" stroke-width="1.6"/>
+<text x="91" y="565.08" font-size="24" fill="#697887" text-anchor="end" font-weight="400">C</text>
+<rect x="213" y="459" width="15" height="36" rx="3" fill="#378b6d" stroke="#378b6d" stroke-width="1.6"/>
+<rect x="231" y="459" width="15" height="36" rx="3" fill="#e9f5ed" stroke="#378b6d" stroke-width="1.6"/>
+<rect x="249" y="459" width="15" height="36" rx="3" fill="#e9f5ed" stroke="#378b6d" stroke-width="1.6"/>
+<rect x="267" y="459" width="15" height="36" rx="3" fill="#e9f5ed" stroke="#378b6d" stroke-width="1.6"/>
+<rect x="213" y="498" width="15" height="36" rx="3" fill="#e9f5ed" stroke="#378b6d" stroke-width="1.6"/>
+<rect x="231" y="498" width="15" height="36" rx="3" fill="#e9f5ed" stroke="#378b6d" stroke-width="1.6"/>
+<rect x="249" y="498" width="15" height="36" rx="3" fill="#e9f5ed" stroke="#378b6d" stroke-width="1.6"/>
+<rect x="267" y="498" width="15" height="36" rx="3" fill="#378b6d" stroke="#378b6d" stroke-width="1.6"/>
+<rect x="213" y="537" width="15" height="36" rx="3" fill="#e9f5ed" stroke="#378b6d" stroke-width="1.6"/>
+<rect x="231" y="537" width="15" height="36" rx="3" fill="#e9f5ed" stroke="#378b6d" stroke-width="1.6"/>
+<rect x="249" y="537" width="15" height="36" rx="3" fill="#378b6d" stroke="#378b6d" stroke-width="1.6"/>
+<rect x="267" y="537" width="15" height="36" rx="3" fill="#e9f5ed" stroke="#378b6d" stroke-width="1.6"/>
+<text x="52" y="614" font-size="24" fill="#697887" text-anchor="start" font-weight="400">每个位置各有一行 K/V</text>
+<path d="M167 641 V660" fill="none" stroke="#2f7aa0" stroke-width="2.4" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<rect x="83" y="673" width="168" height="47" rx="8" fill="#fff0e5" stroke="#ca704b" stroke-width="1.6"/>
+<text x="167.0" y="705.68" font-size="27" fill="#ca704b" text-anchor="middle" font-weight="650">预测出 D</text>
+<rect x="326" y="294" width="222" height="456" rx="16" fill="url(#coral-wash)" stroke="#ca704b" stroke-width="1.6" filter="url(#shadow)"/>
+<text x="346" y="336" font-size="30" fill="#ca704b" text-anchor="start" font-weight="650">② 只输入 D</text>
+<rect x="408" y="355" width="58" height="48" rx="8" fill="#fff0e5" stroke="#ca704b" stroke-width="1.6"/>
+<text x="437.0" y="389.2" font-size="30" fill="#ca704b" text-anchor="middle" font-weight="650">D</text>
+<path d="M437 409 V431" fill="none" stroke="#ca704b" stroke-width="2.4" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<rect x="348" y="441" width="178" height="56" rx="8" fill="white" stroke="#ca704b" stroke-width="1.6"/>
+<text x="437" y="477" font-size="24" fill="#ca704b" text-anchor="middle" font-weight="650">本轮 Q/K/V 投影</text>
+<text x="353" y="550" font-size="26" fill="#8966ad" text-anchor="start" font-weight="650">q_D</text>
+<rect x="420" y="524" width="19" height="30" rx="3" fill="#8966ad" stroke="#8966ad" stroke-width="1.6"/>
+<rect x="443" y="524" width="19" height="30" rx="3" fill="#f2ebf8" stroke="#8966ad" stroke-width="1.6"/>
+<rect x="466" y="524" width="19" height="30" rx="3" fill="#f2ebf8" stroke="#8966ad" stroke-width="1.6"/>
+<rect x="489" y="524" width="19" height="30" rx="3" fill="#8966ad" stroke="#8966ad" stroke-width="1.6"/>
+<text x="353" y="618" font-size="26" fill="#ca704b" text-anchor="start" font-weight="650">k_D</text>
+<rect x="420" y="592" width="19" height="30" rx="3" fill="#fff0e5" stroke="#ca704b" stroke-width="1.6"/>
+<rect x="443" y="592" width="19" height="30" rx="3" fill="#ca704b" stroke="#ca704b" stroke-width="1.6"/>
+<rect x="466" y="592" width="19" height="30" rx="3" fill="#fff0e5" stroke="#ca704b" stroke-width="1.6"/>
+<rect x="489" y="592" width="19" height="30" rx="3" fill="#fff0e5" stroke="#ca704b" stroke-width="1.6"/>
+<text x="353" y="686" font-size="26" fill="#ca704b" text-anchor="start" font-weight="650">v_D</text>
+<rect x="420" y="660" width="19" height="30" rx="3" fill="#fff0e5" stroke="#ca704b" stroke-width="1.6"/>
+<rect x="443" y="660" width="19" height="30" rx="3" fill="#ca704b" stroke="#ca704b" stroke-width="1.6"/>
+<rect x="466" y="660" width="19" height="30" rx="3" fill="#fff0e5" stroke="#ca704b" stroke-width="1.6"/>
+<rect x="489" y="660" width="19" height="30" rx="3" fill="#fff0e5" stroke="#ca704b" stroke-width="1.6"/>
+<text x="437" y="733" font-size="24" fill="#697887" text-anchor="middle" font-weight="400">只计算新增位置</text>
+<rect x="572" y="294" width="380" height="456" rx="16" fill="url(#green-wash)" stroke="#378b6d" stroke-width="1.6" filter="url(#shadow)"/>
+<text x="592" y="336" font-size="30" fill="#378b6d" text-anchor="start" font-weight="650">③ 写入各层自己的缓存</text>
+<text x="676" y="382" font-size="28" fill="#2f7aa0" text-anchor="middle" font-weight="650">Key</text>
+<text x="852" y="382" font-size="28" fill="#378b6d" text-anchor="middle" font-weight="650">Value</text>
+<rect x="630" y="407" width="25" height="44" rx="3" fill="#2f7aa0" stroke="#2f7aa0" stroke-width="1.6"/>
+<rect x="658" y="407" width="25" height="44" rx="3" fill="#e9f4fa" stroke="#2f7aa0" stroke-width="1.6"/>
+<rect x="686" y="407" width="25" height="44" rx="3" fill="#e9f4fa" stroke="#2f7aa0" stroke-width="1.6"/>
+<rect x="714" y="407" width="25" height="44" rx="3" fill="#e9f4fa" stroke="#2f7aa0" stroke-width="1.6"/>
+<text x="618" y="440.84" font-size="24" fill="#697887" text-anchor="end" font-weight="400">A</text>
+<rect x="630" y="454" width="25" height="44" rx="3" fill="#e9f4fa" stroke="#2f7aa0" stroke-width="1.6"/>
+<rect x="658" y="454" width="25" height="44" rx="3" fill="#e9f4fa" stroke="#2f7aa0" stroke-width="1.6"/>
+<rect x="686" y="454" width="25" height="44" rx="3" fill="#e9f4fa" stroke="#2f7aa0" stroke-width="1.6"/>
+<rect x="714" y="454" width="25" height="44" rx="3" fill="#2f7aa0" stroke="#2f7aa0" stroke-width="1.6"/>
+<text x="618" y="487.84" font-size="24" fill="#697887" text-anchor="end" font-weight="400">B</text>
+<rect x="630" y="501" width="25" height="44" rx="3" fill="#e9f4fa" stroke="#2f7aa0" stroke-width="1.6"/>
+<rect x="658" y="501" width="25" height="44" rx="3" fill="#e9f4fa" stroke="#2f7aa0" stroke-width="1.6"/>
+<rect x="686" y="501" width="25" height="44" rx="3" fill="#2f7aa0" stroke="#2f7aa0" stroke-width="1.6"/>
+<rect x="714" y="501" width="25" height="44" rx="3" fill="#e9f4fa" stroke="#2f7aa0" stroke-width="1.6"/>
+<text x="618" y="534.84" font-size="24" fill="#697887" text-anchor="end" font-weight="400">C</text>
+<rect x="630" y="548" width="25" height="44" rx="3" fill="#fff0e5" stroke="#ca704b" stroke-width="1.6"/>
+<rect x="658" y="548" width="25" height="44" rx="3" fill="#ca704b" stroke="#ca704b" stroke-width="1.6"/>
+<rect x="686" y="548" width="25" height="44" rx="3" fill="#fff0e5" stroke="#ca704b" stroke-width="1.6"/>
+<rect x="714" y="548" width="25" height="44" rx="3" fill="#fff0e5" stroke="#ca704b" stroke-width="1.6"/>
+<text x="618" y="581.84" font-size="24" fill="#ca704b" text-anchor="end" font-weight="400">D</text>
+<rect x="801" y="407" width="25" height="44" rx="3" fill="#378b6d" stroke="#378b6d" stroke-width="1.6"/>
+<rect x="829" y="407" width="25" height="44" rx="3" fill="#e9f5ed" stroke="#378b6d" stroke-width="1.6"/>
+<rect x="857" y="407" width="25" height="44" rx="3" fill="#e9f5ed" stroke="#378b6d" stroke-width="1.6"/>
+<rect x="885" y="407" width="25" height="44" rx="3" fill="#e9f5ed" stroke="#378b6d" stroke-width="1.6"/>
+<rect x="801" y="454" width="25" height="44" rx="3" fill="#e9f5ed" stroke="#378b6d" stroke-width="1.6"/>
+<rect x="829" y="454" width="25" height="44" rx="3" fill="#e9f5ed" stroke="#378b6d" stroke-width="1.6"/>
+<rect x="857" y="454" width="25" height="44" rx="3" fill="#e9f5ed" stroke="#378b6d" stroke-width="1.6"/>
+<rect x="885" y="454" width="25" height="44" rx="3" fill="#378b6d" stroke="#378b6d" stroke-width="1.6"/>
+<rect x="801" y="501" width="25" height="44" rx="3" fill="#e9f5ed" stroke="#378b6d" stroke-width="1.6"/>
+<rect x="829" y="501" width="25" height="44" rx="3" fill="#e9f5ed" stroke="#378b6d" stroke-width="1.6"/>
+<rect x="857" y="501" width="25" height="44" rx="3" fill="#378b6d" stroke="#378b6d" stroke-width="1.6"/>
+<rect x="885" y="501" width="25" height="44" rx="3" fill="#e9f5ed" stroke="#378b6d" stroke-width="1.6"/>
+<rect x="801" y="548" width="25" height="44" rx="3" fill="#fff0e5" stroke="#ca704b" stroke-width="1.6"/>
+<rect x="829" y="548" width="25" height="44" rx="3" fill="#ca704b" stroke="#ca704b" stroke-width="1.6"/>
+<rect x="857" y="548" width="25" height="44" rx="3" fill="#fff0e5" stroke="#ca704b" stroke-width="1.6"/>
+<rect x="885" y="548" width="25" height="44" rx="3" fill="#fff0e5" stroke="#ca704b" stroke-width="1.6"/>
+<rect x="614" y="400" width="308" height="142" rx="10" fill="none" stroke="#2f7aa0" stroke-width="1.6" stroke-dasharray="7 5"/>
+<text x="762" y="637" font-size="24" fill="#2f7aa0" text-anchor="middle" font-weight="400">A / B / C：保留原来的行</text>
+<text x="762" y="677" font-size="25" fill="#ca704b" text-anchor="middle" font-weight="650">D：只追加这一行</text>
+<text x="762" y="722" font-size="24" fill="#697887" text-anchor="middle" font-weight="400">K、V 均为 [1, 1, 4, d_h]</text>
+<path d="M525 600 H563" fill="none" stroke="#ca704b" stroke-width="2.4" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<path d="M525 668 H557 V653 H563" fill="none" stroke="#ca704b" stroke-width="2.4" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<rect x="976" y="294" width="432" height="456" rx="16" fill="url(#purple-wash)" stroke="#8966ad" stroke-width="1.6" filter="url(#shadow)"/>
+<text x="996" y="336" font-size="30" fill="#8966ad" text-anchor="start" font-weight="650">④ 新 Query 仍然读取历史</text>
+<rect x="999" y="357" width="86" height="49" rx="8" fill="#f2ebf8" stroke="#8966ad" stroke-width="1.6"/>
+<text x="1042.0" y="390.34" font-size="26" fill="#8966ad" text-anchor="middle" font-weight="650">q_D</text>
+<text x="1099" y="393" font-size="32" fill="#697887" text-anchor="start" font-weight="400">×</text>
+<rect x="1134" y="352" width="244" height="58" rx="8" fill="#e9f4fa" stroke="#2f7aa0" stroke-width="1.6"/>
+<text x="1256" y="390" font-size="26" fill="#2f7aa0" text-anchor="middle" font-weight="650">K[A B C D]ᵀ</text>
+<path d="M1204 420 V446" fill="none" stroke="#8966ad" stroke-width="2.4" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<text x="1027" y="482" font-size="24" fill="#697887" text-anchor="middle" font-weight="400">A</text>
+<rect x="991" y="495" width="74" height="46" rx="6" fill="#f2ebf8" stroke="#8966ad" stroke-width="1.6"/>
+<text x="1028" y="527" font-size="26" fill="#8966ad" text-anchor="middle" font-weight="650">0.1</text>
+<text x="1116" y="482" font-size="24" fill="#697887" text-anchor="middle" font-weight="400">B</text>
+<rect x="1080" y="495" width="74" height="46" rx="6" fill="#f2ebf8" stroke="#8966ad" stroke-width="1.6"/>
+<text x="1117" y="527" font-size="26" fill="#8966ad" text-anchor="middle" font-weight="650">0.2</text>
+<text x="1205" y="482" font-size="24" fill="#697887" text-anchor="middle" font-weight="400">C</text>
+<rect x="1169" y="495" width="74" height="46" rx="6" fill="#f2ebf8" stroke="#8966ad" stroke-width="1.6"/>
+<text x="1206" y="527" font-size="26" fill="#8966ad" text-anchor="middle" font-weight="650">0.3</text>
+<text x="1294" y="482" font-size="24" fill="#697887" text-anchor="middle" font-weight="400">D</text>
+<rect x="1258" y="495" width="74" height="46" rx="6" fill="#f2ebf8" stroke="#8966ad" stroke-width="1.6"/>
+<text x="1295" y="527" font-size="26" fill="#8966ad" text-anchor="middle" font-weight="650">0.4</text>
+<text x="1192" y="570" font-size="24" fill="#697887" text-anchor="middle" font-weight="400">缩放 + Softmax → 4 个权重</text>
+<path d="M1192 579 V603" fill="none" stroke="#8966ad" stroke-width="2.4" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<rect x="997" y="614" width="388" height="52" rx="8" fill="#e9f5ed" stroke="#378b6d" stroke-width="1.6"/>
+<text x="1191" y="649" font-size="26" fill="#378b6d" text-anchor="middle" font-weight="650">按权重聚合 V[A B C D]</text>
+<path d="M1192 667 V680 H1102 V688" fill="none" stroke="#378b6d" stroke-width="2.4" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<rect x="997" y="691" width="210" height="43" rx="8" fill="white" stroke="#378b6d" stroke-width="1.6"/>
+<text x="1102" y="721" font-size="24" fill="#697887" text-anchor="middle" font-weight="400">后续层 / logits</text>
+<rect x="1266" y="690" width="110" height="43" rx="8" fill="#fff0e5" stroke="#ca704b" stroke-width="1.6"/>
+<text x="1321.0" y="720.68" font-size="27" fill="#ca704b" text-anchor="middle" font-weight="650">预测 E</text>
+<path d="M1217 713 H1256" fill="none" stroke="#ca704b" stroke-width="2.4" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<text x="720" y="790" font-size="24" fill="#697887" text-anchor="middle" font-weight="400">蓝 / 绿：历史缓存     橙：当前输入、新增行与预测输出     紫：当前查询与注意力权重（数值仅示意）</text>
+</svg>

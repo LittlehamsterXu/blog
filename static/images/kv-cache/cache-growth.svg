@@ -1,0 +1,138 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="810" viewBox="0 0 1440 810" role="img" aria-labelledby="title desc">
+<title id="title">KV Cache 的容量：把每层的两张历史表加起来</title>
+<desc id="desc">左侧画模型多层堆叠，每层包含Key和Value两个三维缓存，三维分别为KV Heads、历史Token数S、Head宽度dh。右侧在32层单序列8192上下文32Query Heads与BF16下比较32、8、1个KV Heads对应4GiB、1GiB、128MiB。</desc>
+<style>text{font-family:"Noto Sans SC","Microsoft YaHei","PingFang SC",sans-serif}</style>
+<defs><linearGradient id="page" x2="1" y2="1"><stop stop-color="#f8fbfd"/><stop offset="1" stop-color="#fffaf4"/></linearGradient><filter id="shadow" x="-10%" y="-10%" width="120%" height="130%"><feDropShadow dx="0" dy="3" stdDeviation="5" flood-color="#536578" flood-opacity=".09"/></filter><marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto" markerUnits="strokeWidth"><path d="M0 0 8 4 0 8Z" fill="context-stroke"/></marker></defs>
+<rect width="1440" height="810" rx="22" fill="url(#page)"/>
+<defs><linearGradient id="blue-wash" x2="0" y2="1"><stop stop-color="#e9f4fa"/><stop offset="1" stop-color="#ffffff"/></linearGradient></defs>
+<defs><linearGradient id="green-wash" x2="0" y2="1"><stop stop-color="#e9f5ed"/><stop offset="1" stop-color="#ffffff"/></linearGradient></defs>
+<defs><linearGradient id="coral-wash" x2="0" y2="1"><stop stop-color="#fff0e5"/><stop offset="1" stop-color="#ffffff"/></linearGradient></defs>
+<defs><linearGradient id="purple-wash" x2="0" y2="1"><stop stop-color="#f2ebf8"/><stop offset="1" stop-color="#ffffff"/></linearGradient></defs>
+<defs><linearGradient id="gray-wash" x2="0" y2="1"><stop stop-color="#eef1f4"/><stop offset="1" stop-color="#ffffff"/></linearGradient></defs>
+<text x="32" y="56" font-size="40" fill="#253444" text-anchor="start" font-weight="650">KV Cache 的容量：把每层的两张历史表加起来</text>
+<text x="32" y="100" font-size="26" fill="#697887" text-anchor="start" font-weight="400">缓存中的每一个数都要占字节；层数、序列数、历史长度与 KV Heads 一起决定总量。</text>
+<rect x="32" y="134" width="770" height="568" rx="16" fill="url(#blue-wash)" stroke="#2f7aa0" stroke-width="1.6" filter="url(#shadow)"/>
+<text x="52" y="176" font-size="30" fill="#2f7aa0" text-anchor="start" font-weight="650">从一层展开看：K 与 V 各一份</text>
+<rect x="62" y="248" width="143" height="69" rx="9" fill="#e9f4fa" stroke="#2f7aa0" stroke-width="1.6"/>
+<rect x="71" y="235" width="143" height="69" rx="9" fill="#e9f4fa" stroke="#2f7aa0" stroke-width="1.6"/>
+<rect x="80" y="222" width="143" height="69" rx="9" fill="#e9f4fa" stroke="#2f7aa0" stroke-width="1.6"/>
+<rect x="89" y="209" width="143" height="69" rx="9" fill="#e9f4fa" stroke="#2f7aa0" stroke-width="1.6"/>
+<text x="160" y="252" font-size="27" fill="#2f7aa0" text-anchor="middle" font-weight="650">第 ℓ 层</text>
+<text x="144" y="367" font-size="44" fill="#697887" text-anchor="middle" font-weight="400">⋮</text>
+<rect x="70" y="397" width="143" height="69" rx="9" fill="#eef1f4" stroke="#a2adb6" stroke-width="1.6"/>
+<text x="142" y="441" font-size="26" fill="#697887" text-anchor="middle" font-weight="400">第 1 层</text>
+<text x="144" y="516" font-size="29" fill="#2f7aa0" text-anchor="middle" font-weight="650">共 L 层</text>
+<text x="144" y="555" font-size="24" fill="#697887" text-anchor="middle" font-weight="400">每条序列</text>
+<text x="144" y="589" font-size="24" fill="#697887" text-anchor="middle" font-weight="400">各保存一套</text>
+<path d="M219 278 H252 V357 H276" fill="none" stroke="#2f7aa0" stroke-width="2.4" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<text x="393" y="232" font-size="30" fill="#2f7aa0" text-anchor="middle" font-weight="650">K cache</text>
+<rect x="349" y="252" width="167" height="222" rx="5" fill="#e9f4fa" stroke="#2f7aa0" stroke-width="1.6"/>
+<rect x="337" y="267" width="167" height="222" rx="5" fill="#e9f4fa" stroke="#2f7aa0" stroke-width="1.6"/>
+<rect x="325" y="282" width="167" height="222" rx="5" fill="#e9f4fa" stroke="#2f7aa0" stroke-width="1.6"/>
+<rect x="313" y="297" width="167" height="222" rx="5" fill="#e9f4fa" stroke="#2f7aa0" stroke-width="1.6"/>
+<rect x="318" y="302" width="29" height="32" rx="3" fill="#2f7aa0" stroke="#2f7aa0" stroke-width="1.6"/>
+<rect x="350" y="302" width="29" height="32" rx="3" fill="#e9f4fa" stroke="#2f7aa0" stroke-width="1.6"/>
+<rect x="382" y="302" width="29" height="32" rx="3" fill="#e9f4fa" stroke="#2f7aa0" stroke-width="1.6"/>
+<rect x="414" y="302" width="29" height="32" rx="3" fill="#e9f4fa" stroke="#2f7aa0" stroke-width="1.6"/>
+<rect x="446" y="302" width="29" height="32" rx="3" fill="#2f7aa0" stroke="#2f7aa0" stroke-width="1.6"/>
+<rect x="318" y="337" width="29" height="32" rx="3" fill="#e9f4fa" stroke="#2f7aa0" stroke-width="1.6"/>
+<rect x="350" y="337" width="29" height="32" rx="3" fill="#e9f4fa" stroke="#2f7aa0" stroke-width="1.6"/>
+<rect x="382" y="337" width="29" height="32" rx="3" fill="#e9f4fa" stroke="#2f7aa0" stroke-width="1.6"/>
+<rect x="414" y="337" width="29" height="32" rx="3" fill="#2f7aa0" stroke="#2f7aa0" stroke-width="1.6"/>
+<rect x="446" y="337" width="29" height="32" rx="3" fill="#e9f4fa" stroke="#2f7aa0" stroke-width="1.6"/>
+<rect x="318" y="372" width="29" height="32" rx="3" fill="#e9f4fa" stroke="#2f7aa0" stroke-width="1.6"/>
+<rect x="350" y="372" width="29" height="32" rx="3" fill="#e9f4fa" stroke="#2f7aa0" stroke-width="1.6"/>
+<rect x="382" y="372" width="29" height="32" rx="3" fill="#2f7aa0" stroke="#2f7aa0" stroke-width="1.6"/>
+<rect x="414" y="372" width="29" height="32" rx="3" fill="#e9f4fa" stroke="#2f7aa0" stroke-width="1.6"/>
+<rect x="446" y="372" width="29" height="32" rx="3" fill="#e9f4fa" stroke="#2f7aa0" stroke-width="1.6"/>
+<rect x="318" y="407" width="29" height="32" rx="3" fill="#e9f4fa" stroke="#2f7aa0" stroke-width="1.6"/>
+<rect x="350" y="407" width="29" height="32" rx="3" fill="#2f7aa0" stroke="#2f7aa0" stroke-width="1.6"/>
+<rect x="382" y="407" width="29" height="32" rx="3" fill="#e9f4fa" stroke="#2f7aa0" stroke-width="1.6"/>
+<rect x="414" y="407" width="29" height="32" rx="3" fill="#e9f4fa" stroke="#2f7aa0" stroke-width="1.6"/>
+<rect x="446" y="407" width="29" height="32" rx="3" fill="#e9f4fa" stroke="#2f7aa0" stroke-width="1.6"/>
+<rect x="318" y="442" width="29" height="32" rx="3" fill="#2f7aa0" stroke="#2f7aa0" stroke-width="1.6"/>
+<rect x="350" y="442" width="29" height="32" rx="3" fill="#e9f4fa" stroke="#2f7aa0" stroke-width="1.6"/>
+<rect x="382" y="442" width="29" height="32" rx="3" fill="#e9f4fa" stroke="#2f7aa0" stroke-width="1.6"/>
+<rect x="414" y="442" width="29" height="32" rx="3" fill="#e9f4fa" stroke="#2f7aa0" stroke-width="1.6"/>
+<rect x="446" y="442" width="29" height="32" rx="3" fill="#2f7aa0" stroke="#2f7aa0" stroke-width="1.6"/>
+<rect x="318" y="477" width="29" height="32" rx="3" fill="#fff0e5" stroke="#ca704b" stroke-width="1.6"/>
+<rect x="350" y="477" width="29" height="32" rx="3" fill="#fff0e5" stroke="#ca704b" stroke-width="1.6"/>
+<rect x="382" y="477" width="29" height="32" rx="3" fill="#fff0e5" stroke="#ca704b" stroke-width="1.6"/>
+<rect x="414" y="477" width="29" height="32" rx="3" fill="#ca704b" stroke="#ca704b" stroke-width="1.6"/>
+<rect x="446" y="477" width="29" height="32" rx="3" fill="#fff0e5" stroke="#ca704b" stroke-width="1.6"/>
+<path d="M294 302 V504" fill="none" stroke="#2f7aa0" stroke-width="2.4" stroke-linejoin="round"/>
+<path d="M286 302 H301" fill="none" stroke="#2f7aa0" stroke-width="2.4" stroke-linejoin="round"/>
+<path d="M286 504 H301" fill="none" stroke="#2f7aa0" stroke-width="2.4" stroke-linejoin="round"/>
+<text x="285" y="419" font-size="27" fill="#2f7aa0" text-anchor="end" font-weight="650">S</text>
+<path d="M319 535 H478" fill="none" stroke="#2f7aa0" stroke-width="2.4" stroke-linejoin="round"/>
+<text x="399" y="570" font-size="25" fill="#2f7aa0" text-anchor="middle" font-weight="400">d_h 个特征</text>
+<path d="M484 291 L522 246" fill="none" stroke="#2f7aa0" stroke-width="2.4" stroke-linejoin="round"/>
+<text x="417" y="626" font-size="24" fill="#2f7aa0" text-anchor="middle" font-weight="650">H_kv 叠片 / Heads</text>
+<text x="642" y="232" font-size="30" fill="#378b6d" text-anchor="middle" font-weight="650">V cache</text>
+<rect x="598" y="252" width="167" height="222" rx="5" fill="#e9f5ed" stroke="#378b6d" stroke-width="1.6"/>
+<rect x="586" y="267" width="167" height="222" rx="5" fill="#e9f5ed" stroke="#378b6d" stroke-width="1.6"/>
+<rect x="574" y="282" width="167" height="222" rx="5" fill="#e9f5ed" stroke="#378b6d" stroke-width="1.6"/>
+<rect x="562" y="297" width="167" height="222" rx="5" fill="#e9f5ed" stroke="#378b6d" stroke-width="1.6"/>
+<rect x="567" y="302" width="29" height="32" rx="3" fill="#378b6d" stroke="#378b6d" stroke-width="1.6"/>
+<rect x="599" y="302" width="29" height="32" rx="3" fill="#e9f5ed" stroke="#378b6d" stroke-width="1.6"/>
+<rect x="631" y="302" width="29" height="32" rx="3" fill="#e9f5ed" stroke="#378b6d" stroke-width="1.6"/>
+<rect x="663" y="302" width="29" height="32" rx="3" fill="#e9f5ed" stroke="#378b6d" stroke-width="1.6"/>
+<rect x="695" y="302" width="29" height="32" rx="3" fill="#378b6d" stroke="#378b6d" stroke-width="1.6"/>
+<rect x="567" y="337" width="29" height="32" rx="3" fill="#e9f5ed" stroke="#378b6d" stroke-width="1.6"/>
+<rect x="599" y="337" width="29" height="32" rx="3" fill="#e9f5ed" stroke="#378b6d" stroke-width="1.6"/>
+<rect x="631" y="337" width="29" height="32" rx="3" fill="#e9f5ed" stroke="#378b6d" stroke-width="1.6"/>
+<rect x="663" y="337" width="29" height="32" rx="3" fill="#378b6d" stroke="#378b6d" stroke-width="1.6"/>
+<rect x="695" y="337" width="29" height="32" rx="3" fill="#e9f5ed" stroke="#378b6d" stroke-width="1.6"/>
+<rect x="567" y="372" width="29" height="32" rx="3" fill="#e9f5ed" stroke="#378b6d" stroke-width="1.6"/>
+<rect x="599" y="372" width="29" height="32" rx="3" fill="#e9f5ed" stroke="#378b6d" stroke-width="1.6"/>
+<rect x="631" y="372" width="29" height="32" rx="3" fill="#378b6d" stroke="#378b6d" stroke-width="1.6"/>
+<rect x="663" y="372" width="29" height="32" rx="3" fill="#e9f5ed" stroke="#378b6d" stroke-width="1.6"/>
+<rect x="695" y="372" width="29" height="32" rx="3" fill="#e9f5ed" stroke="#378b6d" stroke-width="1.6"/>
+<rect x="567" y="407" width="29" height="32" rx="3" fill="#e9f5ed" stroke="#378b6d" stroke-width="1.6"/>
+<rect x="599" y="407" width="29" height="32" rx="3" fill="#378b6d" stroke="#378b6d" stroke-width="1.6"/>
+<rect x="631" y="407" width="29" height="32" rx="3" fill="#e9f5ed" stroke="#378b6d" stroke-width="1.6"/>
+<rect x="663" y="407" width="29" height="32" rx="3" fill="#e9f5ed" stroke="#378b6d" stroke-width="1.6"/>
+<rect x="695" y="407" width="29" height="32" rx="3" fill="#e9f5ed" stroke="#378b6d" stroke-width="1.6"/>
+<rect x="567" y="442" width="29" height="32" rx="3" fill="#378b6d" stroke="#378b6d" stroke-width="1.6"/>
+<rect x="599" y="442" width="29" height="32" rx="3" fill="#e9f5ed" stroke="#378b6d" stroke-width="1.6"/>
+<rect x="631" y="442" width="29" height="32" rx="3" fill="#e9f5ed" stroke="#378b6d" stroke-width="1.6"/>
+<rect x="663" y="442" width="29" height="32" rx="3" fill="#e9f5ed" stroke="#378b6d" stroke-width="1.6"/>
+<rect x="695" y="442" width="29" height="32" rx="3" fill="#378b6d" stroke="#378b6d" stroke-width="1.6"/>
+<rect x="567" y="477" width="29" height="32" rx="3" fill="#fff0e5" stroke="#ca704b" stroke-width="1.6"/>
+<rect x="599" y="477" width="29" height="32" rx="3" fill="#fff0e5" stroke="#ca704b" stroke-width="1.6"/>
+<rect x="631" y="477" width="29" height="32" rx="3" fill="#fff0e5" stroke="#ca704b" stroke-width="1.6"/>
+<rect x="663" y="477" width="29" height="32" rx="3" fill="#ca704b" stroke="#ca704b" stroke-width="1.6"/>
+<rect x="695" y="477" width="29" height="32" rx="3" fill="#fff0e5" stroke="#ca704b" stroke-width="1.6"/>
+<path d="M543 302 V504" fill="none" stroke="#378b6d" stroke-width="2.4" stroke-linejoin="round"/>
+<path d="M535 302 H550" fill="none" stroke="#378b6d" stroke-width="2.4" stroke-linejoin="round"/>
+<path d="M535 504 H550" fill="none" stroke="#378b6d" stroke-width="2.4" stroke-linejoin="round"/>
+<text x="534" y="419" font-size="27" fill="#378b6d" text-anchor="end" font-weight="650">S</text>
+<path d="M568 535 H727" fill="none" stroke="#378b6d" stroke-width="2.4" stroke-linejoin="round"/>
+<text x="648" y="570" font-size="25" fill="#378b6d" text-anchor="middle" font-weight="400">d_h 个特征</text>
+<path d="M733 291 L771 246" fill="none" stroke="#378b6d" stroke-width="2.4" stroke-linejoin="round"/>
+<text x="666" y="626" font-size="24" fill="#378b6d" text-anchor="middle" font-weight="650">H_kv 叠片 / Heads</text>
+<text x="421" y="670" font-size="25" fill="#697887" text-anchor="middle" font-weight="400">每行 = 一个历史 Token</text>
+<rect x="826" y="134" width="582" height="568" rx="16" fill="url(#green-wash)" stroke="#378b6d" stroke-width="1.6" filter="url(#shadow)"/>
+<text x="846" y="176" font-size="30" fill="#378b6d" text-anchor="start" font-weight="650">同一配置，只改变 KV Heads</text>
+<text x="850" y="223" font-size="27" fill="#253444" text-anchor="start" font-weight="400">L=32 · B=1 · S=8192</text>
+<text x="850" y="264" font-size="25" fill="#697887" text-anchor="start" font-weight="400">H_q=32 · d_h=128 · BF16 / 2 字节</text>
+<text x="852" y="330" font-size="28" fill="#2f7aa0" text-anchor="start" font-weight="650">MHA</text>
+<text x="977" y="330" font-size="25" fill="#697887" text-anchor="start" font-weight="400">H_kv=32</text>
+<text x="1377" y="330" font-size="28" fill="#2f7aa0" text-anchor="end" font-weight="650">4 GiB</text>
+<rect x="852" y="350" width="523" height="34" rx="7" fill="#eef1f4" stroke="none" stroke-width="1.6"/>
+<rect x="852" y="350" width="523" height="34" rx="7" fill="#2f7aa0" stroke="none" stroke-width="1.6"/>
+<text x="852" y="436" font-size="28" fill="#378b6d" text-anchor="start" font-weight="650">GQA</text>
+<text x="977" y="436" font-size="25" fill="#697887" text-anchor="start" font-weight="400">H_kv=8</text>
+<text x="1377" y="436" font-size="28" fill="#378b6d" text-anchor="end" font-weight="650">1 GiB</text>
+<rect x="852" y="456" width="523" height="34" rx="7" fill="#eef1f4" stroke="none" stroke-width="1.6"/>
+<rect x="852" y="456" width="130.75" height="34" rx="7" fill="#378b6d" stroke="none" stroke-width="1.6"/>
+<text x="852" y="542" font-size="28" fill="#ca704b" text-anchor="start" font-weight="650">MQA</text>
+<text x="977" y="542" font-size="25" fill="#697887" text-anchor="start" font-weight="400">H_kv=1</text>
+<text x="1377" y="542" font-size="28" fill="#ca704b" text-anchor="end" font-weight="650">128 MiB</text>
+<rect x="852" y="562" width="523" height="34" rx="7" fill="#eef1f4" stroke="none" stroke-width="1.6"/>
+<rect x="852" y="562" width="16.34375" height="34" rx="7" fill="#ca704b" stroke="none" stroke-width="1.6"/>
+<text x="1117" y="641" font-size="27" fill="#378b6d" text-anchor="middle" font-weight="650">上下文 S 翻倍 → 缓存也翻倍</text>
+<text x="1117" y="680" font-size="24" fill="#697887" text-anchor="middle" font-weight="400">右侧横条按理论字节数成比例绘制</text>
+<rect x="32" y="726" width="1376" height="58" rx="12" fill="#f2ebf8" stroke="#8966ad" stroke-width="1.6"/>
+<text x="720" y="766" font-size="29" fill="#8966ad" text-anchor="middle" font-weight="650">M_KV = 2 × L × B × S × H_kv × d_h × b    （2：K + V；b：每元素字节数）</text>
+</svg>
