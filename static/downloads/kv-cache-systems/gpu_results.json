@@ -1,0 +1,254 @@
+{
+  "environment": {
+    "python_version": "3.12.15",
+    "torch_version": "2.14.1+cu130",
+    "cuda_runtime_version": "13.0",
+    "device": "NVIDIA GeForce RTX 4070 Laptop GPU",
+    "device_total_memory_bytes": 8585216000,
+    "device_compute_capability": [
+      8,
+      9
+    ],
+    "execution_platform": "WSL Linux",
+    "device_index": 0
+  },
+  "capture_method": "Original main functions, with wrappers collecting existing tensor statistics and timing return values; original source files unchanged.",
+  "quantization": {
+    "source": {
+      "filename": "kv_cache_quant.py",
+      "sha256": "3693e5fe77eefeeb8a92e5c4a701e45f879036b37f127f93ec1254177897437f",
+      "bytes": 3719
+    },
+    "seed": 42,
+    "source_dtype": "float32",
+    "shape_per_tensor": [
+      1,
+      4,
+      1024,
+      64
+    ],
+    "granularity": "one symmetric scale per last-dimension vector",
+    "scale_dtype": "float32",
+    "scale_shape_per_tensor": [
+      1,
+      4,
+      1024,
+      1
+    ],
+    "scale_formula": "max(abs(x), last_dimension) / 127, clamped to at least 1e-8",
+    "quantized_range": [
+      -127,
+      127
+    ],
+    "zero_point": 0,
+    "reconstruction_metrics": {
+      "FP16 Key reconstruction": {
+        "mae": 0.00014043979172129184,
+        "mse": 4.301212186419434e-08,
+        "rmse": 0.00020739363988366263,
+        "max_abs_error": 0.0018458366394042969,
+        "reference_rms": 0.9996412396430969,
+        "relative_rmse": 0.00020746807120293337
+      },
+      "FP16 Value reconstruction": {
+        "mae": 0.00014015298802405596,
+        "mse": 4.293833910651301e-08,
+        "rmse": 0.00020721568257859492,
+        "max_abs_error": 0.0018329620361328125,
+        "reference_rms": 0.997985303401947,
+        "relative_rmse": 0.00020763400209625839
+      },
+      "INT8 Key reconstruction": {
+        "mae": 0.005029585212469101,
+        "mse": 3.514884883770719e-05,
+        "rmse": 0.0059286464591597286,
+        "max_abs_error": 0.017197996377944946,
+        "reference_rms": 0.9996412396430969,
+        "relative_rmse": 0.005930774185823346
+      },
+      "INT8 Value reconstruction": {
+        "mae": 0.0050003305077552795,
+        "mse": 3.477655991446227e-05,
+        "rmse": 0.005897165413523879,
+        "max_abs_error": 0.01710808277130127,
+        "reference_rms": 0.997985303401947,
+        "relative_rmse": 0.005909070397551482
+      }
+    },
+    "int8_tensors": {
+      "key": {
+        "payload_bytes": 262144,
+        "scale_bytes": 16384,
+        "scale_min": 0.011279274709522724,
+        "scale_max": 0.03572430834174156,
+        "first_vector_example": {
+          "scale": 0.018544338643550873,
+          "max_abs": 2.355130910873413,
+          "first_8_original_values": [
+            0.19401879608631134,
+            2.1613736152648926,
+            -0.17205022275447845,
+            0.8490601181983948,
+            -1.9243990182876587,
+            0.6529855132102966,
+            -0.6494408249855042,
+            -0.8175247311592102
+          ],
+          "first_8_quantized_values": [
+            10,
+            117,
+            -9,
+            46,
+            -104,
+            35,
+            -35,
+            -44
+          ],
+          "first_8_restored_values": [
+            0.18544338643550873,
+            2.169687509536743,
+            -0.16689905524253845,
+            0.853039562702179,
+            -1.9286112785339355,
+            0.6490518450737,
+            -0.6490518450737,
+            -0.815950870513916
+          ],
+          "scale_uses_dimensions": 64
+        }
+      },
+      "value": {
+        "payload_bytes": 262144,
+        "scale_bytes": 16384,
+        "scale_min": 0.012090236879885197,
+        "scale_max": 0.034862302243709564,
+        "first_vector_example": {
+          "scale": 0.016547830775380135,
+          "max_abs": 2.101574420928955,
+          "first_8_original_values": [
+            -0.5187486410140991,
+            1.2267580032348633,
+            0.6254805326461792,
+            -0.9116847515106201,
+            0.568683385848999,
+            -0.33366551995277405,
+            0.05579303577542305,
+            -0.7529569864273071
+          ],
+          "first_8_quantized_values": [
+            -31,
+            74,
+            38,
+            -55,
+            34,
+            -20,
+            3,
+            -46
+          ],
+          "first_8_restored_values": [
+            -0.5129827260971069,
+            1.2245395183563232,
+            0.6288175582885742,
+            -0.9101306796073914,
+            0.5626262426376343,
+            -0.3309566080570221,
+            0.04964349418878555,
+            -0.7612001895904541
+          ],
+          "scale_uses_dimensions": 64
+        }
+      }
+    },
+    "storage_bytes": {
+      "fp32_kv": 2097152,
+      "fp16_kv": 1048576,
+      "int8_payload": 524288,
+      "scale_metadata": 32768,
+      "int8_total": 557056
+    },
+    "storage_reduction": {
+      "fp32_to_fp16": 0.5,
+      "fp32_to_int8": 0.734375,
+      "fp16_to_int8": 0.46875
+    }
+  },
+  "offloading": {
+    "source": {
+      "filename": "kv_cache_offload.py",
+      "sha256": "f53599baa97edc35799a3ef08ec65064714286082380f45819d0242777a4dce1",
+      "bytes": 4208
+    },
+    "seed": 42,
+    "dtype": "float16",
+    "chunk_shape": [
+      2,
+      1,
+      8,
+      2048,
+      128
+    ],
+    "num_chunks": 4,
+    "chunk_bytes": 8388608,
+    "offload_indices": [
+      2,
+      3
+    ],
+    "allocation": "each chunk allocated independently",
+    "cpu_storage": "pinned memory",
+    "non_blocking_copy": true,
+    "warmup_copies": 2,
+    "timed_repeats": 7,
+    "timing": "CUDA events on current stream; end event synchronized; median",
+    "d2h": [
+      {
+        "block": 2,
+        "median_ms": 0.6388159990310669,
+        "bytes": 8388608,
+        "destination_is_pinned": true
+      },
+      {
+        "block": 3,
+        "median_ms": 0.6401600241661072,
+        "bytes": 8388608,
+        "destination_is_pinned": true
+      }
+    ],
+    "h2d": [
+      {
+        "block": 2,
+        "median_ms": 0.6320000290870667,
+        "bytes": 8388608,
+        "source_is_pinned": true
+      },
+      {
+        "block": 3,
+        "median_ms": 0.6338880062103271,
+        "bytes": 8388608,
+        "source_is_pinned": true
+      }
+    ],
+    "baseline_memory_allocated_bytes": 0,
+    "baseline_memory_reserved_bytes": 0,
+    "cache_allocated_mib": {
+      "all_four_chunks": 32.0,
+      "after_offload_2": 24.0,
+      "after_offload_3": 16.0,
+      "after_restore_all": 32.0
+    },
+    "cpu_cache_payload_mib": 16.0,
+    "restore_exact_matches": [
+      true,
+      true
+    ],
+    "all_blocks_restored": true,
+    "final_allocator_reserved_mib": 40.0,
+    "memory_allocated_after_main_returns_bytes": 0
+  },
+  "measurement_notes": {
+    "quantization_storage": "Storage comparison counts the chosen cache payload and scale metadata. The experiment also holds reference, other dtypes, and reconstructed tensors together; its live GPU allocation differs from an individual representation size.",
+    "quantization_scope": "Random CUDA K/V tensor reconstruction and byte counts; no Attention layer or language model was run.",
+    "offload_timing": "Each direction uses pinned host memory, 2 warmup copies, and the median of 7 CUDA-event measurements. Destination allocation and garbage collection are outside the measured copy interval.",
+    "offload_memory": "Reported cache allocation is the process memory_allocated difference from the script baseline. Allocator reserved memory is reported separately.",
+    "offload_allocation": "Four independent CUDA storage chunks allow dropping a selected chunk reference to release its allocation. A view into one large still-referenced tensor would retain that original storage."
+  }
+}

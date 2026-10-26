@@ -1,7 +1,7 @@
 ---
 title: "KV Cache：从缓存机制到 Attention 架构优化"
 date: 2026-10-26
-draft: true
+draft: false
 tags: [Transformer, KV Cache, GQA, MLA, DeepSeek]
 categories: [AI Infra]
 description: "从自回归生成的重复计算出发，理解 KV Cache、MHA/GQA/MQA、MLA，以及 DeepSeek-V4 的 CSA 与 HCA。"
@@ -11,46 +11,59 @@ ShowToc: true
 TocOpen: true
 ---
 
-## 知识点速记
+{{< study-summary id="知识点速记" >}}
 
-**先抓住这条线：KV Cache 复用旧计算；Attention 架构继续调整 KV 组数、表示宽度、历史条目数和本轮访问范围。**
+**KV Cache：把旧 Token 的 K/V 存起来，下次接着用。**
 
-**生成与复用。** 因果 Attention 中，追加 Token 后，旧位置看到的前缀保持不变，因此可以复用各层已经算出的 K/V。Prefill 输入 `ABC`，缓存 `ABC`，预测 `D`；下一轮 Decode 输入 `D`，追加它的 K/V，再预测 `E`。新 Token 仍要经过自己的 Q/K/V 投影、Attention、输出投影和 FFN；当前 Query 继续读取历史，旧 Query 完成任务后即可丢弃。
+- 每层存自己的 K/V。新 Q 和历史 K 算分数，再按权重对 V 求和。旧 Q 用完就丢。
+- 因果 Mask 下，追加 Token 不影响旧位置的表示，所以旧结果可以复用。新 Token 仍要算自己的 Q/K/V、Attention 和 FFN。
+- **Prefill**：输入 `ABC` → 存 `ABC` 的 K/V → 预测 `D`。
+- **Decode**：输入 `D` → 缓存追加到 `ABCD` → 预测 `E`。
 
-**标准缓存容量。** 每层 K、V 各一份，形状都是 `[B,H_kv,S,d_h]`：
+**显存怎么算**
+
+MHA/MQA/GQA：每层 K、V 各一份，形状都是 `[B,H_kv,S,d_h]`：
 
 $$
 M_{\mathrm{KV}}=2LBSH_{\mathrm{kv}}d_hb
 $$
 
-依次是：两份 × 层数 × 同时保留的序列数 × 历史长度 × KV Heads × Head 宽度 × 每元素字节数。BF16 的 \(b=2\)。固定其余配置，序列数或历史长度翻倍，容量也翻倍。
+`L` 层数，`B` 序列数，`S` 历史长度，`H_kv` KV Heads 数，`d_h` Head 宽度，`b` 每元素字节数。BF16 的 `b=2`。其他不变，`B` 或 `S` 翻倍，缓存也翻倍。
 
-**把几种架构放在一起。**
+**几种架构的区别**
 
-| 结构 | 保存的历史表示 | 本轮核心 Attention 读取什么 |
-| --- | --- | --- |
-| MHA | 每个位置有 \(H_q\) 组 K/V | 全部可见历史位置 |
-| MQA | 每个位置只有 1 组 K/V，全部 Query Heads 共享 | 全部可见历史位置 |
-| GQA | 每个位置有 \(H_{\mathrm{kv}}\) 组 K/V，组内 Query 共享 | 全部可见历史位置 |
-| MLA | 每个位置保存联合潜在向量 \(c^{KV}\) 和位置 Key \(k^R\) | 逐位置匹配、聚合潜在表示 |
-| CSA | 步长 4 的压缩池、额外索引池、近期窗口 | Top-k 压缩条目 + 窗口 |
-| HCA | 步长 128 的压缩池、近期窗口 | 全部可见压缩条目 + 窗口 |
+| 方法 | 改了什么 |
+| --- | --- |
+| MHA | 每个 Q Head 有自己的 K/V。 |
+| MQA | 所有 Q Heads 共用一组 K/V。 |
+| GQA | Q Heads 分组，组内共用 K/V。 |
+| MLA | 每个 Token 改存联合潜在向量 `cKV` 和位置 Key `kR`。 |
+| CSA | 每 4 个新 Token 出一条压缩记录，再用 Indexer 选 Top-k。 |
+| HCA | 每 128 个 Token 压成一条，压缩后全部读取。 |
 
-\(H_q\) 是 Query Heads 数量。从 MHA 到 MQA，独立 KV 组数由 \(H_q\) 减到 1，GQA 取中间组数。三者的 Query Heads 可以保持相同数量，共享 K/V 的各个 Query 仍然得到各自的 Attention 权重。
+MHA/MQA/GQA 改的是 KV 组数，各个 Q 仍有自己的权重，仍然读取全部可见历史。
 
-**MLA 的关键是联合表示与矩阵吸收。** Key 侧先把上投影的转置作用到当前 Query，再直接匹配历史潜在向量；Value 侧先用权重聚合潜在向量，再上投影。内容和 RoPE 分成两条路径，两部分缓存使用相同存储精度时，容量为：
+**MLA 的矩阵吸收**
+
+- 算分数：先用 Key 上投影的转置变换当前 Q，再和历史 `cKV` 做点积。
+- 取结果：先对 `cKV` 加权求和，再做 Value 上投影。
+- 内容与 RoPE 分开，分别缓存 `cKV` 和 `kR`。两部分精度相同时：
 
 $$
 M_{\mathrm{MLA}}=LBS(d_c+d_R)b
 $$
 
-\(d_c\) 是潜在向量宽度，\(d_R\) 是位置 Key 宽度。这里保存的是一份联合 \(c^{KV}\) 加一份位置 \(k^R\)，按这两个字段计数。
+`d_c` 是 `cKV` 的宽度，`d_R` 是 `kR` 的宽度。
 
-**CSA/HCA 要分清“保存”与“读取”。** V4 使用同一共享向量作为 K 和 V。CSA 每前进 4 个 Token 产生一条，采用相邻两块的重叠压缩；Indexer 扫描可见候选，再选 Top-k。完整压缩池继续保存，下一轮可以选其他条目。HCA 每 128 个 Token 非重叠压成一条，再读取全部可见压缩历史。两种机制都结合近期 128 个 Token 的未压缩窗口；CSA 的 Top-k 在 Flash 中为 512，在 Pro 中为 1024。
+**CSA/HCA 存什么、读什么**
 
-**最后核对结果与耗时。** 完整前向和缓存前向对齐 logits，同时检查层、位置编号和因果 Mask。分别观察缓存容量、历史读取量与执行时间；计时区分 Prefill、Decode，并用 GPU 同步或 CUDA Event 确定范围。最终耗时取决于数据读取、计算形状和 Kernel 实现。
+- V4 的 CSA/HCA：同一条缓存向量同时作为核心 Attention 的 K 和 V 输入，见[论文式 (19)、(26)](https://arxiv.org/html/2606.19348v1#S2.SS3)。两种机制都另保留最近 128 个 Token 的未压缩窗口。
+- **CSA**：相邻块重叠压缩。完整压缩池一直保留，Indexer 扫描可见候选；主 Attention 读 Top-k 条和近期窗口。Flash 的 `k=512`，Pro 的 `k=1024`。
+- **HCA**：128 个 Token 非重叠压成一条；主 Attention 读全部可见压缩条目和近期窗口。
 
----
+**取舍**：共享减少独立表示，压缩把信息放进更少的维度或条目。模型要在这些约束下保留有用信息，换取更小的缓存和更少的历史读取。
+
+{{< /study-summary >}}
 
 [上一篇](../transformer-position-encoding/)写到增量生成时，输入虽然只剩一个 Token，位置编号还要接着历史往下数。那时已经有了一个缓存，只是主要盯着 `past_len`，还没仔细看里面存的东西。
 
@@ -306,11 +319,38 @@ $$
 - **CSA，Compressed Sparse Attention**：较低比例的历史压缩，再选择部分压缩条目。
 - **HCA，Heavily Compressed Attention**：较高比例的历史压缩，再读取全部可见的压缩条目。
 
-先把 V4 的缓存结构交代一下：它使用多头 Query，读取一份共享的 KV 表示，**同一个条目同时用作 Key 和 Value**。论文称为 Shared Key-Value MQA。
-
-所以，从 MLA 到这一节，是沿着“压缩什么”继续思考；V4 的具体计算采用自己的共享 KV 结构。MLA 中的联合潜在缓存与解耦位置 Key，则属于前一节的那套组织方式。
+V4 的这两种机制采用 **Shared Key-Value MQA**。先把整体路径放在这里，接下来分别看 K/V 共享、历史压缩和条目选择。
 
 ![CSA使用步长4的重叠压缩，再经过索引器和Top-k选择；HCA使用128的非重叠压缩，直接访问压缩池。两路都结合近期未压缩窗口。](/images/kv-cache/compressed-history.svg "两种机制都保留近期细节，远处历史使用不同的粒度和访问方式。")
+
+### 共享 K 与 V
+
+普通 MQA 中，K、V 各自生成，所有 Query Heads 共用一组 K，也共用一组 V。V4 再往前走了一步：**同一条缓存向量，既作为 Key，也作为 Value。** [论文式 (19)、(26)](https://arxiv.org/html/2606.19348v1#S2.SS3)将核心 Attention 的 `key` 和 `value` 设为同一组条目。
+
+设当前 Head 的 Query 是 \(q\)，本轮可读的第 \(j\) 条缓存向量是 \(c_j\)。它先参与匹配，再参与加权求和：
+
+$$
+\begin{aligned}
+s_j&=\frac{q^{\mathsf T}c_j}{\sqrt{d}}\\
+o&=\sum_j\alpha_jc_j
+\end{aligned}
+$$
+
+\(d\) 是向量宽度，\(\alpha_j\) 是由分数归一化得到的 Attention 权重。第一行把 \(c_j\) 当作 Key，决定这一条有多相关；第二行把同一个 \(c_j\) 当作 Value，取出它的内容。各个 Head 的 Q 仍然不同，因此可以算出不同的权重，得到各自的加权结果。
+
+和前面的共享方式放在一起看：
+
+| 结构 | 共享了什么 |
+| --- | --- |
+| 普通 MQA | 多个 Q Heads 共用 K、共用 V；K 和 V 分开生成。 |
+| MLA | 内容 K/V 来自同一个 `cKV`，经过不同的上投影得到。 |
+| V4 的 Shared KV | 多个 Q Heads 共用历史条目，同一个条目同时作为 K 和 V 输入。 |
+
+[官方 Kernel](https://huggingface.co/deepseek-ai/DeepSeek-V4-Pro/blob/b5968e9190ef611bbf34a7229255be88a0e937c1/inference/kernel.py#L325)也正好对应这两步：同一份 `kv_shared`，先与 `q_shared` 相乘计算分数，再与权重 `acc_s_cast` 相乘得到输出。
+
+标准容量公式里的 `2` 对应分别保存 K、V 两份数据；V4 的核心缓存按一份共享向量计数，再分别统计压缩池、近期窗口和额外索引池。
+
+位置处理也跟着变了：共享 KV 的部分维度应用了 RoPE，这部分既参与匹配，也参与 Value 聚合。V4 因而在聚合输出的对应维度上，再按当前 Query 的位置做逆旋转，使输出携带相对位置关系。
 
 ### 学习式压缩
 
@@ -391,8 +431,6 @@ CSA 保留较细的远程历史粒度，通过选择控制核心读取量；HCA 
 
 压缩把多个位置的信息放进较少的条目，能保留多少细节，取决于学到的表示和模型后续怎样使用它。CSA 还要判断哪些条目值得读取，Indexer、Top-k 和收集数据都会产生工作量。比较最终推理性能时，这些部分要与核心 Attention 一起算进去。
 
-位置处理也随共享结构改变了。V4 在共享 KV 的部分维度应用 RoPE，并对 Attention 输出对应维度做反向旋转，让输出携带相对位置关系。读实现时，可以把它和 MLA 的解耦 RoPE 分别对照各自的缓存张量看。
-
 ## 缓存复用的检查
 
 ### 完整前向与增量前向
@@ -431,9 +469,13 @@ CUDA 还会带来计时上的差别。[PyTorch 的异步执行说明](https://do
 | 减少历史条目 | CSA、HCA | 多个位置聚合成较少的压缩记录 |
 | 选择本轮访问的历史 | CSA | 从压缩池中选择核心 Attention 要读的条目 |
 
-这些方法有各自的张量定义、投影参数和训练过程。具体架构怎么组合，要沿着 Q、K、V 的来源、分数公式以及输出路径继续检查。
+MHA 允许每个 Head 独立学习 K/V；GQA 让多个 Query Heads 共享 K/V；MLA 用联合潜在向量压缩 K/V 相关表示；DeepSeek-V4 则让 K 和 V 本身共享表示，并结合 CSA/HCA 压缩历史序列、调整历史访问方式。
 
-下一阶段准备写《KV Cache：从显存管理到高效推理系统》。模型已经产生这些缓存以后，再看推理引擎如何分配、复用和调度它们：PagedAttention、Prefix Caching、KV Cache 量化与 Offloading，以及 Continuous Batching。
+**每增加一种共享或压缩，都可能减少一部分表示自由度或历史细节，换取更小的缓存和更少的历史读取。** GQA 减少了独立的 KV 组数，MLA 让内容 K/V 受同一潜在表示约束，共享 K=V 将匹配与取值放在同一向量上，CSA/HCA 则让多个位置的信息通过压缩条目传递。
+
+这些设计把取舍放在不同的位置。模型需要在相应的约束下学会保留有用信息，最后的表现由架构与训练共同决定。
+
+接下来的[《KV Cache：从显存管理到高效推理系统》](../kv-cache-inference-systems/)继续看模型产生这些缓存以后，推理引擎如何分配、复用和调度它们：PagedAttention、Prefix Caching、KV Cache 量化与 Offloading，以及 Continuous Batching。
 
 两篇分别沿着模型和系统往下看。这篇关注 Attention 怎样表示历史、减少缓存需求与访问量；下一篇关注这些缓存怎样存放，以及 GPU 怎样同时服务更多推理请求。
 

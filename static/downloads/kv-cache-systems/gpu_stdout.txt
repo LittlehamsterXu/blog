@@ -1,0 +1,59 @@
+===== kv_cache_quant.py =====
+Device: cuda
+Cache shape per tensor: (1, 4, 1024, 64)
+
+[FP16 Key reconstruction]
+MAE:           0.00014044
+RMSE:          0.00020739
+Max abs error: 0.00184584
+Relative RMSE: 0.020747%
+
+[FP16 Value reconstruction]
+MAE:           0.00014015
+RMSE:          0.00020722
+Max abs error: 0.00183296
+Relative RMSE: 0.020763%
+
+[INT8 Key reconstruction]
+MAE:           0.00502959
+RMSE:          0.00592865
+Max abs error: 0.01719800
+Relative RMSE: 0.593077%
+
+[INT8 Value reconstruction]
+MAE:           0.00500033
+RMSE:          0.00589717
+Max abs error: 0.01710808
+Relative RMSE: 0.590907%
+
+===== Storage Comparison =====
+FP32 K/V:       2.00000 MiB
+FP16 K/V:       1.00000 MiB
+INT8 payload:   0.50000 MiB
+Scale metadata: 0.03125 MiB
+INT8 total:     0.53125 MiB
+
+===== Storage Reduction =====
+FP32 -> FP16: 50.00%
+FP32 -> INT8: 73.44%
+FP16 -> INT8: 46.88%
+
+===== kv_cache_offload.py =====
+Device: cuda
+Chunk size: 8.00 MiB
+Total cache: 32.00 MiB
+GPU cache allocated: 32.00 MiB
+
+===== Offloading =====
+Block 2: D2H median=0.639 ms | GPU cache allocated=24.00 MiB
+Block 3: D2H median=0.640 ms | GPU cache allocated=16.00 MiB
+CPU cache payload: 16.00 MiB
+
+===== Restoring =====
+Block 2: H2D median=0.632 ms | exact match=True
+Block 3: H2D median=0.634 ms | exact match=True
+
+===== Final State =====
+GPU cache allocated: 32.00 MiB
+All blocks restored: True
+GPU allocator reserved: 40.00 MiB
