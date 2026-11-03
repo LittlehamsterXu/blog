@@ -1,0 +1,176 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1500" height="1210" viewBox="0 0 1500 1210" role="img" aria-labelledby="title desc"><title id="title">同一个 Token，先被采样，再写入 KV</title><desc id="desc">三个位置对齐的状态带显示序列与KV的不同长度。Prefill处理ABC后采样D；D沿箭头进入下一轮并写入自己的KV；E重复这一过程。下方因果矩阵展示Q_D读取K_A到K_D，再对对应V加权求和。</desc>
+<style>text{font-family:"Microsoft YaHei","Noto Sans SC","PingFang SC",sans-serif} .mono{font-family:"Cascadia Code","DejaVu Sans Mono",monospace}</style>
+<defs>
+<marker id="teal" markerWidth="11" markerHeight="11" refX="9" refY="5.5" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 0L10 5.5L0 11Z" fill="#267f79"/></marker>
+<marker id="orange" markerWidth="11" markerHeight="11" refX="9" refY="5.5" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 0L10 5.5L0 11Z" fill="#c36b2e"/></marker>
+<marker id="purple" markerWidth="11" markerHeight="11" refX="9" refY="5.5" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 0L10 5.5L0 11Z" fill="#7a5caa"/></marker>
+<marker id="blue" markerWidth="11" markerHeight="11" refX="9" refY="5.5" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 0L10 5.5L0 11Z" fill="#50758d"/></marker>
+<marker id="gray" markerWidth="11" markerHeight="11" refX="9" refY="5.5" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 0L10 5.5L0 11Z" fill="#657987"/></marker>
+</defs>
+<rect width="1500" height="1210" fill="#fbfcfc" rx="20"/>
+<text x="48" y="65" font-size="46" fill="#243847" font-weight="700" text-anchor="start">Token 已经出现，KV 还差一轮</text>
+<rect x="48" y="93" width="26" height="26" rx="7" fill="#d9eeea" stroke="#267f79" stroke-width="2.5"/>
+<text x="86" y="117" font-size="28" fill="#657987" font-weight="400" text-anchor="start">已有 KV</text>
+<rect x="303" y="93" width="26" height="26" rx="7" fill="#ffdfbd" stroke="#c36b2e" stroke-width="2.5"/>
+<text x="341" y="117" font-size="28" fill="#657987" font-weight="400" text-anchor="start">本轮输入 / 新 KV</text>
+<rect x="653" y="93" width="26" height="26" rx="7" fill="#eee5fa" stroke="#7a5caa" stroke-width="2.5" stroke-dasharray="8 6"/>
+<text x="691" y="117" font-size="28" fill="#657987" font-weight="400" text-anchor="start">刚采样，KV 待算</text>
+<text x="516" y="174" font-size="28" fill="#657987" font-weight="400" text-anchor="middle">位置 0</text>
+<text x="658" y="174" font-size="28" fill="#657987" font-weight="400" text-anchor="middle">位置 1</text>
+<text x="800" y="174" font-size="28" fill="#657987" font-weight="400" text-anchor="middle">位置 2</text>
+<text x="942" y="174" font-size="28" fill="#657987" font-weight="400" text-anchor="middle">位置 3</text>
+<text x="1084" y="174" font-size="28" fill="#657987" font-weight="400" text-anchor="middle">位置 4</text>
+<text x="1226" y="174" font-size="28" fill="#657987" font-weight="400" text-anchor="middle">位置 5</text>
+<path d="M942 269 V423" fill="none" stroke="#7a5caa" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#purple)" stroke-dasharray="8 8"/>
+<path d="M1084 499 V653" fill="none" stroke="#7a5caa" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#purple)" stroke-dasharray="8 8"/>
+<text x="48" y="241" font-size="34" fill="#50758d" font-weight="650" text-anchor="start">1  Prefill</text>
+<text x="48" y="293" font-size="28" fill="#657987" font-weight="400" text-anchor="start">输入</text>
+<text x="142" y="293" font-size="34" fill="#c36b2e" font-weight="650" text-anchor="start" class="mono">ABC</text>
+<text x="332" y="246" font-size="28" fill="#657987" font-weight="400" text-anchor="start">序列</text>
+<text x="332" y="323" font-size="30" fill="#657987" font-weight="400" text-anchor="start" class="mono">KV</text>
+<rect x="460" y="210" width="112" height="58" rx="7" fill="#ffdfbd" stroke="#c36b2e" stroke-width="2.5"/>
+<text x="516.0" y="250.6" font-size="35" fill="#c36b2e" font-weight="650" text-anchor="middle" class="mono">A</text>
+<rect x="460" y="288" width="112" height="58" rx="7" fill="#ffdfbd" stroke="#c36b2e" stroke-width="2.5"/>
+<text x="516.0" y="328.6" font-size="35" fill="#c36b2e" font-weight="650" text-anchor="middle" class="mono">A</text>
+<path d="M516 270 V286" fill="none" stroke="#c36b2e" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#orange)"/>
+<rect x="602" y="210" width="112" height="58" rx="7" fill="#ffdfbd" stroke="#c36b2e" stroke-width="2.5"/>
+<text x="658.0" y="250.6" font-size="35" fill="#c36b2e" font-weight="650" text-anchor="middle" class="mono">B</text>
+<rect x="602" y="288" width="112" height="58" rx="7" fill="#ffdfbd" stroke="#c36b2e" stroke-width="2.5"/>
+<text x="658.0" y="328.6" font-size="35" fill="#c36b2e" font-weight="650" text-anchor="middle" class="mono">B</text>
+<path d="M658 270 V286" fill="none" stroke="#c36b2e" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#orange)"/>
+<rect x="744" y="210" width="112" height="58" rx="7" fill="#ffdfbd" stroke="#c36b2e" stroke-width="2.5"/>
+<text x="800.0" y="250.6" font-size="35" fill="#c36b2e" font-weight="650" text-anchor="middle" class="mono">C</text>
+<rect x="744" y="288" width="112" height="58" rx="7" fill="#ffdfbd" stroke="#c36b2e" stroke-width="2.5"/>
+<text x="800.0" y="328.6" font-size="35" fill="#c36b2e" font-weight="650" text-anchor="middle" class="mono">C</text>
+<path d="M800 270 V286" fill="none" stroke="#c36b2e" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#orange)"/>
+<rect x="886" y="210" width="112" height="58" rx="7" fill="#eee5fa" stroke="#7a5caa" stroke-width="2.5" stroke-dasharray="8 6"/>
+<text x="942.0" y="250.6" font-size="35" fill="#7a5caa" font-weight="650" text-anchor="middle" class="mono">D</text>
+<rect x="886" y="288" width="112" height="58" rx="7" fill="white" stroke="#d6e0e5" stroke-width="2.5"/>
+<rect x="1028" y="210" width="112" height="58" rx="7" fill="white" stroke="#d6e0e5" stroke-width="2.5"/>
+<rect x="1028" y="288" width="112" height="58" rx="7" fill="white" stroke="#d6e0e5" stroke-width="2.5"/>
+<rect x="1170" y="210" width="112" height="58" rx="7" fill="white" stroke="#d6e0e5" stroke-width="2.5"/>
+<rect x="1170" y="288" width="112" height="58" rx="7" fill="white" stroke="#d6e0e5" stroke-width="2.5"/>
+<path d="M460 361 v10 H856 v-10" fill="none" stroke="#267f79" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+<text x="658.0" y="406" font-size="28" fill="#267f79" font-weight="400" text-anchor="middle">Q_C 读取 3 个 K/V</text>
+<text x="1370" y="246" font-size="34" fill="#7a5caa" font-weight="650" text-anchor="middle" class="mono">4</text>
+<text x="1370" y="322" font-size="34" fill="#267f79" font-weight="650" text-anchor="middle" class="mono">3</text>
+<text x="48" y="471" font-size="34" fill="#50758d" font-weight="650" text-anchor="start">2  Decode</text>
+<text x="48" y="523" font-size="28" fill="#657987" font-weight="400" text-anchor="start">输入</text>
+<text x="142" y="523" font-size="34" fill="#c36b2e" font-weight="650" text-anchor="start" class="mono">D</text>
+<text x="332" y="476" font-size="28" fill="#657987" font-weight="400" text-anchor="start">序列</text>
+<text x="332" y="553" font-size="30" fill="#657987" font-weight="400" text-anchor="start" class="mono">KV</text>
+<rect x="460" y="440" width="112" height="58" rx="7" fill="white" stroke="#267f79" stroke-width="2.5"/>
+<text x="516.0" y="480.6" font-size="35" fill="#267f79" font-weight="650" text-anchor="middle" class="mono">A</text>
+<rect x="460" y="518" width="112" height="58" rx="7" fill="#d9eeea" stroke="#267f79" stroke-width="2.5"/>
+<text x="516.0" y="558.6" font-size="35" fill="#267f79" font-weight="650" text-anchor="middle" class="mono">A</text>
+<rect x="602" y="440" width="112" height="58" rx="7" fill="white" stroke="#267f79" stroke-width="2.5"/>
+<text x="658.0" y="480.6" font-size="35" fill="#267f79" font-weight="650" text-anchor="middle" class="mono">B</text>
+<rect x="602" y="518" width="112" height="58" rx="7" fill="#d9eeea" stroke="#267f79" stroke-width="2.5"/>
+<text x="658.0" y="558.6" font-size="35" fill="#267f79" font-weight="650" text-anchor="middle" class="mono">B</text>
+<rect x="744" y="440" width="112" height="58" rx="7" fill="white" stroke="#267f79" stroke-width="2.5"/>
+<text x="800.0" y="480.6" font-size="35" fill="#267f79" font-weight="650" text-anchor="middle" class="mono">C</text>
+<rect x="744" y="518" width="112" height="58" rx="7" fill="#d9eeea" stroke="#267f79" stroke-width="2.5"/>
+<text x="800.0" y="558.6" font-size="35" fill="#267f79" font-weight="650" text-anchor="middle" class="mono">C</text>
+<rect x="886" y="440" width="112" height="58" rx="7" fill="#ffdfbd" stroke="#c36b2e" stroke-width="2.5"/>
+<text x="942.0" y="480.6" font-size="35" fill="#c36b2e" font-weight="650" text-anchor="middle" class="mono">D</text>
+<rect x="886" y="518" width="112" height="58" rx="7" fill="#ffdfbd" stroke="#c36b2e" stroke-width="2.5"/>
+<text x="942.0" y="558.6" font-size="35" fill="#c36b2e" font-weight="650" text-anchor="middle" class="mono">D</text>
+<path d="M942 500 V516" fill="none" stroke="#c36b2e" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#orange)"/>
+<rect x="1028" y="440" width="112" height="58" rx="7" fill="#eee5fa" stroke="#7a5caa" stroke-width="2.5" stroke-dasharray="8 6"/>
+<text x="1084.0" y="480.6" font-size="35" fill="#7a5caa" font-weight="650" text-anchor="middle" class="mono">E</text>
+<rect x="1028" y="518" width="112" height="58" rx="7" fill="white" stroke="#d6e0e5" stroke-width="2.5"/>
+<rect x="1170" y="440" width="112" height="58" rx="7" fill="white" stroke="#d6e0e5" stroke-width="2.5"/>
+<rect x="1170" y="518" width="112" height="58" rx="7" fill="white" stroke="#d6e0e5" stroke-width="2.5"/>
+<path d="M460 591 v10 H998 v-10" fill="none" stroke="#267f79" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+<text x="729.0" y="636" font-size="28" fill="#267f79" font-weight="400" text-anchor="middle">Q_D 读取 4 个 K/V</text>
+<text x="1370" y="476" font-size="34" fill="#7a5caa" font-weight="650" text-anchor="middle" class="mono">5</text>
+<text x="1370" y="552" font-size="34" fill="#267f79" font-weight="650" text-anchor="middle" class="mono">4</text>
+<text x="48" y="701" font-size="34" fill="#50758d" font-weight="650" text-anchor="start">3  Decode</text>
+<text x="48" y="753" font-size="28" fill="#657987" font-weight="400" text-anchor="start">输入</text>
+<text x="142" y="753" font-size="34" fill="#c36b2e" font-weight="650" text-anchor="start" class="mono">E</text>
+<text x="332" y="706" font-size="28" fill="#657987" font-weight="400" text-anchor="start">序列</text>
+<text x="332" y="783" font-size="30" fill="#657987" font-weight="400" text-anchor="start" class="mono">KV</text>
+<rect x="460" y="670" width="112" height="58" rx="7" fill="white" stroke="#267f79" stroke-width="2.5"/>
+<text x="516.0" y="710.6" font-size="35" fill="#267f79" font-weight="650" text-anchor="middle" class="mono">A</text>
+<rect x="460" y="748" width="112" height="58" rx="7" fill="#d9eeea" stroke="#267f79" stroke-width="2.5"/>
+<text x="516.0" y="788.6" font-size="35" fill="#267f79" font-weight="650" text-anchor="middle" class="mono">A</text>
+<rect x="602" y="670" width="112" height="58" rx="7" fill="white" stroke="#267f79" stroke-width="2.5"/>
+<text x="658.0" y="710.6" font-size="35" fill="#267f79" font-weight="650" text-anchor="middle" class="mono">B</text>
+<rect x="602" y="748" width="112" height="58" rx="7" fill="#d9eeea" stroke="#267f79" stroke-width="2.5"/>
+<text x="658.0" y="788.6" font-size="35" fill="#267f79" font-weight="650" text-anchor="middle" class="mono">B</text>
+<rect x="744" y="670" width="112" height="58" rx="7" fill="white" stroke="#267f79" stroke-width="2.5"/>
+<text x="800.0" y="710.6" font-size="35" fill="#267f79" font-weight="650" text-anchor="middle" class="mono">C</text>
+<rect x="744" y="748" width="112" height="58" rx="7" fill="#d9eeea" stroke="#267f79" stroke-width="2.5"/>
+<text x="800.0" y="788.6" font-size="35" fill="#267f79" font-weight="650" text-anchor="middle" class="mono">C</text>
+<rect x="886" y="670" width="112" height="58" rx="7" fill="white" stroke="#267f79" stroke-width="2.5"/>
+<text x="942.0" y="710.6" font-size="35" fill="#267f79" font-weight="650" text-anchor="middle" class="mono">D</text>
+<rect x="886" y="748" width="112" height="58" rx="7" fill="#d9eeea" stroke="#267f79" stroke-width="2.5"/>
+<text x="942.0" y="788.6" font-size="35" fill="#267f79" font-weight="650" text-anchor="middle" class="mono">D</text>
+<rect x="1028" y="670" width="112" height="58" rx="7" fill="#ffdfbd" stroke="#c36b2e" stroke-width="2.5"/>
+<text x="1084.0" y="710.6" font-size="35" fill="#c36b2e" font-weight="650" text-anchor="middle" class="mono">E</text>
+<rect x="1028" y="748" width="112" height="58" rx="7" fill="#ffdfbd" stroke="#c36b2e" stroke-width="2.5"/>
+<text x="1084.0" y="788.6" font-size="35" fill="#c36b2e" font-weight="650" text-anchor="middle" class="mono">E</text>
+<path d="M1084 730 V746" fill="none" stroke="#c36b2e" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#orange)"/>
+<rect x="1170" y="670" width="112" height="58" rx="7" fill="#eee5fa" stroke="#7a5caa" stroke-width="2.5" stroke-dasharray="8 6"/>
+<text x="1226.0" y="710.6" font-size="35" fill="#7a5caa" font-weight="650" text-anchor="middle" class="mono">F</text>
+<rect x="1170" y="748" width="112" height="58" rx="7" fill="white" stroke="#d6e0e5" stroke-width="2.5"/>
+<path d="M460 821 v10 H1140 v-10" fill="none" stroke="#267f79" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+<text x="800.0" y="866" font-size="28" fill="#267f79" font-weight="400" text-anchor="middle">Q_E 读取 5 个 K/V</text>
+<text x="1370" y="706" font-size="34" fill="#7a5caa" font-weight="650" text-anchor="middle" class="mono">6</text>
+<text x="1370" y="782" font-size="34" fill="#267f79" font-weight="650" text-anchor="middle" class="mono">5</text>
+<text x="1370" y="174" font-size="28" fill="#657987" font-weight="400" text-anchor="middle">长度</text>
+<path d="M48 894 H1450" fill="none" stroke="#d6e0e5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+<text x="48" y="944" font-size="34" fill="#243847" font-weight="650" text-anchor="start">展开第二轮：D 的 Attention</text>
+<text x="141" y="975" font-size="27" fill="#267f79" font-weight="650" text-anchor="middle" class="mono">A</text>
+<text x="181" y="975" font-size="27" fill="#267f79" font-weight="650" text-anchor="middle" class="mono">B</text>
+<text x="221" y="975" font-size="27" fill="#267f79" font-weight="650" text-anchor="middle" class="mono">C</text>
+<text x="261" y="975" font-size="27" fill="#267f79" font-weight="650" text-anchor="middle" class="mono">D</text>
+<text x="97" y="1017" font-size="27" fill="#657987" font-weight="650" text-anchor="middle" class="mono">A</text>
+<rect x="125" y="991" width="32" height="32" rx="3" fill="#d9eeea" stroke="#d6e0e5" stroke-width="1.5"/>
+<circle cx="141" cy="1007" r="4" fill="#267f79" stroke="#267f79" stroke-width="1"/>
+<rect x="165" y="991" width="32" height="32" rx="3" fill="#f1f4f5" stroke="#d6e0e5" stroke-width="1.5"/>
+<rect x="205" y="991" width="32" height="32" rx="3" fill="#f1f4f5" stroke="#d6e0e5" stroke-width="1.5"/>
+<rect x="245" y="991" width="32" height="32" rx="3" fill="#f1f4f5" stroke="#d6e0e5" stroke-width="1.5"/>
+<text x="97" y="1057" font-size="27" fill="#657987" font-weight="650" text-anchor="middle" class="mono">B</text>
+<rect x="125" y="1031" width="32" height="32" rx="3" fill="#d9eeea" stroke="#d6e0e5" stroke-width="1.5"/>
+<circle cx="141" cy="1047" r="4" fill="#267f79" stroke="#267f79" stroke-width="1"/>
+<rect x="165" y="1031" width="32" height="32" rx="3" fill="#d9eeea" stroke="#d6e0e5" stroke-width="1.5"/>
+<circle cx="181" cy="1047" r="4" fill="#267f79" stroke="#267f79" stroke-width="1"/>
+<rect x="205" y="1031" width="32" height="32" rx="3" fill="#f1f4f5" stroke="#d6e0e5" stroke-width="1.5"/>
+<rect x="245" y="1031" width="32" height="32" rx="3" fill="#f1f4f5" stroke="#d6e0e5" stroke-width="1.5"/>
+<text x="97" y="1097" font-size="27" fill="#657987" font-weight="650" text-anchor="middle" class="mono">C</text>
+<rect x="125" y="1071" width="32" height="32" rx="3" fill="#d9eeea" stroke="#d6e0e5" stroke-width="1.5"/>
+<circle cx="141" cy="1087" r="4" fill="#267f79" stroke="#267f79" stroke-width="1"/>
+<rect x="165" y="1071" width="32" height="32" rx="3" fill="#d9eeea" stroke="#d6e0e5" stroke-width="1.5"/>
+<circle cx="181" cy="1087" r="4" fill="#267f79" stroke="#267f79" stroke-width="1"/>
+<rect x="205" y="1071" width="32" height="32" rx="3" fill="#d9eeea" stroke="#d6e0e5" stroke-width="1.5"/>
+<circle cx="221" cy="1087" r="4" fill="#267f79" stroke="#267f79" stroke-width="1"/>
+<rect x="245" y="1071" width="32" height="32" rx="3" fill="#f1f4f5" stroke="#d6e0e5" stroke-width="1.5"/>
+<text x="97" y="1137" font-size="27" fill="#c36b2e" font-weight="650" text-anchor="middle" class="mono">D</text>
+<rect x="125" y="1111" width="32" height="32" rx="3" fill="#ffdfbd" stroke="#c36b2e" stroke-width="1.5"/>
+<circle cx="141" cy="1127" r="4" fill="#c36b2e" stroke="#c36b2e" stroke-width="1"/>
+<rect x="165" y="1111" width="32" height="32" rx="3" fill="#ffdfbd" stroke="#c36b2e" stroke-width="1.5"/>
+<circle cx="181" cy="1127" r="4" fill="#c36b2e" stroke="#c36b2e" stroke-width="1"/>
+<rect x="205" y="1111" width="32" height="32" rx="3" fill="#ffdfbd" stroke="#c36b2e" stroke-width="1.5"/>
+<circle cx="221" cy="1127" r="4" fill="#c36b2e" stroke="#c36b2e" stroke-width="1"/>
+<rect x="245" y="1111" width="32" height="32" rx="3" fill="#ffdfbd" stroke="#c36b2e" stroke-width="1.5"/>
+<circle cx="261" cy="1127" r="4" fill="#c36b2e" stroke="#c36b2e" stroke-width="1"/>
+<text x="48" y="976" font-size="26" fill="#657987" font-weight="400" text-anchor="start" class="mono">K →</text>
+<text x="48" y="1040" font-size="26" fill="#657987" font-weight="400" text-anchor="start" class="mono">Q</text>
+<path d="M58 1051 V1105" fill="none" stroke="#657987" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#gray)"/>
+<text x="405" y="1010" font-size="31" fill="#c36b2e" font-weight="650" text-anchor="start" class="mono">Q_D · [K_A  K_B  K_C  K_D]</text>
+<path d="M740 1026 V1054" fill="none" stroke="#c36b2e" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#orange)"/>
+<rect x="415" y="1095.5744680851064" width="90" height="20.425531914893618" rx="3" fill="#ffdfbd" stroke="#c36b2e" stroke-width="1.5"/>
+<text x="460" y="1154" font-size="28" fill="#267f79" font-weight="650" text-anchor="middle" class="mono">V_A</text>
+<rect x="565" y="1076.8510638297873" width="90" height="39.14893617021277" rx="3" fill="#ffdfbd" stroke="#c36b2e" stroke-width="1.5"/>
+<text x="610" y="1154" font-size="28" fill="#267f79" font-weight="650" text-anchor="middle" class="mono">V_B</text>
+<rect x="715" y="1085.3617021276596" width="90" height="30.638297872340424" rx="3" fill="#ffdfbd" stroke="#c36b2e" stroke-width="1.5"/>
+<text x="760" y="1154" font-size="28" fill="#267f79" font-weight="650" text-anchor="middle" class="mono">V_C</text>
+<rect x="865" y="1036.0" width="90" height="79.99999999999999" rx="3" fill="#ffdfbd" stroke="#c36b2e" stroke-width="1.5"/>
+<text x="910" y="1154" font-size="28" fill="#267f79" font-weight="650" text-anchor="middle" class="mono">V_D</text>
+<text x="1080" y="1067" font-size="29" fill="#657987" font-weight="400" text-anchor="middle">softmax → 权重</text>
+<path d="M1025 1118 H1133" fill="none" stroke="#267f79" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#teal)"/>
+<text x="1180" y="1104" font-size="36" fill="#267f79" font-weight="650" text-anchor="start" class="mono">Σ αᵢ Vᵢ</text>
+<text x="1180" y="1148" font-size="28" fill="#657987" font-weight="400" text-anchor="start">→ 当前输出</text>
+<text x="415" y="1190" font-size="27" fill="#657987" font-weight="400" text-anchor="start">柱高仅示意权重；可见历史到 D 为止。</text>
+</svg>

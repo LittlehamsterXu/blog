@@ -1,0 +1,827 @@
+{
+  "metadata": {
+    "recorded_date": "2026-10-27",
+    "timezone": "Asia/Shanghai",
+    "upstream": "https://github.com/GeeeekExplorer/nano-vllm",
+    "commit": "bb823b3e06983d71485a8e1f23715ebd87d98ef8",
+    "model": "Qwen3-0.6B",
+    "mode": "eager",
+    "block_size": 256,
+    "command": ".venv/bin/python -u test_continuous_batching.py",
+    "exit_code": 0,
+    "description": "Actual GPU run; rounds are scheduler iterations, not equal-duration units.",
+    "config": {
+      "max_model_len": 1024,
+      "max_num_batched_tokens": 1024,
+      "max_num_seqs": 4,
+      "gpu_memory_utilization": 0.7,
+      "enforce_eager": true
+    },
+    "sampling": {
+      "temperature": 0.6,
+      "max_tokens": 64
+    }
+  },
+  "events": [
+    {
+      "step": 1,
+      "mode": "PREFILL",
+      "waiting": 0,
+      "running": 1,
+      "scheduled": [
+        1
+      ]
+    },
+    {
+      "step": 2,
+      "mode": "DECODE",
+      "waiting": 0,
+      "running": 1,
+      "scheduled": [
+        1
+      ]
+    },
+    {
+      "step": 3,
+      "mode": "PREFILL",
+      "waiting": 0,
+      "running": 2,
+      "scheduled": [
+        2
+      ]
+    },
+    {
+      "step": 4,
+      "mode": "PREFILL",
+      "waiting": 0,
+      "running": 3,
+      "scheduled": [
+        3
+      ]
+    },
+    {
+      "step": 5,
+      "mode": "PREFILL",
+      "waiting": 0,
+      "running": 4,
+      "scheduled": [
+        4
+      ]
+    },
+    {
+      "step": 6,
+      "mode": "DECODE",
+      "waiting": 0,
+      "running": 4,
+      "scheduled": [
+        1,
+        2,
+        3,
+        4
+      ]
+    },
+    {
+      "step": 7,
+      "mode": "DECODE",
+      "waiting": 0,
+      "running": 4,
+      "scheduled": [
+        1,
+        2,
+        3,
+        4
+      ]
+    },
+    {
+      "step": 8,
+      "mode": "DECODE",
+      "waiting": 0,
+      "running": 4,
+      "scheduled": [
+        1,
+        2,
+        3,
+        4
+      ]
+    },
+    {
+      "step": 9,
+      "mode": "DECODE",
+      "waiting": 0,
+      "running": 4,
+      "scheduled": [
+        1,
+        2,
+        3,
+        4
+      ]
+    },
+    {
+      "step": 10,
+      "mode": "DECODE",
+      "waiting": 0,
+      "running": 4,
+      "scheduled": [
+        1,
+        2,
+        3,
+        4
+      ]
+    },
+    {
+      "step": 11,
+      "mode": "DECODE",
+      "waiting": 0,
+      "running": 4,
+      "scheduled": [
+        1,
+        2,
+        3,
+        4
+      ]
+    },
+    {
+      "step": 12,
+      "mode": "DECODE",
+      "waiting": 0,
+      "running": 4,
+      "scheduled": [
+        1,
+        2,
+        3,
+        4
+      ]
+    },
+    {
+      "step": 13,
+      "mode": "DECODE",
+      "waiting": 0,
+      "running": 4,
+      "scheduled": [
+        1,
+        2,
+        3,
+        4
+      ]
+    },
+    {
+      "step": 14,
+      "mode": "DECODE",
+      "waiting": 0,
+      "running": 4,
+      "scheduled": [
+        1,
+        2,
+        3,
+        4
+      ]
+    },
+    {
+      "step": 15,
+      "mode": "DECODE",
+      "waiting": 0,
+      "running": 4,
+      "scheduled": [
+        1,
+        2,
+        3,
+        4
+      ]
+    },
+    {
+      "step": 16,
+      "mode": "DECODE",
+      "waiting": 0,
+      "running": 4,
+      "scheduled": [
+        1,
+        2,
+        3,
+        4
+      ]
+    },
+    {
+      "step": 17,
+      "mode": "DECODE",
+      "waiting": 0,
+      "running": 4,
+      "scheduled": [
+        1,
+        2,
+        3,
+        4
+      ]
+    },
+    {
+      "step": 18,
+      "mode": "DECODE",
+      "waiting": 0,
+      "running": 4,
+      "scheduled": [
+        1,
+        2,
+        3,
+        4
+      ]
+    },
+    {
+      "step": 19,
+      "mode": "DECODE",
+      "waiting": 0,
+      "running": 4,
+      "scheduled": [
+        1,
+        2,
+        3,
+        4
+      ]
+    },
+    {
+      "step": 20,
+      "mode": "DECODE",
+      "waiting": 0,
+      "running": 4,
+      "scheduled": [
+        1,
+        2,
+        3,
+        4
+      ]
+    },
+    {
+      "step": 21,
+      "mode": "DECODE",
+      "waiting": 0,
+      "running": 4,
+      "scheduled": [
+        1,
+        2,
+        3,
+        4
+      ]
+    },
+    {
+      "step": 22,
+      "mode": "DECODE",
+      "waiting": 0,
+      "running": 4,
+      "scheduled": [
+        1,
+        2,
+        3,
+        4
+      ]
+    },
+    {
+      "step": 23,
+      "mode": "DECODE",
+      "waiting": 0,
+      "running": 4,
+      "scheduled": [
+        1,
+        2,
+        3,
+        4
+      ]
+    },
+    {
+      "step": 24,
+      "mode": "DECODE",
+      "waiting": 0,
+      "running": 4,
+      "scheduled": [
+        1,
+        2,
+        3,
+        4
+      ]
+    },
+    {
+      "step": 25,
+      "mode": "DECODE",
+      "waiting": 0,
+      "running": 4,
+      "scheduled": [
+        1,
+        2,
+        3,
+        4
+      ]
+    },
+    {
+      "step": 26,
+      "mode": "DECODE",
+      "waiting": 0,
+      "running": 4,
+      "scheduled": [
+        1,
+        2,
+        3,
+        4
+      ]
+    },
+    {
+      "step": 27,
+      "mode": "DECODE",
+      "waiting": 0,
+      "running": 4,
+      "scheduled": [
+        1,
+        2,
+        3,
+        4
+      ]
+    },
+    {
+      "step": 28,
+      "mode": "DECODE",
+      "waiting": 0,
+      "running": 4,
+      "scheduled": [
+        1,
+        2,
+        3,
+        4
+      ]
+    },
+    {
+      "step": 29,
+      "mode": "DECODE",
+      "waiting": 0,
+      "running": 4,
+      "scheduled": [
+        1,
+        2,
+        3,
+        4
+      ]
+    },
+    {
+      "step": 30,
+      "mode": "DECODE",
+      "waiting": 0,
+      "running": 4,
+      "scheduled": [
+        1,
+        2,
+        3,
+        4
+      ]
+    },
+    {
+      "step": 31,
+      "mode": "DECODE",
+      "waiting": 0,
+      "running": 4,
+      "scheduled": [
+        1,
+        2,
+        3,
+        4
+      ]
+    },
+    {
+      "step": 32,
+      "mode": "DECODE",
+      "waiting": 0,
+      "running": 4,
+      "scheduled": [
+        1,
+        2,
+        3,
+        4
+      ]
+    },
+    {
+      "step": 33,
+      "mode": "DECODE",
+      "waiting": 0,
+      "running": 4,
+      "scheduled": [
+        1,
+        2,
+        3,
+        4
+      ]
+    },
+    {
+      "step": 34,
+      "mode": "DECODE",
+      "waiting": 0,
+      "running": 4,
+      "scheduled": [
+        1,
+        2,
+        3,
+        4
+      ]
+    },
+    {
+      "step": 35,
+      "mode": "DECODE",
+      "waiting": 0,
+      "running": 4,
+      "scheduled": [
+        1,
+        2,
+        3,
+        4
+      ]
+    },
+    {
+      "step": 36,
+      "mode": "DECODE",
+      "waiting": 0,
+      "running": 4,
+      "scheduled": [
+        1,
+        2,
+        3,
+        4
+      ]
+    },
+    {
+      "step": 37,
+      "mode": "DECODE",
+      "waiting": 0,
+      "running": 4,
+      "scheduled": [
+        1,
+        2,
+        3,
+        4
+      ]
+    },
+    {
+      "step": 38,
+      "mode": "DECODE",
+      "waiting": 0,
+      "running": 4,
+      "scheduled": [
+        1,
+        2,
+        3,
+        4
+      ]
+    },
+    {
+      "step": 39,
+      "mode": "DECODE",
+      "waiting": 0,
+      "running": 4,
+      "scheduled": [
+        1,
+        2,
+        3,
+        4
+      ]
+    },
+    {
+      "step": 40,
+      "mode": "DECODE",
+      "waiting": 0,
+      "running": 4,
+      "scheduled": [
+        1,
+        2,
+        3,
+        4
+      ]
+    },
+    {
+      "step": 41,
+      "mode": "DECODE",
+      "waiting": 0,
+      "running": 4,
+      "scheduled": [
+        1,
+        2,
+        3,
+        4
+      ]
+    },
+    {
+      "step": 42,
+      "mode": "DECODE",
+      "waiting": 0,
+      "running": 4,
+      "scheduled": [
+        1,
+        2,
+        3,
+        4
+      ]
+    },
+    {
+      "step": 43,
+      "mode": "DECODE",
+      "waiting": 0,
+      "running": 4,
+      "scheduled": [
+        1,
+        2,
+        3,
+        4
+      ]
+    },
+    {
+      "step": 44,
+      "mode": "DECODE",
+      "waiting": 0,
+      "running": 4,
+      "scheduled": [
+        1,
+        2,
+        3,
+        4
+      ]
+    },
+    {
+      "step": 45,
+      "mode": "DECODE",
+      "waiting": 0,
+      "running": 4,
+      "scheduled": [
+        1,
+        2,
+        3,
+        4
+      ]
+    },
+    {
+      "step": 46,
+      "mode": "DECODE",
+      "waiting": 0,
+      "running": 4,
+      "scheduled": [
+        1,
+        2,
+        3,
+        4
+      ]
+    },
+    {
+      "step": 47,
+      "mode": "DECODE",
+      "waiting": 0,
+      "running": 4,
+      "scheduled": [
+        1,
+        2,
+        3,
+        4
+      ]
+    },
+    {
+      "step": 48,
+      "mode": "DECODE",
+      "waiting": 0,
+      "running": 4,
+      "scheduled": [
+        1,
+        2,
+        3,
+        4
+      ]
+    },
+    {
+      "step": 49,
+      "mode": "DECODE",
+      "waiting": 0,
+      "running": 4,
+      "scheduled": [
+        1,
+        2,
+        3,
+        4
+      ]
+    },
+    {
+      "step": 50,
+      "mode": "DECODE",
+      "waiting": 0,
+      "running": 4,
+      "scheduled": [
+        1,
+        2,
+        3,
+        4
+      ]
+    },
+    {
+      "step": 51,
+      "mode": "DECODE",
+      "waiting": 0,
+      "running": 4,
+      "scheduled": [
+        1,
+        2,
+        3,
+        4
+      ]
+    },
+    {
+      "step": 52,
+      "mode": "DECODE",
+      "waiting": 0,
+      "running": 4,
+      "scheduled": [
+        1,
+        2,
+        3,
+        4
+      ]
+    },
+    {
+      "step": 53,
+      "mode": "DECODE",
+      "waiting": 0,
+      "running": 4,
+      "scheduled": [
+        1,
+        2,
+        3,
+        4
+      ]
+    },
+    {
+      "step": 54,
+      "mode": "DECODE",
+      "waiting": 0,
+      "running": 4,
+      "scheduled": [
+        1,
+        2,
+        3,
+        4
+      ]
+    },
+    {
+      "step": 55,
+      "mode": "DECODE",
+      "waiting": 0,
+      "running": 4,
+      "scheduled": [
+        1,
+        2,
+        3,
+        4
+      ]
+    },
+    {
+      "step": 56,
+      "mode": "DECODE",
+      "waiting": 0,
+      "running": 4,
+      "scheduled": [
+        1,
+        2,
+        3,
+        4
+      ]
+    },
+    {
+      "step": 57,
+      "mode": "DECODE",
+      "waiting": 0,
+      "running": 4,
+      "scheduled": [
+        1,
+        2,
+        3,
+        4
+      ]
+    },
+    {
+      "step": 58,
+      "mode": "DECODE",
+      "waiting": 0,
+      "running": 4,
+      "scheduled": [
+        1,
+        2,
+        3,
+        4
+      ]
+    },
+    {
+      "step": 59,
+      "mode": "DECODE",
+      "waiting": 0,
+      "running": 4,
+      "scheduled": [
+        1,
+        2,
+        3,
+        4
+      ]
+    },
+    {
+      "step": 60,
+      "mode": "DECODE",
+      "waiting": 0,
+      "running": 4,
+      "scheduled": [
+        1,
+        2,
+        3,
+        4
+      ]
+    },
+    {
+      "step": 61,
+      "mode": "DECODE",
+      "waiting": 0,
+      "running": 4,
+      "scheduled": [
+        1,
+        2,
+        3,
+        4
+      ]
+    },
+    {
+      "step": 62,
+      "mode": "DECODE",
+      "waiting": 0,
+      "running": 4,
+      "scheduled": [
+        1,
+        2,
+        3,
+        4
+      ]
+    },
+    {
+      "step": 63,
+      "mode": "DECODE",
+      "waiting": 0,
+      "running": 4,
+      "scheduled": [
+        1,
+        2,
+        3,
+        4
+      ]
+    },
+    {
+      "step": 64,
+      "mode": "DECODE",
+      "waiting": 0,
+      "running": 4,
+      "scheduled": [
+        1,
+        2,
+        3,
+        4
+      ]
+    },
+    {
+      "step": 65,
+      "mode": "DECODE",
+      "waiting": 0,
+      "running": 4,
+      "scheduled": [
+        1,
+        2,
+        3,
+        4
+      ]
+    },
+    {
+      "step": 66,
+      "mode": "DECODE",
+      "waiting": 0,
+      "running": 4,
+      "scheduled": [
+        1,
+        2,
+        3,
+        4
+      ]
+    },
+    {
+      "step": 67,
+      "mode": "DECODE",
+      "waiting": 0,
+      "running": 4,
+      "scheduled": [
+        1,
+        2,
+        3,
+        4
+      ]
+    },
+    {
+      "step": 68,
+      "mode": "DECODE",
+      "waiting": 0,
+      "running": 3,
+      "scheduled": [
+        2,
+        3,
+        4
+      ]
+    }
+  ]
+}

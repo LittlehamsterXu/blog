@@ -1,0 +1,77 @@
+{
+  "metadata": {
+    "recorded_date": "2026-10-27",
+    "timezone": "Asia/Shanghai",
+    "upstream": "https://github.com/GeeeekExplorer/nano-vllm",
+    "commit": "bb823b3e06983d71485a8e1f23715ebd87d98ef8",
+    "model": "Qwen3-0.6B",
+    "mode": "eager",
+    "block_size": 256,
+    "command": ".venv/bin/python -u test_continuous_batching.py",
+    "exit_code": 0,
+    "description": "Actual GPU run; rounds are scheduler iterations, not equal-duration units.",
+    "config": {
+      "max_model_len": 1024,
+      "max_num_batched_tokens": 1024,
+      "max_num_seqs": 4,
+      "gpu_memory_utilization": 0.7,
+      "enforce_eager": true
+    },
+    "sampling": {
+      "temperature": 0.6,
+      "max_tokens": 64
+    }
+  },
+  "files": [
+    {
+      "file": "test_continuous_batching.py",
+      "bytes": 2056,
+      "sha256": "06c44eb074315ecbb0e6c773a5d76cafbade20b43caaadf89b33a56a73e22b92"
+    },
+    {
+      "file": "RUNNING.zh-CN.md",
+      "bytes": 2606,
+      "sha256": "91ab2d6861c960591fa483d9a18f593afc095792dfc77429838c1989cad17b28"
+    },
+    {
+      "file": "nanovllm/config.py",
+      "bytes": 792,
+      "sha256": "bca5fddf17092e26d14075348965e46a3b707f5ad780b04b31f48e91bd38e98c"
+    },
+    {
+      "file": "nanovllm/engine/llm_engine.py",
+      "bytes": 4958,
+      "sha256": "d85de06c1b099f8f3a4fea1bce47cb8fc347d5b2d3d037bafa5ef9ff36583295"
+    },
+    {
+      "file": "nanovllm/engine/scheduler.py",
+      "bytes": 4194,
+      "sha256": "e6719009d2b81c5e6757927d015838e02c907e243b131a8fa9b7e91b43f22669"
+    },
+    {
+      "file": "nanovllm/engine/block_manager.py",
+      "bytes": 4292,
+      "sha256": "d0240374f589eaa85c4c7923b8970f2635ab7bc73adc5044fa2d273955b54242"
+    },
+    {
+      "file": "nanovllm/engine/model_runner.py",
+      "bytes": 11935,
+      "sha256": "2373c9daad7de3956905c9a0ec9d6b2e0a8d355a209162de8570507c5f419fd7"
+    },
+    {
+      "file": "nanovllm/engine/sequence.py",
+      "bytes": 2626,
+      "sha256": "d5bb5c522d22554b5c36de745150ec8b601827ee0388058404dcceef1ae8290d"
+    },
+    {
+      "file": "nanovllm/layers/attention.py",
+      "bytes": 2818,
+      "sha256": "00c2f52cd428bc2f82ff90ef8cbc96b0959a225daaeb035e9e0eaf63a85bfbba"
+    },
+    {
+      "file": "run_logs/example.log",
+      "bytes": 114005,
+      "sha256": "da75b0e786529143ca7870cbe87f6aac8c004cc633539b2fd222aee904b6d79f"
+    }
+  ]
+}

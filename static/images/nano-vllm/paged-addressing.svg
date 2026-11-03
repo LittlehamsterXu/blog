@@ -1,0 +1,149 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1500" height="1140" viewBox="0 0 1500 1140" role="img" aria-labelledby="title desc"><title id="title">位置9如何落到物理槽17</title><desc id="desc">完整的8块物理缓存池，每块4槽。A的逻辑位置0到9映射到物理块2、7、4。位置9是本轮新KV，写入物理块4偏移1即槽17；Attention只读取这10个有效位置，不读取尾块的两个空位。</desc>
+<style>text{font-family:"Microsoft YaHei","Noto Sans SC","PingFang SC",sans-serif} .mono{font-family:"Cascadia Code","DejaVu Sans Mono",monospace}</style>
+<defs>
+<marker id="teal" markerWidth="11" markerHeight="11" refX="9" refY="5.5" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 0L10 5.5L0 11Z" fill="#267f79"/></marker>
+<marker id="orange" markerWidth="11" markerHeight="11" refX="9" refY="5.5" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 0L10 5.5L0 11Z" fill="#c36b2e"/></marker>
+<marker id="purple" markerWidth="11" markerHeight="11" refX="9" refY="5.5" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 0L10 5.5L0 11Z" fill="#7a5caa"/></marker>
+<marker id="blue" markerWidth="11" markerHeight="11" refX="9" refY="5.5" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 0L10 5.5L0 11Z" fill="#50758d"/></marker>
+<marker id="gray" markerWidth="11" markerHeight="11" refX="9" refY="5.5" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 0L10 5.5L0 11Z" fill="#657987"/></marker>
+</defs>
+<rect width="1500" height="1140" fill="#fbfcfc" rx="20"/>
+<text x="48" y="65" font-size="46" fill="#243847" font-weight="700" text-anchor="start">位置 9，怎样落到物理槽 17</text>
+<rect x="48" y="93" width="26" height="26" rx="7" fill="#d9eeea" stroke="#267f79" stroke-width="2.5"/>
+<text x="86" y="117" font-size="28" fill="#657987" font-weight="400" text-anchor="start">已有 KV</text>
+<rect x="298" y="93" width="26" height="26" rx="7" fill="#ffdfbd" stroke="#c36b2e" stroke-width="2.5"/>
+<text x="336" y="117" font-size="28" fill="#657987" font-weight="400" text-anchor="start">本轮写入</text>
+<rect x="568" y="93" width="26" height="26" rx="7" fill="white" stroke="#d6e0e5" stroke-width="2.5"/>
+<text x="606" y="117" font-size="28" fill="#657987" font-weight="400" text-anchor="start">空槽</text>
+<text x="48" y="205" font-size="31" fill="#243847" font-weight="650" text-anchor="start">A 的逻辑位置</text>
+<text x="342.0" y="199" font-size="27" fill="#657987" font-weight="400" text-anchor="middle" class="mono">0</text>
+<rect x="297" y="221" width="90" height="64" rx="7" fill="#d9eeea" stroke="#267f79" stroke-width="2.5"/>
+<text x="342.0" y="265.8" font-size="31" fill="#267f79" font-weight="650" text-anchor="middle" class="mono">t0</text>
+<text x="453.0" y="199" font-size="27" fill="#657987" font-weight="400" text-anchor="middle" class="mono">1</text>
+<rect x="408" y="221" width="90" height="64" rx="7" fill="#d9eeea" stroke="#267f79" stroke-width="2.5"/>
+<text x="453.0" y="265.8" font-size="31" fill="#267f79" font-weight="650" text-anchor="middle" class="mono">t1</text>
+<text x="564.0" y="199" font-size="27" fill="#657987" font-weight="400" text-anchor="middle" class="mono">2</text>
+<rect x="519" y="221" width="90" height="64" rx="7" fill="#d9eeea" stroke="#267f79" stroke-width="2.5"/>
+<text x="564.0" y="265.8" font-size="31" fill="#267f79" font-weight="650" text-anchor="middle" class="mono">t2</text>
+<text x="675.0" y="199" font-size="27" fill="#657987" font-weight="400" text-anchor="middle" class="mono">3</text>
+<rect x="630" y="221" width="90" height="64" rx="7" fill="#d9eeea" stroke="#267f79" stroke-width="2.5"/>
+<text x="675.0" y="265.8" font-size="31" fill="#267f79" font-weight="650" text-anchor="middle" class="mono">t3</text>
+<text x="786.0" y="199" font-size="27" fill="#657987" font-weight="400" text-anchor="middle" class="mono">4</text>
+<rect x="741" y="221" width="90" height="64" rx="7" fill="#d9eeea" stroke="#267f79" stroke-width="2.5"/>
+<text x="786.0" y="265.8" font-size="31" fill="#267f79" font-weight="650" text-anchor="middle" class="mono">t4</text>
+<text x="897.0" y="199" font-size="27" fill="#657987" font-weight="400" text-anchor="middle" class="mono">5</text>
+<rect x="852" y="221" width="90" height="64" rx="7" fill="#d9eeea" stroke="#267f79" stroke-width="2.5"/>
+<text x="897.0" y="265.8" font-size="31" fill="#267f79" font-weight="650" text-anchor="middle" class="mono">t5</text>
+<text x="1008.0" y="199" font-size="27" fill="#657987" font-weight="400" text-anchor="middle" class="mono">6</text>
+<rect x="963" y="221" width="90" height="64" rx="7" fill="#d9eeea" stroke="#267f79" stroke-width="2.5"/>
+<text x="1008.0" y="265.8" font-size="31" fill="#267f79" font-weight="650" text-anchor="middle" class="mono">t6</text>
+<text x="1119.0" y="199" font-size="27" fill="#657987" font-weight="400" text-anchor="middle" class="mono">7</text>
+<rect x="1074" y="221" width="90" height="64" rx="7" fill="#d9eeea" stroke="#267f79" stroke-width="2.5"/>
+<text x="1119.0" y="265.8" font-size="31" fill="#267f79" font-weight="650" text-anchor="middle" class="mono">t7</text>
+<text x="1230.0" y="199" font-size="27" fill="#657987" font-weight="400" text-anchor="middle" class="mono">8</text>
+<rect x="1185" y="221" width="90" height="64" rx="7" fill="#d9eeea" stroke="#267f79" stroke-width="2.5"/>
+<text x="1230.0" y="265.8" font-size="31" fill="#267f79" font-weight="650" text-anchor="middle" class="mono">t8</text>
+<text x="1341.0" y="199" font-size="27" fill="#657987" font-weight="400" text-anchor="middle" class="mono">9</text>
+<rect x="1296" y="221" width="90" height="64" rx="7" fill="#ffdfbd" stroke="#c36b2e" stroke-width="2.5"/>
+<text x="1341.0" y="265.8" font-size="31" fill="#c36b2e" font-weight="650" text-anchor="middle" class="mono">t9</text>
+<path d="M297 304 v13 H720 v-13" fill="none" stroke="#50758d" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+<text x="508.5" y="353" font-size="28" fill="#50758d" font-weight="400" text-anchor="middle">逻辑块 0</text>
+<rect x="471.5" y="376" width="74" height="54" rx="7" fill="white" stroke="#267f79" stroke-width="2.5"/>
+<text x="508.5" y="413.8" font-size="32" fill="#267f79" font-weight="650" text-anchor="middle" class="mono">2</text>
+<path d="M741 304 v13 H1164 v-13" fill="none" stroke="#50758d" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+<text x="952.5" y="353" font-size="28" fill="#50758d" font-weight="400" text-anchor="middle">逻辑块 1</text>
+<rect x="915.5" y="376" width="74" height="54" rx="7" fill="white" stroke="#267f79" stroke-width="2.5"/>
+<text x="952.5" y="413.8" font-size="32" fill="#267f79" font-weight="650" text-anchor="middle" class="mono">7</text>
+<path d="M1185 304 v13 H1386 v-13" fill="none" stroke="#50758d" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+<text x="1285.5" y="353" font-size="28" fill="#50758d" font-weight="400" text-anchor="middle">逻辑块 2</text>
+<rect x="1248.5" y="376" width="74" height="54" rx="7" fill="white" stroke="#267f79" stroke-width="2.5"/>
+<text x="1285.5" y="413.8" font-size="32" fill="#267f79" font-weight="650" text-anchor="middle" class="mono">4</text>
+<text x="48" y="414" font-size="29" fill="#50758d" font-weight="650" text-anchor="start" class="mono">block_table</text>
+<path d="M508.5 434 C508.5 477 486.0 478 486.0 586" fill="none" stroke="#50758d" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#blue)"/>
+<path d="M952.5 434 C952.5 501 1361.0 502 1361.0 586" fill="none" stroke="#50758d" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#blue)"/>
+<path d="M1285.5 434 C1285.5 525 836.0 526 836.0 586" fill="none" stroke="#50758d" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#blue)"/>
+<text x="48" y="580" font-size="32" fill="#243847" font-weight="650" text-anchor="start">物理池</text>
+<text x="136.0" y="620" font-size="30" fill="#657987" font-weight="650" text-anchor="middle">块 0</text>
+<rect x="55" y="639" width="162" height="84" rx="7" fill="white" stroke="#d6e0e5" stroke-width="2.5"/>
+<rect x="64" y="646" width="33" height="70" rx="7" fill="white" stroke="#d6e0e5" stroke-width="2.5"/>
+<rect x="101" y="646" width="33" height="70" rx="7" fill="white" stroke="#d6e0e5" stroke-width="2.5"/>
+<rect x="138" y="646" width="33" height="70" rx="7" fill="white" stroke="#d6e0e5" stroke-width="2.5"/>
+<rect x="175" y="646" width="33" height="70" rx="7" fill="white" stroke="#d6e0e5" stroke-width="2.5"/>
+<text x="311.0" y="620" font-size="30" fill="#657987" font-weight="650" text-anchor="middle">块 1</text>
+<rect x="230" y="639" width="162" height="84" rx="7" fill="white" stroke="#d6e0e5" stroke-width="2.5"/>
+<rect x="239" y="646" width="33" height="70" rx="7" fill="white" stroke="#d6e0e5" stroke-width="2.5"/>
+<rect x="276" y="646" width="33" height="70" rx="7" fill="white" stroke="#d6e0e5" stroke-width="2.5"/>
+<rect x="313" y="646" width="33" height="70" rx="7" fill="white" stroke="#d6e0e5" stroke-width="2.5"/>
+<rect x="350" y="646" width="33" height="70" rx="7" fill="white" stroke="#d6e0e5" stroke-width="2.5"/>
+<text x="486.0" y="620" font-size="30" fill="#267f79" font-weight="650" text-anchor="middle">块 2</text>
+<rect x="405" y="639" width="162" height="84" rx="7" fill="white" stroke="#50758d" stroke-width="2.5"/>
+<rect x="414" y="646" width="33" height="70" rx="7" fill="#d9eeea" stroke="#267f79" stroke-width="2.5"/>
+<text x="430.5" y="695.0" font-size="29" fill="#267f79" font-weight="650" text-anchor="middle" class="mono">0</text>
+<rect x="451" y="646" width="33" height="70" rx="7" fill="#d9eeea" stroke="#267f79" stroke-width="2.5"/>
+<text x="467.5" y="695.0" font-size="29" fill="#267f79" font-weight="650" text-anchor="middle" class="mono">1</text>
+<rect x="488" y="646" width="33" height="70" rx="7" fill="#d9eeea" stroke="#267f79" stroke-width="2.5"/>
+<text x="504.5" y="695.0" font-size="29" fill="#267f79" font-weight="650" text-anchor="middle" class="mono">2</text>
+<rect x="525" y="646" width="33" height="70" rx="7" fill="#d9eeea" stroke="#267f79" stroke-width="2.5"/>
+<text x="541.5" y="695.0" font-size="29" fill="#267f79" font-weight="650" text-anchor="middle" class="mono">3</text>
+<path d="M414 775 v13 H558 v-13" fill="none" stroke="#267f79" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M486.0 790 V865" fill="none" stroke="#267f79" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+<text x="661.0" y="620" font-size="30" fill="#657987" font-weight="650" text-anchor="middle">块 3</text>
+<rect x="580" y="639" width="162" height="84" rx="7" fill="white" stroke="#d6e0e5" stroke-width="2.5"/>
+<rect x="589" y="646" width="33" height="70" rx="7" fill="white" stroke="#d6e0e5" stroke-width="2.5"/>
+<rect x="626" y="646" width="33" height="70" rx="7" fill="white" stroke="#d6e0e5" stroke-width="2.5"/>
+<rect x="663" y="646" width="33" height="70" rx="7" fill="white" stroke="#d6e0e5" stroke-width="2.5"/>
+<rect x="700" y="646" width="33" height="70" rx="7" fill="white" stroke="#d6e0e5" stroke-width="2.5"/>
+<text x="836.0" y="620" font-size="30" fill="#267f79" font-weight="650" text-anchor="middle">块 4</text>
+<rect x="755" y="639" width="162" height="84" rx="7" fill="white" stroke="#50758d" stroke-width="2.5"/>
+<rect x="764" y="646" width="33" height="70" rx="7" fill="#d9eeea" stroke="#267f79" stroke-width="2.5"/>
+<text x="780.5" y="695.0" font-size="29" fill="#267f79" font-weight="650" text-anchor="middle" class="mono">8</text>
+<text x="780.5" y="754" font-size="27" fill="#657987" font-weight="400" text-anchor="middle" class="mono">16</text>
+<rect x="801" y="646" width="33" height="70" rx="7" fill="#ffdfbd" stroke="#c36b2e" stroke-width="2.5"/>
+<text x="817.5" y="695.0" font-size="29" fill="#c36b2e" font-weight="650" text-anchor="middle" class="mono">9</text>
+<text x="817.5" y="754" font-size="27" fill="#c36b2e" font-weight="400" text-anchor="middle" class="mono">17</text>
+<rect x="838" y="646" width="33" height="70" rx="7" fill="white" stroke="#d6e0e5" stroke-width="2.5"/>
+<text x="854.5" y="754" font-size="27" fill="#657987" font-weight="400" text-anchor="middle" class="mono">18</text>
+<rect x="875" y="646" width="33" height="70" rx="7" fill="white" stroke="#d6e0e5" stroke-width="2.5"/>
+<text x="891.5" y="754" font-size="27" fill="#657987" font-weight="400" text-anchor="middle" class="mono">19</text>
+<path d="M764 775 v13 H834 v-13" fill="none" stroke="#267f79" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M799.0 790 V865" fill="none" stroke="#267f79" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+<text x="1011.0" y="620" font-size="30" fill="#657987" font-weight="650" text-anchor="middle">块 5</text>
+<rect x="930" y="639" width="162" height="84" rx="7" fill="white" stroke="#d6e0e5" stroke-width="2.5"/>
+<rect x="939" y="646" width="33" height="70" rx="7" fill="white" stroke="#d6e0e5" stroke-width="2.5"/>
+<rect x="976" y="646" width="33" height="70" rx="7" fill="white" stroke="#d6e0e5" stroke-width="2.5"/>
+<rect x="1013" y="646" width="33" height="70" rx="7" fill="white" stroke="#d6e0e5" stroke-width="2.5"/>
+<rect x="1050" y="646" width="33" height="70" rx="7" fill="white" stroke="#d6e0e5" stroke-width="2.5"/>
+<text x="1186.0" y="620" font-size="30" fill="#657987" font-weight="650" text-anchor="middle">块 6</text>
+<rect x="1105" y="639" width="162" height="84" rx="7" fill="white" stroke="#d6e0e5" stroke-width="2.5"/>
+<rect x="1114" y="646" width="33" height="70" rx="7" fill="white" stroke="#d6e0e5" stroke-width="2.5"/>
+<rect x="1151" y="646" width="33" height="70" rx="7" fill="white" stroke="#d6e0e5" stroke-width="2.5"/>
+<rect x="1188" y="646" width="33" height="70" rx="7" fill="white" stroke="#d6e0e5" stroke-width="2.5"/>
+<rect x="1225" y="646" width="33" height="70" rx="7" fill="white" stroke="#d6e0e5" stroke-width="2.5"/>
+<text x="1361.0" y="620" font-size="30" fill="#267f79" font-weight="650" text-anchor="middle">块 7</text>
+<rect x="1280" y="639" width="162" height="84" rx="7" fill="white" stroke="#50758d" stroke-width="2.5"/>
+<rect x="1289" y="646" width="33" height="70" rx="7" fill="#d9eeea" stroke="#267f79" stroke-width="2.5"/>
+<text x="1305.5" y="695.0" font-size="29" fill="#267f79" font-weight="650" text-anchor="middle" class="mono">4</text>
+<rect x="1326" y="646" width="33" height="70" rx="7" fill="#d9eeea" stroke="#267f79" stroke-width="2.5"/>
+<text x="1342.5" y="695.0" font-size="29" fill="#267f79" font-weight="650" text-anchor="middle" class="mono">5</text>
+<rect x="1363" y="646" width="33" height="70" rx="7" fill="#d9eeea" stroke="#267f79" stroke-width="2.5"/>
+<text x="1379.5" y="695.0" font-size="29" fill="#267f79" font-weight="650" text-anchor="middle" class="mono">6</text>
+<rect x="1400" y="646" width="33" height="70" rx="7" fill="#d9eeea" stroke="#267f79" stroke-width="2.5"/>
+<text x="1416.5" y="695.0" font-size="29" fill="#267f79" font-weight="650" text-anchor="middle" class="mono">7</text>
+<path d="M1289 775 v13 H1433 v-13" fill="none" stroke="#267f79" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M1361.0 790 V865" fill="none" stroke="#267f79" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+<text x="55" y="760" font-size="27" fill="#657987" font-weight="400" text-anchor="start">格内数字 = Token 位置</text>
+<text x="785" y="797" font-size="26" fill="#657987" font-weight="400" text-anchor="middle">槽号</text>
+<path d="M1386.0 254 H1460 V548 H817.5 V640" fill="none" stroke="#c36b2e" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#orange)"/>
+<text x="925" y="590" font-size="29" fill="#c36b2e" font-weight="650" text-anchor="start" class="mono">slot_mapping = [17]</text>
+<path d="M486.0 865 H1361.0" fill="none" stroke="#267f79" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M750 865 V903" fill="none" stroke="#267f79" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#teal)"/>
+<text x="750" y="842" font-size="31" fill="#267f79" font-weight="650" text-anchor="middle" class="mono">block_tables=[2,7,4]   context_len=10</text>
+<circle cx="750" cy="950" r="43" fill="#ffdfbd" stroke="#c36b2e" stroke-width="3"/>
+<text x="750" y="961" font-size="34" fill="#c36b2e" font-weight="650" text-anchor="middle">Q₉</text>
+<text x="48" y="960" font-size="32" fill="#267f79" font-weight="650" text-anchor="start">读取 10 个有效位置</text>
+<text x="880" y="939" font-size="30" fill="#267f79" font-weight="400" text-anchor="start">K₀ … K₉ → 分数 → 权重</text>
+<text x="880" y="987" font-size="30" fill="#267f79" font-weight="400" text-anchor="start">V₀ … V₉ → 加权求和</text>
+<path d="M799 950 H848" fill="none" stroke="#267f79" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#teal)"/>
+<text x="48" y="1048" font-size="30" fill="#c36b2e" font-weight="650" text-anchor="start" class="mono">9 = 2×4+1  →  block_table[2] = 4  →  slot = 4×4+1 = 17</text>
+<text x="48" y="1100" font-size="28" fill="#657987" font-weight="400" text-anchor="start">教学块大小 P=4；本地配置为 256。每格代表该层一个 Token 的 K/V。</text>
+</svg>

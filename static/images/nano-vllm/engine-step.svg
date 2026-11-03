@@ -1,0 +1,105 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1000" viewBox="0 0 1600 1000" role="img" aria-labelledby="title desc">
+<title id="title">两条请求的一轮 Decode</title><desc id="desc">三阶段从左到右。Scheduler 选中请求1和请求2。ModelRunner 以 batch=2 的一次模型调用分别输入 D、Y，两行各自读取历史 ABC、X，在模型执行中写入 D、Y 的 KV，形成 ABCD、XY，再分别采样 E、Z。postprocess 将 cached 计数从3、1更新为4、2，并把 E、Z 追加到各自序列。新采样 E、Z 的 KV 留待下一轮计算。两条请求始终处于独立的行。</desc>
+<style>text{font-family:"Microsoft YaHei","Noto Sans SC","PingFang SC",sans-serif}</style><defs><linearGradient id="page" x2="1" y2="1"><stop stop-color="#f8fbfd"/><stop offset="1" stop-color="#fffaf4"/></linearGradient><marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 0 10 5 0 10Z" fill="context-stroke"/></marker></defs><rect width="1600" height="1000" rx="22" fill="url(#page)"/>
+<text x="32" y="57" font-size="42" fill="#253444" font-weight="650" text-anchor="start">两条请求的一轮 Decode</text>
+<text x="32" y="105" font-size="29" fill="#697887" font-weight="400" text-anchor="start">同一次 step，两条独立序列各生成一个新 Token。</text>
+<text x="55" y="175" font-size="36" fill="#2f7aa0" font-weight="650" text-anchor="start">① 选请求</text>
+<text x="55" y="218" font-size="28" fill="#697887" font-weight="400" text-anchor="start">Scheduler</text>
+<text x="540" y="175" font-size="36" fill="#2f7aa0" font-weight="650" text-anchor="start">② 组批执行</text>
+<text x="540" y="218" font-size="28" fill="#697887" font-weight="400" text-anchor="start">ModelRunner</text>
+<text x="1160" y="175" font-size="36" fill="#2f7aa0" font-weight="650" text-anchor="start">③ 更新序列</text>
+<text x="1160" y="218" font-size="28" fill="#697887" font-weight="400" text-anchor="start">postprocess</text>
+<rect x="520" y="279" width="560" height="589" rx="20" fill="#f7fbfe" stroke="#2f7aa0" stroke-width="1.8"/>
+<text x="800" y="263" font-size="29" fill="#2f7aa0" font-weight="650" text-anchor="middle">一次模型调用 · batch = 2</text>
+<path d="M38 554 H1562" fill="none" stroke="#b8c8d2" stroke-width="1.8" stroke-dasharray="8 8"/>
+<text x="55" y="259" font-size="29" fill="#2f7aa0" font-weight="650" text-anchor="start">请求 1</text>
+<text x="55" y="324" font-size="27" fill="#697887" font-weight="400" text-anchor="start">序列</text>
+<rect x="140" y="290" width="48" height="48" rx="9" fill="#e9f5ed" stroke="#378b6d" stroke-width="1.8"/>
+<text x="164" y="324" font-size="30" fill="#378b6d" font-weight="650" text-anchor="middle">A</text>
+<rect x="197" y="290" width="48" height="48" rx="9" fill="#e9f5ed" stroke="#378b6d" stroke-width="1.8"/>
+<text x="221" y="324" font-size="30" fill="#378b6d" font-weight="650" text-anchor="middle">B</text>
+<rect x="254" y="290" width="48" height="48" rx="9" fill="#e9f5ed" stroke="#378b6d" stroke-width="1.8"/>
+<text x="278" y="324" font-size="30" fill="#378b6d" font-weight="650" text-anchor="middle">C</text>
+<rect x="311" y="290" width="48" height="48" rx="9" fill="#fff0e5" stroke="#c5744c" stroke-width="1.8"/>
+<text x="335" y="324" font-size="30" fill="#c5744c" font-weight="650" text-anchor="middle">D</text>
+<text x="55" y="414" font-size="27" fill="#697887" font-weight="400" text-anchor="start">KV</text>
+<rect x="140" y="380" width="48" height="48" rx="9" fill="#e9f5ed" stroke="#378b6d" stroke-width="1.8"/>
+<text x="164" y="414" font-size="30" fill="#378b6d" font-weight="650" text-anchor="middle">A</text>
+<rect x="197" y="380" width="48" height="48" rx="9" fill="#e9f5ed" stroke="#378b6d" stroke-width="1.8"/>
+<text x="221" y="414" font-size="30" fill="#378b6d" font-weight="650" text-anchor="middle">B</text>
+<rect x="254" y="380" width="48" height="48" rx="9" fill="#e9f5ed" stroke="#378b6d" stroke-width="1.8"/>
+<text x="278" y="414" font-size="30" fill="#378b6d" font-weight="650" text-anchor="middle">C</text>
+<text x="140" y="465" font-size="28" fill="#697887" font-weight="400" text-anchor="start">cached = 3</text>
+<path d="M366 314 H564" fill="none" stroke="#c5744c" stroke-width="2.8" stroke-linejoin="round" stroke-linecap="round" marker-end="url(#arrow)"/>
+<path d="M310 404 H564" fill="none" stroke="#378b6d" stroke-width="2.8" stroke-linejoin="round" stroke-linecap="round" marker-end="url(#arrow)"/>
+<text x="420" y="368" font-size="26" fill="#378b6d" font-weight="650" text-anchor="middle">沿用历史 KV</text>
+<rect x="570" y="290" width="48" height="48" rx="9" fill="#fff0e5" stroke="#c5744c" stroke-width="1.8"/>
+<text x="594" y="324" font-size="30" fill="#c5744c" font-weight="650" text-anchor="middle">D</text>
+<text x="638" y="324" font-size="28" fill="#c5744c" font-weight="650" text-anchor="start">输入</text>
+<rect x="570" y="380" width="48" height="48" rx="9" fill="#e9f5ed" stroke="#378b6d" stroke-width="1.8"/>
+<text x="594" y="414" font-size="30" fill="#378b6d" font-weight="650" text-anchor="middle">A</text>
+<rect x="627" y="380" width="48" height="48" rx="9" fill="#e9f5ed" stroke="#378b6d" stroke-width="1.8"/>
+<text x="651" y="414" font-size="30" fill="#378b6d" font-weight="650" text-anchor="middle">B</text>
+<rect x="684" y="380" width="48" height="48" rx="9" fill="#e9f5ed" stroke="#378b6d" stroke-width="1.8"/>
+<text x="708" y="414" font-size="30" fill="#378b6d" font-weight="650" text-anchor="middle">C</text>
+<rect x="741" y="380" width="48" height="48" rx="9" fill="#fff0e5" stroke="#c5744c" stroke-width="1.8"/>
+<text x="765" y="414" font-size="30" fill="#c5744c" font-weight="650" text-anchor="middle">D</text>
+<path d="M594 344 V359 H765 V374" fill="none" stroke="#c5744c" stroke-width="2.8" stroke-linejoin="round" stroke-linecap="round" marker-end="url(#arrow)"/>
+<text x="765" y="465" font-size="26" fill="#c5744c" font-weight="650" text-anchor="middle">写 KV</text>
+<path d="M798 404 H958" fill="none" stroke="#378b6d" stroke-width="2.8" stroke-linejoin="round" stroke-linecap="round" marker-end="url(#arrow)"/>
+<text x="879" y="373" font-size="27" fill="#8966ad" font-weight="650" text-anchor="middle">采样</text>
+<rect x="966" y="380" width="48" height="48" rx="9" fill="#f2ebf8" stroke="#8966ad" stroke-width="1.8"/>
+<text x="990" y="414" font-size="30" fill="#8966ad" font-weight="650" text-anchor="middle">E</text>
+<path d="M1020 404 H1145" fill="none" stroke="#8966ad" stroke-width="2.8" stroke-linejoin="round" stroke-linecap="round" marker-end="url(#arrow)"/>
+<text x="1160" y="356" font-size="27" fill="#697887" font-weight="400" text-anchor="start">序列</text>
+<rect x="1160" y="380" width="48" height="48" rx="9" fill="#e9f5ed" stroke="#378b6d" stroke-width="1.8"/>
+<text x="1184" y="414" font-size="30" fill="#378b6d" font-weight="650" text-anchor="middle">A</text>
+<rect x="1217" y="380" width="48" height="48" rx="9" fill="#e9f5ed" stroke="#378b6d" stroke-width="1.8"/>
+<text x="1241" y="414" font-size="30" fill="#378b6d" font-weight="650" text-anchor="middle">B</text>
+<rect x="1274" y="380" width="48" height="48" rx="9" fill="#e9f5ed" stroke="#378b6d" stroke-width="1.8"/>
+<text x="1298" y="414" font-size="30" fill="#378b6d" font-weight="650" text-anchor="middle">C</text>
+<rect x="1331" y="380" width="48" height="48" rx="9" fill="#fff0e5" stroke="#c5744c" stroke-width="1.8"/>
+<text x="1355" y="414" font-size="30" fill="#c5744c" font-weight="650" text-anchor="middle">D</text>
+<rect x="1388" y="380" width="48" height="48" rx="9" fill="#ffffff" stroke="#8966ad" stroke-width="1.8" stroke-dasharray="5 4"/>
+<text x="1412" y="414" font-size="30" fill="#8966ad" font-weight="650" text-anchor="middle">E</text>
+<text x="1160" y="471" font-size="28" fill="#8966ad" font-weight="650" text-anchor="start">E：下轮计算 KV</text>
+<text x="1160" y="514" font-size="29" fill="#697887" font-weight="400" text-anchor="start">cached：3 → 4</text>
+<text x="55" y="594" font-size="29" fill="#2f7aa0" font-weight="650" text-anchor="start">请求 2</text>
+<text x="55" y="659" font-size="27" fill="#697887" font-weight="400" text-anchor="start">序列</text>
+<rect x="140" y="625" width="48" height="48" rx="9" fill="#e9f5ed" stroke="#378b6d" stroke-width="1.8"/>
+<text x="164" y="659" font-size="30" fill="#378b6d" font-weight="650" text-anchor="middle">X</text>
+<rect x="197" y="625" width="48" height="48" rx="9" fill="#fff0e5" stroke="#c5744c" stroke-width="1.8"/>
+<text x="221" y="659" font-size="30" fill="#c5744c" font-weight="650" text-anchor="middle">Y</text>
+<text x="55" y="749" font-size="27" fill="#697887" font-weight="400" text-anchor="start">KV</text>
+<rect x="140" y="715" width="48" height="48" rx="9" fill="#e9f5ed" stroke="#378b6d" stroke-width="1.8"/>
+<text x="164" y="749" font-size="30" fill="#378b6d" font-weight="650" text-anchor="middle">X</text>
+<text x="140" y="800" font-size="28" fill="#697887" font-weight="400" text-anchor="start">cached = 1</text>
+<path d="M252 649 H564" fill="none" stroke="#c5744c" stroke-width="2.8" stroke-linejoin="round" stroke-linecap="round" marker-end="url(#arrow)"/>
+<path d="M196 739 H564" fill="none" stroke="#378b6d" stroke-width="2.8" stroke-linejoin="round" stroke-linecap="round" marker-end="url(#arrow)"/>
+<text x="420" y="703" font-size="26" fill="#378b6d" font-weight="650" text-anchor="middle">沿用历史 KV</text>
+<rect x="570" y="625" width="48" height="48" rx="9" fill="#fff0e5" stroke="#c5744c" stroke-width="1.8"/>
+<text x="594" y="659" font-size="30" fill="#c5744c" font-weight="650" text-anchor="middle">Y</text>
+<text x="638" y="659" font-size="28" fill="#c5744c" font-weight="650" text-anchor="start">输入</text>
+<rect x="570" y="715" width="48" height="48" rx="9" fill="#e9f5ed" stroke="#378b6d" stroke-width="1.8"/>
+<text x="594" y="749" font-size="30" fill="#378b6d" font-weight="650" text-anchor="middle">X</text>
+<rect x="627" y="715" width="48" height="48" rx="9" fill="#fff0e5" stroke="#c5744c" stroke-width="1.8"/>
+<text x="651" y="749" font-size="30" fill="#c5744c" font-weight="650" text-anchor="middle">Y</text>
+<path d="M594 679 V694 H651 V709" fill="none" stroke="#c5744c" stroke-width="2.8" stroke-linejoin="round" stroke-linecap="round" marker-end="url(#arrow)"/>
+<text x="651" y="800" font-size="26" fill="#c5744c" font-weight="650" text-anchor="middle">写 KV</text>
+<path d="M684 739 H958" fill="none" stroke="#378b6d" stroke-width="2.8" stroke-linejoin="round" stroke-linecap="round" marker-end="url(#arrow)"/>
+<text x="879" y="708" font-size="27" fill="#8966ad" font-weight="650" text-anchor="middle">采样</text>
+<rect x="966" y="715" width="48" height="48" rx="9" fill="#f2ebf8" stroke="#8966ad" stroke-width="1.8"/>
+<text x="990" y="749" font-size="30" fill="#8966ad" font-weight="650" text-anchor="middle">Z</text>
+<path d="M1020 739 H1145" fill="none" stroke="#8966ad" stroke-width="2.8" stroke-linejoin="round" stroke-linecap="round" marker-end="url(#arrow)"/>
+<text x="1160" y="691" font-size="27" fill="#697887" font-weight="400" text-anchor="start">序列</text>
+<rect x="1160" y="715" width="48" height="48" rx="9" fill="#e9f5ed" stroke="#378b6d" stroke-width="1.8"/>
+<text x="1184" y="749" font-size="30" fill="#378b6d" font-weight="650" text-anchor="middle">X</text>
+<rect x="1217" y="715" width="48" height="48" rx="9" fill="#fff0e5" stroke="#c5744c" stroke-width="1.8"/>
+<text x="1241" y="749" font-size="30" fill="#c5744c" font-weight="650" text-anchor="middle">Y</text>
+<rect x="1274" y="715" width="48" height="48" rx="9" fill="#ffffff" stroke="#8966ad" stroke-width="1.8" stroke-dasharray="5 4"/>
+<text x="1298" y="749" font-size="30" fill="#8966ad" font-weight="650" text-anchor="middle">Z</text>
+<text x="1160" y="806" font-size="28" fill="#8966ad" font-weight="650" text-anchor="start">Z：下轮计算 KV</text>
+<text x="1160" y="849" font-size="29" fill="#697887" font-weight="400" text-anchor="start">cached：1 → 2</text>
+<text x="32" y="931" font-size="28" fill="#697887" font-weight="400" text-anchor="start">绿色：沿用历史 KV　橙色：本轮输入 / 新 KV　紫色：新采样 Token</text>
+<text x="32" y="980" font-size="28" fill="#697887" font-weight="400" text-anchor="start">D / Y 的 KV 在模型执行中写入；postprocess 更新 cached 计数，并追加 E / Z。</text>
+</svg>

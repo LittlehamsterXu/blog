@@ -1,0 +1,22 @@
+{{- define "main" }}
+
+<header class="page-header">
+    <h1>{{- (printf "%s&nbsp;" .Title ) | htmlUnescape -}}
+        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="11" cy="11" r="8"></circle>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+        </svg>
+    </h1>
+    <div class="post-description">
+        {{- with .Description }}{{ . }}{{ else }}搜索标题、正文和标签，例如「CUDA」「Triton」；按 Esc 清空，用 ↑ ↓ 选择结果。{{ end -}}
+    </div>
+</header>
+
+<div id="searchbox" class="searchbox">
+    <input id="searchInput" disabled placeholder="搜索文章" aria-label="搜索文章" type="search"
+        autocomplete="off" maxlength="64">
+    <ul id="searchResults" class="searchResults" aria-label="搜索结果"></ul>
+</div>
+
+{{- end }}{{/* end main */}}

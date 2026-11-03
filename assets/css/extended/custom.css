@@ -7,7 +7,11 @@
     --header-height: 72px;
     --gap: 24px;
     --content-gap: 20px;
+    /* --accent draws decoration (underlines, bars, progress); --accent-text is
+       the readable variant used wherever the accent becomes type (5.04:1 on
+       the page background, 4.82:1 on --code-bg). */
     --accent: hsl(15, 63.1%, 59.6%);
+    --accent-text: hsl(15, 63%, 43%);
     --theme: hsl(48, 33.3%, 97.1%);
     --entry: hsl(0, 0%, 100%);
     --primary: hsl(60, 2.6%, 7.6%);
@@ -15,21 +19,26 @@
     --secondary: hsl(51, 3.1%, 43.7%);
     --tertiary: hsl(53, 28.6%, 94.5%);
     --border: hsl(50, 20.7%, 88.6%);
+    --border-strong: hsl(48, 8%, 52%);
     --code-bg: hsl(53, 28.6%, 94.5%);
     --code-block-bg: rgb(28, 29, 33);
     --code-font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
 }
 
 :root[data-theme="dark"] {
+    /* Surfaces and lines are paired on purpose: in the dark theme --border used
+       to equal --tertiary, which made every divider 1.1:1 against the page. */
     --theme: hsl(60, 2.7%, 14.5%);
-    --entry: hsl(60, 2.1%, 18.4%);
+    --entry: hsl(60, 2.5%, 18.5%);
     --primary: hsl(48, 20%, 85%);
     --content: hsl(48, 20%, 85%);
     --secondary: hsl(48, 4.8%, 59.2%);
-    --tertiary: hsl(30, 3.3%, 11.8%);
-    --border: hsl(30, 3.3%, 11.8%);
-    --code-bg: hsl(60, 2.1%, 18.4%);
+    --tertiary: hsl(60, 2.5%, 24%);
+    --border: hsl(30, 6%, 32%);
+    --border-strong: hsl(30, 6%, 48%);
+    --code-bg: hsl(60, 2.5%, 21%);
     --code-block-bg: rgb(46, 46, 51);
+    --accent-text: hsl(15, 70%, 64%);
 }
 
 html,
@@ -64,7 +73,7 @@ body {
     padding: 8px 14px;
     color: var(--theme);
     border-radius: 999px;
-    background: var(--accent);
+    background: var(--accent-text);
     font-size: 14px;
     font-weight: 600;
 }
@@ -106,7 +115,7 @@ body {
     display: inline-flex;
     align-items: center;
     min-height: var(--header-height);
-    color: var(--accent) !important;
+    color: var(--accent-text) !important;
     font-size: 22px;
     font-weight: 600;
     transition: color .2s ease;
@@ -148,8 +157,8 @@ body {
 }
 
 .nav #menu a span.active {
-    color: var(--accent);
-    border-bottom: 2px solid var(--accent);
+    color: var(--accent-text);
+    border-bottom: 2px solid var(--accent-text);
     font-weight: 600;
 }
 
@@ -172,8 +181,9 @@ body {
     color: var(--secondary);
 }
 .nav #theme-toggle:hover { background: var(--code-bg); transform: none; }
-a:focus-visible, button:focus-visible, summary:focus-visible {
-    outline: 2px solid var(--accent);
+a:focus-visible, button:focus-visible, summary:focus-visible,
+input:focus-visible, textarea:focus-visible, select:focus-visible {
+    outline: 2px solid var(--accent-text);
     outline-offset: 4px;
     border-radius: 3px;
 }
@@ -275,7 +285,7 @@ a:focus-visible, button:focus-visible, summary:focus-visible {
 }
 .post-list-heading h2 { margin: 0; font-size: 18px; font-weight: 600; }
 .post-list-heading a { color: var(--secondary); font-size: 14px; }
-.post-list-heading a:hover { color: var(--accent); }
+.post-list-heading a:hover { color: var(--accent-text); }
 
 .post-sidebar details.toc > summary {
     cursor: pointer;
@@ -323,11 +333,11 @@ a:focus-visible, button:focus-visible, summary:focus-visible {
 }
 
 .post-entry:hover .entry-header h2,
-.post-entry:focus-within .entry-header h2 { color: var(--accent); }
+.post-entry:focus-within .entry-header h2 { color: var(--accent-text); }
 .post-entry .entry-link { border-radius: 2px; }
 .entry-meta { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; margin-bottom: 10px; color: var(--secondary); font-size: 13px; line-height: 1.5; }
 .entry-meta time { font-variant-numeric: tabular-nums; }
-.entry-category { padding-inline-start: 12px; border-inline-start: 1px solid var(--border); color: var(--accent); }
+.entry-category { padding-inline-start: 12px; border-inline-start: 1px solid var(--border); color: var(--accent-text); }
 
 .post-entry .entry-content {
     margin: 10px 0;
@@ -490,15 +500,14 @@ a:focus-visible, button:focus-visible, summary:focus-visible {
 }
 
 .post-content a {
-    color: var(--accent) !important;
-    box-shadow: 0 1px 0 var(--accent);
+    color: var(--accent-text) !important;
+    box-shadow: 0 1px 0 currentColor;
     text-decoration: none;
-    transition: opacity .3s ease, box-shadow .3s ease;
+    transition: box-shadow .3s ease;
 }
 
 .post-content a:hover {
-    opacity: .8;
-    box-shadow: 0 2px 0 var(--accent);
+    box-shadow: 0 2px 0 currentColor;
 }
 
 .post-content blockquote {
@@ -583,7 +592,6 @@ a:focus-visible, button:focus-visible, summary:focus-visible {
 
 .post-content pre code {
     display: grid;
-    max-height: 40em;
     margin: auto 0;
     padding: 14px 18px 18px;
     color: #f8f8f2;
@@ -597,6 +605,16 @@ a:focus-visible, button:focus-visible, summary:focus-visible {
     word-break: break-all;
     border-top-left-radius: 0;
     border-top-right-radius: 0;
+}
+
+/* Display math is wider than the column on phones; without a scroll container
+   a long formula stretches the whole document sideways (roofline article at
+   390px used to have scrollWidth 524). */
+.post-content .katex-display {
+    overflow-x: auto;
+    overflow-y: hidden;
+    overscroll-behavior-x: contain;
+    padding-block: 6px;
 }
 
 .post-content .mac-tool {
@@ -712,10 +730,10 @@ mark {
 
 .post-tags li a {
     padding: 5px 10px;
-    color: var(--accent);
-    border: 1px solid var(--border);
+    color: var(--accent-text);
+    border: 1px solid var(--border-strong);
     border-radius: 999px;
-    background: var(--code-bg);
+    background: transparent;
     font-size: 13px;
 }
 
@@ -735,14 +753,14 @@ mark {
     min-width: 0;
     gap: 2px;
     padding: 7px 12px;
-    border: 1px solid var(--border);
+    border: 1px solid var(--border-strong);
     border-radius: 999px;
     background: var(--code-bg);
     transition: border-color .3s ease, transform .3s ease;
 }
 
 .post-footer .paginav a:hover {
-    border-color: var(--accent);
+    border-color: var(--accent-text);
     transform: translateY(-2px);
 }
 
@@ -804,7 +822,7 @@ button:active {
 }
 .post-sidebar .toc summary, .recent-container .toc summary {
     display: flex; align-items: center; min-height: 46px;
-    margin-bottom: 0; padding: 0 14px; color: var(--accent);
+    margin-bottom: 0; padding: 0 14px; color: var(--accent-text);
     font-size: 16px; font-weight: 600; list-style: none;
 }
 .post-sidebar .toc summary::before, .recent-container .toc summary::before {
@@ -825,7 +843,7 @@ button:active {
     text-decoration: none; transition: color .2s ease;
 }
 .post-sidebar .toc a:hover, .post-sidebar .toc a.is-active,
-.recent-container .toc a:hover { color: var(--accent); }
+.recent-container .toc a:hover { color: var(--accent-text); }
 .post-sidebar:not(.wide) .toc { border: 1px solid var(--border); background: var(--code-bg); }
 .post-sidebar details.toc::details-content { transition: none; }
 .post-sidebar:not(.wide) .toc[open] { padding-bottom: 14px; }
@@ -838,6 +856,37 @@ button:active {
 .post-footer .recent-container ul { display: grid; grid-template-columns: 1fr 1fr; gap: 12px 28px; padding: 0; margin: 0; }
 .post-footer .recent-container li { padding: 0; }
 .post-footer .recent-container a { line-height: 1.8; }
+
+/* Search page: the input is the only form control on the site, so it needs a
+   visible boundary (was 1.05:1) and an empty state when nothing matches. */
+.searchbox input {
+    border-color: var(--border-strong);
+    background: var(--entry);
+    font-weight: 400;
+}
+
+.searchbox input::placeholder { color: var(--secondary); }
+
+.searchbox input::-webkit-search-cancel-button { appearance: none; }
+
+.searchResults li.search-empty {
+    display: block;
+    padding: 18px 20px;
+    color: var(--secondary);
+    border: 1px dashed var(--border-strong);
+    border-radius: var(--radius);
+    background: transparent;
+    font-weight: 400;
+}
+
+.search-empty p { margin: 0; }
+
+.search-empty .search-empty-hint { margin-top: 6px; font-size: 14px; }
+
+.search-empty a {
+    color: var(--accent-text);
+    box-shadow: 0 1px 0 currentColor;
+}
 
 @media screen and (min-width: 1280px) {
     .post-single > .post-sidebar.wide {

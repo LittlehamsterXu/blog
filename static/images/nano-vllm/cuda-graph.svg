@@ -1,0 +1,140 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1040" viewBox="0 0 1600 1040" role="img" aria-labelledby="title desc"><title id="title">CUDA Graph 的捕获与重放</title><desc id="desc">示意两次 Decode 的模型主干片段。Eager 在 CPU 为每个 Kernel 分别 launch，CUDA Graph 为捕获好的相同 Kernel 链每轮调用一次 replay。图中抽取五个 Kernel，用 K1 到 K5 表示；真实模型主干包含更多 Kernel。固定地址缓冲区的 input_ids 内容 D到E、position内容3到4。教学块大小为4，进入位置4时新增物理块7，块表缓冲区从首列2扩展为有效列2和7，缓冲区地址保持不变。图读取新内容重新计算，logits与采样在模型捕获图外。图宽度和间隔不表示耗时，本地实验使用 eager，Graph来自源码。</desc>
+<style>text{font-family:"Microsoft YaHei","Noto Sans SC","PingFang SC",sans-serif}</style><defs><linearGradient id="page" x2="1" y2="1"><stop stop-color="#f8fbfd"/><stop offset="1" stop-color="#fffaf4"/></linearGradient><marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 0 10 5 0 10Z" fill="context-stroke"/></marker></defs><rect width="1600" height="1040" rx="22" fill="url(#page)"/>
+<text x="32" y="55" font-size="42" fill="#253444" font-weight="650" text-anchor="start">CUDA Graph 的捕获与重放</text>
+<text x="32" y="102" font-size="28" fill="#697887" font-weight="400" text-anchor="start">模型主干片段：抽取 5 个 Kernel，观察两轮 Decode 的 CPU 提交方式。</text>
+<rect x="30" y="145" width="1540" height="275" rx="20" fill="#ffffff" stroke="#2f7aa0" stroke-width="1.8"/>
+<rect x="30" y="450" width="1540" height="310" rx="20" fill="#ffffff" stroke="#8966ad" stroke-width="1.8"/>
+<text x="55" y="188" font-size="32" fill="#2f7aa0" font-weight="650" text-anchor="start">Eager</text>
+<text x="55" y="248" font-size="28" fill="#2f7aa0" font-weight="650" text-anchor="start">CPU</text>
+<text x="55" y="350" font-size="28" fill="#378b6d" font-weight="650" text-anchor="start">GPU</text>
+<text x="55" y="493" font-size="31" fill="#8966ad" font-weight="650" text-anchor="start">CUDA</text>
+<text x="55" y="530" font-size="31" fill="#8966ad" font-weight="650" text-anchor="start">Graph</text>
+<text x="55" y="577" font-size="28" fill="#8966ad" font-weight="650" text-anchor="start">CPU</text>
+<text x="55" y="671" font-size="28" fill="#378b6d" font-weight="650" text-anchor="start">GPU</text>
+<text x="260" y="188" font-size="28" fill="#253444" font-weight="650" text-anchor="start">第 1 轮：input=D，position=3</text>
+<text x="260" y="493" font-size="28" fill="#253444" font-weight="650" text-anchor="start">第 1 轮：input=D，position=3</text>
+<path d="M260 240 H786" stroke="#b9d0de" stroke-width="2" fill="none"/>
+<circle cx="307.0" cy="240" r="7" fill="#2f7aa0"/>
+<path d="M307.0 253 V306" fill="none" stroke="#2f7aa0" stroke-width="2.6" stroke-linejoin="round" stroke-linecap="round" marker-end="url(#arrow)"/>
+<rect x="260" y="310" width="94" height="62" rx="8" fill="#e9f5ed" stroke="#378b6d" stroke-width="1.8"/>
+<text x="307.0" y="350" font-size="26" fill="#378b6d" font-weight="650" text-anchor="middle">K1</text>
+<path d="M356 341 H366" fill="none" stroke="#378b6d" stroke-width="2.6" stroke-linejoin="round" stroke-linecap="round" marker-end="url(#arrow)"/>
+<circle cx="415.0" cy="240" r="7" fill="#2f7aa0"/>
+<path d="M415.0 253 V306" fill="none" stroke="#2f7aa0" stroke-width="2.6" stroke-linejoin="round" stroke-linecap="round" marker-end="url(#arrow)"/>
+<rect x="368" y="310" width="94" height="62" rx="8" fill="#e9f5ed" stroke="#378b6d" stroke-width="1.8"/>
+<text x="415.0" y="350" font-size="26" fill="#378b6d" font-weight="650" text-anchor="middle">K2</text>
+<path d="M464 341 H474" fill="none" stroke="#378b6d" stroke-width="2.6" stroke-linejoin="round" stroke-linecap="round" marker-end="url(#arrow)"/>
+<circle cx="523.0" cy="240" r="7" fill="#2f7aa0"/>
+<path d="M523.0 253 V306" fill="none" stroke="#2f7aa0" stroke-width="2.6" stroke-linejoin="round" stroke-linecap="round" marker-end="url(#arrow)"/>
+<rect x="476" y="310" width="94" height="62" rx="8" fill="#e9f5ed" stroke="#378b6d" stroke-width="1.8"/>
+<text x="523.0" y="350" font-size="26" fill="#378b6d" font-weight="650" text-anchor="middle">K3</text>
+<path d="M572 341 H582" fill="none" stroke="#378b6d" stroke-width="2.6" stroke-linejoin="round" stroke-linecap="round" marker-end="url(#arrow)"/>
+<circle cx="631.0" cy="240" r="7" fill="#2f7aa0"/>
+<path d="M631.0 253 V306" fill="none" stroke="#2f7aa0" stroke-width="2.6" stroke-linejoin="round" stroke-linecap="round" marker-end="url(#arrow)"/>
+<rect x="584" y="310" width="94" height="62" rx="8" fill="#e9f5ed" stroke="#378b6d" stroke-width="1.8"/>
+<text x="631.0" y="350" font-size="26" fill="#378b6d" font-weight="650" text-anchor="middle">K4</text>
+<path d="M680 341 H690" fill="none" stroke="#378b6d" stroke-width="2.6" stroke-linejoin="round" stroke-linecap="round" marker-end="url(#arrow)"/>
+<circle cx="739.0" cy="240" r="7" fill="#2f7aa0"/>
+<path d="M739.0 253 V306" fill="none" stroke="#2f7aa0" stroke-width="2.6" stroke-linejoin="round" stroke-linecap="round" marker-end="url(#arrow)"/>
+<rect x="692" y="310" width="94" height="62" rx="8" fill="#e9f5ed" stroke="#378b6d" stroke-width="1.8"/>
+<text x="739.0" y="350" font-size="26" fill="#378b6d" font-weight="650" text-anchor="middle">K5</text>
+<text x="523" y="222" font-size="26" fill="#2f7aa0" font-weight="650" text-anchor="middle">5 次 CPU 提交</text>
+<path d="M739 377 V389" fill="none" stroke="#c5744c" stroke-width="2.6" stroke-linejoin="round" stroke-linecap="round" marker-end="url(#arrow)"/>
+<text x="775" y="407" font-size="26" fill="#8966ad" font-weight="650" text-anchor="end">logits → sampler → E</text>
+<text x="523" y="554" font-size="28" fill="#8966ad" font-weight="650" text-anchor="middle">1 次 replay()</text>
+<path d="M523 566 V604" fill="none" stroke="#8966ad" stroke-width="2.6" stroke-linejoin="round" stroke-linecap="round" marker-end="url(#arrow)"/>
+<rect x="244" y="607" width="558" height="87" rx="14" fill="#faf7fe" stroke="#8966ad" stroke-width="1.8"/>
+<rect x="260" y="620" width="94" height="61" rx="8" fill="#e9f5ed" stroke="#378b6d" stroke-width="1.8"/>
+<text x="307.0" y="659" font-size="26" fill="#378b6d" font-weight="650" text-anchor="middle">K1</text>
+<path d="M356 651 H366" fill="none" stroke="#378b6d" stroke-width="2.6" stroke-linejoin="round" stroke-linecap="round" marker-end="url(#arrow)"/>
+<rect x="368" y="620" width="94" height="61" rx="8" fill="#e9f5ed" stroke="#378b6d" stroke-width="1.8"/>
+<text x="415.0" y="659" font-size="26" fill="#378b6d" font-weight="650" text-anchor="middle">K2</text>
+<path d="M464 651 H474" fill="none" stroke="#378b6d" stroke-width="2.6" stroke-linejoin="round" stroke-linecap="round" marker-end="url(#arrow)"/>
+<rect x="476" y="620" width="94" height="61" rx="8" fill="#e9f5ed" stroke="#378b6d" stroke-width="1.8"/>
+<text x="523.0" y="659" font-size="26" fill="#378b6d" font-weight="650" text-anchor="middle">K3</text>
+<path d="M572 651 H582" fill="none" stroke="#378b6d" stroke-width="2.6" stroke-linejoin="round" stroke-linecap="round" marker-end="url(#arrow)"/>
+<rect x="584" y="620" width="94" height="61" rx="8" fill="#e9f5ed" stroke="#378b6d" stroke-width="1.8"/>
+<text x="631.0" y="659" font-size="26" fill="#378b6d" font-weight="650" text-anchor="middle">K4</text>
+<path d="M680 651 H690" fill="none" stroke="#378b6d" stroke-width="2.6" stroke-linejoin="round" stroke-linecap="round" marker-end="url(#arrow)"/>
+<rect x="692" y="620" width="94" height="61" rx="8" fill="#e9f5ed" stroke="#378b6d" stroke-width="1.8"/>
+<text x="739.0" y="659" font-size="26" fill="#378b6d" font-weight="650" text-anchor="middle">K5</text>
+<path d="M739 699 V712" fill="none" stroke="#c5744c" stroke-width="2.6" stroke-linejoin="round" stroke-linecap="round" marker-end="url(#arrow)"/>
+<text x="775" y="740" font-size="26" fill="#8966ad" font-weight="650" text-anchor="end">logits → sampler → E</text>
+<text x="940" y="188" font-size="28" fill="#253444" font-weight="650" text-anchor="start">第 2 轮：input=E，position=4</text>
+<text x="940" y="493" font-size="28" fill="#253444" font-weight="650" text-anchor="start">第 2 轮：input=E，position=4</text>
+<path d="M940 240 H1466" stroke="#b9d0de" stroke-width="2" fill="none"/>
+<circle cx="987.0" cy="240" r="7" fill="#2f7aa0"/>
+<path d="M987.0 253 V306" fill="none" stroke="#2f7aa0" stroke-width="2.6" stroke-linejoin="round" stroke-linecap="round" marker-end="url(#arrow)"/>
+<rect x="940" y="310" width="94" height="62" rx="8" fill="#e9f5ed" stroke="#378b6d" stroke-width="1.8"/>
+<text x="987.0" y="350" font-size="26" fill="#378b6d" font-weight="650" text-anchor="middle">K1</text>
+<path d="M1036 341 H1046" fill="none" stroke="#378b6d" stroke-width="2.6" stroke-linejoin="round" stroke-linecap="round" marker-end="url(#arrow)"/>
+<circle cx="1095.0" cy="240" r="7" fill="#2f7aa0"/>
+<path d="M1095.0 253 V306" fill="none" stroke="#2f7aa0" stroke-width="2.6" stroke-linejoin="round" stroke-linecap="round" marker-end="url(#arrow)"/>
+<rect x="1048" y="310" width="94" height="62" rx="8" fill="#e9f5ed" stroke="#378b6d" stroke-width="1.8"/>
+<text x="1095.0" y="350" font-size="26" fill="#378b6d" font-weight="650" text-anchor="middle">K2</text>
+<path d="M1144 341 H1154" fill="none" stroke="#378b6d" stroke-width="2.6" stroke-linejoin="round" stroke-linecap="round" marker-end="url(#arrow)"/>
+<circle cx="1203.0" cy="240" r="7" fill="#2f7aa0"/>
+<path d="M1203.0 253 V306" fill="none" stroke="#2f7aa0" stroke-width="2.6" stroke-linejoin="round" stroke-linecap="round" marker-end="url(#arrow)"/>
+<rect x="1156" y="310" width="94" height="62" rx="8" fill="#e9f5ed" stroke="#378b6d" stroke-width="1.8"/>
+<text x="1203.0" y="350" font-size="26" fill="#378b6d" font-weight="650" text-anchor="middle">K3</text>
+<path d="M1252 341 H1262" fill="none" stroke="#378b6d" stroke-width="2.6" stroke-linejoin="round" stroke-linecap="round" marker-end="url(#arrow)"/>
+<circle cx="1311.0" cy="240" r="7" fill="#2f7aa0"/>
+<path d="M1311.0 253 V306" fill="none" stroke="#2f7aa0" stroke-width="2.6" stroke-linejoin="round" stroke-linecap="round" marker-end="url(#arrow)"/>
+<rect x="1264" y="310" width="94" height="62" rx="8" fill="#e9f5ed" stroke="#378b6d" stroke-width="1.8"/>
+<text x="1311.0" y="350" font-size="26" fill="#378b6d" font-weight="650" text-anchor="middle">K4</text>
+<path d="M1360 341 H1370" fill="none" stroke="#378b6d" stroke-width="2.6" stroke-linejoin="round" stroke-linecap="round" marker-end="url(#arrow)"/>
+<circle cx="1419.0" cy="240" r="7" fill="#2f7aa0"/>
+<path d="M1419.0 253 V306" fill="none" stroke="#2f7aa0" stroke-width="2.6" stroke-linejoin="round" stroke-linecap="round" marker-end="url(#arrow)"/>
+<rect x="1372" y="310" width="94" height="62" rx="8" fill="#e9f5ed" stroke="#378b6d" stroke-width="1.8"/>
+<text x="1419.0" y="350" font-size="26" fill="#378b6d" font-weight="650" text-anchor="middle">K5</text>
+<text x="1203" y="222" font-size="26" fill="#2f7aa0" font-weight="650" text-anchor="middle">5 次 CPU 提交</text>
+<path d="M1419 377 V389" fill="none" stroke="#c5744c" stroke-width="2.6" stroke-linejoin="round" stroke-linecap="round" marker-end="url(#arrow)"/>
+<text x="1455" y="407" font-size="26" fill="#8966ad" font-weight="650" text-anchor="end">logits → sampler → F</text>
+<text x="1203" y="554" font-size="28" fill="#8966ad" font-weight="650" text-anchor="middle">1 次 replay()</text>
+<path d="M1203 566 V604" fill="none" stroke="#8966ad" stroke-width="2.6" stroke-linejoin="round" stroke-linecap="round" marker-end="url(#arrow)"/>
+<rect x="924" y="607" width="558" height="87" rx="14" fill="#faf7fe" stroke="#8966ad" stroke-width="1.8"/>
+<rect x="940" y="620" width="94" height="61" rx="8" fill="#e9f5ed" stroke="#378b6d" stroke-width="1.8"/>
+<text x="987.0" y="659" font-size="26" fill="#378b6d" font-weight="650" text-anchor="middle">K1</text>
+<path d="M1036 651 H1046" fill="none" stroke="#378b6d" stroke-width="2.6" stroke-linejoin="round" stroke-linecap="round" marker-end="url(#arrow)"/>
+<rect x="1048" y="620" width="94" height="61" rx="8" fill="#e9f5ed" stroke="#378b6d" stroke-width="1.8"/>
+<text x="1095.0" y="659" font-size="26" fill="#378b6d" font-weight="650" text-anchor="middle">K2</text>
+<path d="M1144 651 H1154" fill="none" stroke="#378b6d" stroke-width="2.6" stroke-linejoin="round" stroke-linecap="round" marker-end="url(#arrow)"/>
+<rect x="1156" y="620" width="94" height="61" rx="8" fill="#e9f5ed" stroke="#378b6d" stroke-width="1.8"/>
+<text x="1203.0" y="659" font-size="26" fill="#378b6d" font-weight="650" text-anchor="middle">K3</text>
+<path d="M1252 651 H1262" fill="none" stroke="#378b6d" stroke-width="2.6" stroke-linejoin="round" stroke-linecap="round" marker-end="url(#arrow)"/>
+<rect x="1264" y="620" width="94" height="61" rx="8" fill="#e9f5ed" stroke="#378b6d" stroke-width="1.8"/>
+<text x="1311.0" y="659" font-size="26" fill="#378b6d" font-weight="650" text-anchor="middle">K4</text>
+<path d="M1360 651 H1370" fill="none" stroke="#378b6d" stroke-width="2.6" stroke-linejoin="round" stroke-linecap="round" marker-end="url(#arrow)"/>
+<rect x="1372" y="620" width="94" height="61" rx="8" fill="#e9f5ed" stroke="#378b6d" stroke-width="1.8"/>
+<text x="1419.0" y="659" font-size="26" fill="#378b6d" font-weight="650" text-anchor="middle">K5</text>
+<path d="M1419 699 V712" fill="none" stroke="#c5744c" stroke-width="2.6" stroke-linejoin="round" stroke-linecap="round" marker-end="url(#arrow)"/>
+<text x="1455" y="740" font-size="26" fill="#8966ad" font-weight="650" text-anchor="end">logits → sampler → F</text>
+<rect x="30" y="800" width="1540" height="135" rx="20" fill="#f7f9fb" stroke="#a6b2bd" stroke-width="1.8"/>
+<text x="55" y="849" font-size="29" fill="#8966ad" font-weight="650" text-anchor="start">固定地址缓冲区</text>
+<text x="55" y="898" font-size="27" fill="#697887" font-weight="400" text-anchor="start">填入新数据 → replay()</text>
+<rect x="390" y="817" width="315" height="101" rx="12" fill="#ffffff" stroke="#8966ad" stroke-width="1.8"/>
+<text x="408" y="850" font-size="26" fill="#8966ad" font-weight="650" text-anchor="start">input_ids @0xA0</text>
+<rect x="410" y="865" width="75" height="39" rx="6" fill="#e9f4fa" stroke="#2f7aa0" stroke-width="1.8"/>
+<text x="447" y="894" font-size="27" fill="#2f7aa0" font-weight="650" text-anchor="middle">D</text>
+<path d="M493 884 H537" fill="none" stroke="#c5744c" stroke-width="2.6" stroke-linejoin="round" stroke-linecap="round" marker-end="url(#arrow)"/>
+<rect x="550" y="865" width="75" height="39" rx="6" fill="#fff0e5" stroke="#c5744c" stroke-width="1.8"/>
+<text x="587" y="894" font-size="27" fill="#c5744c" font-weight="650" text-anchor="middle">E</text>
+<rect x="735" y="817" width="315" height="101" rx="12" fill="#ffffff" stroke="#8966ad" stroke-width="1.8"/>
+<text x="753" y="850" font-size="26" fill="#8966ad" font-weight="650" text-anchor="start">positions @0xB0</text>
+<rect x="755" y="865" width="75" height="39" rx="6" fill="#e9f4fa" stroke="#2f7aa0" stroke-width="1.8"/>
+<text x="792" y="894" font-size="27" fill="#2f7aa0" font-weight="650" text-anchor="middle">3</text>
+<path d="M838 884 H882" fill="none" stroke="#c5744c" stroke-width="2.6" stroke-linejoin="round" stroke-linecap="round" marker-end="url(#arrow)"/>
+<rect x="895" y="865" width="75" height="39" rx="6" fill="#fff0e5" stroke="#c5744c" stroke-width="1.8"/>
+<text x="932" y="894" font-size="27" fill="#c5744c" font-weight="650" text-anchor="middle">4</text>
+<rect x="1080" y="817" width="465" height="101" rx="12" fill="#ffffff" stroke="#8966ad" stroke-width="1.8"/>
+<text x="1098" y="850" font-size="26" fill="#8966ad" font-weight="650" text-anchor="start">block_tables @0xC0</text>
+<rect x="1100" y="865" width="120" height="39" rx="6" fill="#e9f4fa" stroke="#2f7aa0" stroke-width="1.8"/>
+<text x="1160" y="894" font-size="27" fill="#2f7aa0" font-weight="650" text-anchor="middle">[2, ·]</text>
+<path d="M1230 884 H1280" fill="none" stroke="#c5744c" stroke-width="2.6" stroke-linejoin="round" stroke-linecap="round" marker-end="url(#arrow)"/>
+<rect x="1295" y="865" width="120" height="39" rx="6" fill="#fff0e5" stroke="#c5744c" stroke-width="1.8"/>
+<text x="1355" y="894" font-size="27" fill="#c5744c" font-weight="650" text-anchor="middle">[2, 7]</text>
+<text x="32" y="976" font-size="26" fill="#697887">K1…K5 为抽取示意；完整模型包含更多 Kernel。图形宽度、间隔不表示耗时，地址为示意值。</text>
+<text x="32" y="1015" font-size="26" fill="#697887">此图 P=4，跨块时更新块表；· 为未使用列。Graph 来自源码，本地运行用 eager。</text>
+<path d="M410 815 V780 H225 V650 H240" fill="none" stroke="#2f7aa0" stroke-width="2.3" stroke-dasharray="7 6" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<path d="M1100 815 V780 H905 V650 H920" fill="none" stroke="#2f7aa0" stroke-width="2.3" stroke-dasharray="7 6" stroke-linejoin="round" marker-end="url(#arrow)"/>
+</svg>
